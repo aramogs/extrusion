@@ -9,13 +9,16 @@ let tituloSuccess = document.getElementById("tituloSuccess")
 let cantidadSuccess = document.getElementById("cantidadSuccess")
 let cargasAnteriores = document.getElementById("cargasAnteriores")
 let btnGuardar = document.getElementById("btnGuardar")
+let btn_excel = document.getElementById("btn_excel")
 let formData = new FormData()
 let selectedTurno = document.getElementById("selectedTurno")
 let cardExcel = document.getElementById("cardExcel")
+let selectedFecha = document.getElementById("selectedFecha")
 let myDateString
 let turno
 let turnos_programados = []
 let modal_errorText = document.getElementById("modal_errorText")
+let modal_btnCerrar_Error = document.getElementById("modal_btnCerrar_Error")
 
 btnCancelar.forEach(element => {
     element.addEventListener('click', deleteFile)
@@ -25,13 +28,13 @@ btnCancelar.forEach(element => {
 
 document.getElementById("excelFile").addEventListener("change", () => {
     if (document.getElementById("excelFile").files.length == 0) {
-        document.getElementById("btn_excel").disabled = true;
-        document.getElementById("btn_excel").classList.remove("animate__flipInX")
-        document.getElementById("btn_excel").classList.add("animate__flipOutX")
+        btn_excel.disabled = true;
+        btn_excel.classList.remove("animate__flipInX")
+        btn_excel.classList.add("animate__flipOutX")
     } else {
-        document.getElementById("btn_excel").disabled = false;
-        document.getElementById("btn_excel").classList.remove("animate__flipOutX")
-        document.getElementById("btn_excel").classList.add("animate__flipInX")
+        btn_excel.disabled = false;
+        btn_excel.classList.remove("animate__flipOutX")
+        btn_excel.classList.add("animate__flipInX")
     }
 });
 
@@ -44,11 +47,22 @@ selectedTurno.addEventListener("change", ()=>{
         if (turno === element.turno) {
             $('#modalError').modal({ backdrop: 'static', keyboard: false })
             modal_errorText.innerHTML = "Turno previamente programado"
-            console.log("Error-Turno duplicado");
         }    
     });
 })
 
+modal_btnCerrar_Error.addEventListener("click",()=>{cleanPage()})
+
+function cleanPage() {
+    turnos_programados = []
+    selectedFecha.value = ""
+    selectedTurno.value = "Seleccionar"
+    selectedTurno.disabled = true
+    cardExcel.hidden = true
+    formData = new FormData()
+    deleteFile()
+    
+}
 
 const picker = datepicker('#selectedFecha', {
     customDays: ['D', 'L', 'M', 'M', 'J', 'V', 'S'],
@@ -122,7 +136,11 @@ function sendData() {
         headers: { 'Content-Type': 'multipart/form-data', 'Accept': 'application/json', }
     })
         .then((response) => {
-            console.log(response);
+            console.log(response.data)
+
+            setTimeout(function(){ $('#modalSpinner').modal('hide') }, 1000);
+            
+            cleanPage()
 
         })
         .catch((err) => { console.error(err) });
@@ -132,7 +150,7 @@ function sendData() {
 
 function deleteFile() {
     excelFile.value = ""
-    document.getElementById("btn_excel").disabled = true;
-    document.getElementById("btn_excel").classList.remove("animate__flipInX")
-    document.getElementById("btn_excel").classList.add("animate__flipOutX")
+    btn_excel.disabled = true;
+    btn_excel.classList.remove("animate__flipInX")
+    btn_excel.classList.add("animate__flipOutX")
 }
