@@ -141,6 +141,17 @@ controller.getTurnos_GET = (req, res) => {
 
 }
 
+controller.getProgramacion_POST = (req, res) => {
+    let fecha = req.body.fecha
+    funcion.getProgramacion(fecha)
+        .then((result) => {
+
+            res.json(result)
+        })
+        .catch((err) => { res.json(err) })
+
+}
+
 const arreglosExcel = (base, tabla, bufferExcel) => {
     return new Promise((resolve, reject) => {
 
@@ -196,7 +207,6 @@ const arreglosExcel = (base, tabla, bufferExcel) => {
                         resolve([titulos, valores])
                     } else {
                         reject("Verificar archivo de Excel")
-                        //TODO mandar error, los titulos no coinciden el archivo esta mal 
                     }
                 })
 
@@ -205,10 +215,14 @@ const arreglosExcel = (base, tabla, bufferExcel) => {
 }
 
 controller.verificarSAP_POST = (req, res) => {
-    let user = req.res.socket.user
-    id_carga = req.params.id_carga
+    console.log(req.body);
+    let body = JSON.parse(req.body.data)
+    
+    let fecha = body.fecha
+    let turno = body.turno
+
+    let user = (req.res.socket.user).substring(3)
     let bufferExcel = req.file.buffer
-    let ids = []
     let base = process.env.DB_CONN_EXTR
     let tabla = "extr"
     
@@ -216,9 +230,11 @@ controller.verificarSAP_POST = (req, res) => {
     .then((result)=>{
         titulos = result[0]
         valores= result[1]
-        funcion.insertProgramaExcel("extrusion","production_plan",titulos,valores,user)
-        .then((result)=>{console.log(result)})
-        .catch((err)=>{console.log(err)})
+        //TODO cambiar base y tabla a .env
+        //TODO Crear funcion extra que verifique que los numeros de SAP coiniciden con la base da datos, en caso contrario regresar error
+        funcion.insertProgramaExcel("extrusion","production_plan",titulos,valores,user,fecha,turno)
+        .then((result)=>{res.json(result)})
+        .catch((err)=>{res.json(err)})
     })
     .catch((err)=>{console.error(err)})
 
