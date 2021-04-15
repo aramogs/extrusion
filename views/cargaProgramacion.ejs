@@ -1,72 +1,75 @@
 <%- include ("./static/header") %>
-<%- include ("./static/sidebar") %>
-<%- include ("./static/navbar") %>
+    <%- include ("./static/sidebar") %>
+        <%- include ("./static/navbar") %>
 
 
-<div class="col-xl-12 jumbotron jumbotron-fluid animated bounceInDown bg-transparent jumbotronBg">
-    <div class="container">
-        <img src="/img/TristoneLogo.png" class="img-logo rounded mx-auto d-block" alt="Tristone Flowtech">
-        <h1 class="display-4 text-center csvTitulo">Carga de Programacion Extrusion</h1>
-        <p class="lead text-center"></p>
-    </div>
-</div>
-<div class="container">
-
-    <div class=" card-header text-white bg-secondary ">
-        <div class="row">
-
-
-
-            <div class="col-lg-6">
-                <div class="form-group">
-                    <label>Fecha</label>
-                    <input type="text" class="form-control text-center" name="date" id="selectFecha"
-                        aria-describedby="helpId" placeholder="Seleccionar Fecha" autocomplete="off">
-                    
+            <div class="col-xl-12 jumbotron jumbotron-fluid animated bounceInDown bg-transparent jumbotronBg">
+                <div class="container">
+                    <img src="/img/TristoneLogo.png" class="img-logo rounded mx-auto d-block" alt="Tristone Flowtech">
+                    <h1 class="display-4 text-center csvTitulo">Carga de Programacion Extrusion</h1>
+                    <p class="lead text-center"></p>
                 </div>
             </div>
+            <div class="container">
 
-            <div class="col-lg-6">
-                <div class="form-group">
-                    <label>Turno</label>
-                    <select class="form-control text-center" id="selectTurno" disabled>
-                        <option value="">Seleccionar</option>
-
-                    </select>
-                </div>
-            </div>
-
-
-        </div>
-
-    </div>
-
-    <div class="card text-center" id="cardExcel" hidden>
-        <h5 class="card-header bg-dark text-white"><span class="text-success fas fa-file-excel"> </span> Carga archivo excel</h5>
-        <div class="card-body">
-
-            <form onsubmit="event.preventDefault(); sendData();">
-                <div class="form-group ">
+                <div class=" card-header text-white bg-secondary ">
                     <div class="row">
-                        <div class="text-center col" id="insert_excel">
-                            <div class="box">
-                                <input id="excelFile" name="excelFile" type="file"
-                                    accept="application/vnd.openxmlformats-officedocument.spreadsheetml.sheet">
-                                <label for="excelFile"></label>
-                            </div>
-                            <br>
-                            <div class="form-group text-center col">
-                                <input id="btn_excel" type="submit" formaction="/verificarSAP"
-                                    class="btn btn-secondary  btn-sm btn-block animate__animated animate__flipOutX"
-                                    disabled></input>
-                            </div>
 
+
+
+                        <div class="col-lg-6">
+                            <div class="form-group">
+                                <label>Fecha</label>
+                                <input type="text" class="form-control text-center" name="date" id="selectedFecha"
+                                    aria-describedby="helpId" placeholder="Seleccionar Fecha" autocomplete="off">
+
+                            </div>
                         </div>
+
+                        <div class="col-lg-6">
+                            <div class="form-group">
+                                <label>Turno</label>
+                                <select class="form-control text-center" id="selectedTurno" disabled>
+                                    <option value="">Seleccionar</option>
+
+                                </select>
+                            </div>
+                        </div>
+
+
+                    </div>
+
+                </div>
+
+                <div class="card text-center" id="cardExcel" hidden>
+                    <h5 class="card-header bg-dark text-white"><span class="text-success fas fa-file-excel"> </span>
+                        Carga archivo excel</h5>
+                    <div class="card-body">
+
+                        <form onsubmit="event.preventDefault(); sendData();">
+                            <div class="form-group ">
+                                <div class="row">
+                                    <div class="text-center col" id="insert_excel">
+                                        <div class="box">
+                                            <input id="excelFile" name="excelFile" type="file"
+                                                accept="application/vnd.openxmlformats-officedocument.spreadsheetml.sheet">
+                                            <label for="excelFile"></label>
+                                        </div>
+                                        <br>
+                                        <div class="form-group text-center col">
+                                            <input id="btn_excel" type="submit" formaction="/verificarSAP"
+                                                class="btn btn-secondary  btn-sm btn-block animate__animated animate__flipOutX"
+                                                disabled></input>
+                                        </div>
+
+                                    </div>
+                                </div>
+                            </div>
+                        </form>
+
                     </div>
                 </div>
-            </form>
-
-
+            </div>
 
             <!-- Modal
             <div class="modal fade" id="myModal" tabindex="-1" aria-labelledby="myModalLabel" aria-hidden="true">
@@ -126,8 +129,8 @@
                 </div>
             </div>
             -->
-            <!-- Modal 
-            <div class="modal fade" id="myModal3" tabindex="-1" aria-labelledby="myModalLabel" aria-hidden="true">
+
+            <div class="modal fade" id="modalSpinner" tabindex="-1" aria-labelledby="myModalLabel" aria-hidden="true">
                 <div class="modal-dialog">
                     <div class="modal-content">
                         <div class="modal-header text-center">
@@ -145,15 +148,40 @@
                         </div>
                     </div>
                 </div>
-            </div> -->
+            </div>
+
+            <!-- Small modal Error-->
+            <div class="modal fade" id="modalError" tabindex="-1" role="dialog" aria-labelledby="modelTitleId"
+                aria-hidden="true">
+                <div class="modal-dialog modal-dialog-scrollable" role="document">
+                    <div class="modal-content">
+                        <div class="modal-header card-mov text-center">
+                            <h3><span class="badge badge-danger">Error:</span></h3>
+        
+                            <!-- <button type="button" class="close" data-dismiss="modal" aria-label="Close"></button> -->
+                        </div>
+                        <div class="modal-body">
+                            <div class="row">
+                                <div class="col-lg-12 text-center">
+                                    <h4 id="modal_errorText2" ><span
+                                            class="fas fa-exclamation-circle text-danger"></span><span
+                                            id="modal_errorText"></span></h4>
+                                </div>
+                            </div>
+
+                        </div>
+                        <div class="modal-footer">
+                            <button id="btnCerrar_Error" type="button" class="btn btn-outline-warning btnCerrar"
+                                data-dismiss="modal">Cerrar
+                            </button>
+
+                        </div>
+                    </div>
+                </div>
+            </div>
 
 
-        </div>
 
-    </div>
-</div>
-</div>
 
-<%- include ("./static/footer") %>
-
-<script src="/js/functions/cargaProgramacion.js"></script>
+            <%- include ("./static/footer") %>
+                <script src="/js/functions/cargaProgramacion.js"></script>

@@ -17,7 +17,7 @@ router.get('/consultaEx',verifyToken, routesController.consultaEx_GET);
 router.get('/cargaProgramacion', routesController.cargaProgramacion_GET);
 router.get('/getTurnos',routesController.getTurnos_GET);
 router.post('/verificarSAP/:id_carga', upload.single("excelFile"), routesController.verificarSAP_POST);
-
+router.post('/getProgramacion',routesController.getProgramacion_POST);
 
 
 

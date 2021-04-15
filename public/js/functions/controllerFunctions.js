@@ -36,6 +36,23 @@ funcion.getTurnos = () => {
     })
 }
 
+funcion.getProgramacion = (fecha) => {
+    return new Promise((resolve, reject) => {
+        dbEX(`
+        SELECT DISTINCT
+            turno
+        FROM
+            production_plan
+        WHERE
+            fecha = '${fecha}'
+        `)
+            .then((result) => { resolve(result) })
+            .catch((error) => { 
+                console.log(error);
+                reject(error) })
+    })
+}
+
 funcion.verifySAP = (base, tabla, callback) => {
     if (base === "b10_bartender") {
         db(`SELECT no_sap FROM ${tabla} `, function (err, result, fields) {
@@ -50,7 +67,7 @@ funcion.verifySAP = (base, tabla, callback) => {
 
 }
 
-funcion.insertProgramaExcel = (base, tabla, titulos, valores,sup_num) => {
+funcion.insertProgramaExcel = (base, tabla, titulos, valores,sup_num,fecha,turno) => {
     return new Promise((resolve, reject) => {
 
         let valor
@@ -70,8 +87,11 @@ funcion.insertProgramaExcel = (base, tabla, titulos, valores,sup_num) => {
                 
             }
             valores_finales.push(`"${sup_num}"`)
+            valores_finales.push(`"${fecha}"`)
+            valores_finales.push(`"${turno}"`)
 
-            dbEX(`INSERT INTO ${tabla} (${titulos.join()},sup_name) VALUES (${valores_finales})`)
+
+            dbEX(`INSERT INTO ${tabla} (${titulos.join()},sup_name,fecha,turno) VALUES (${valores_finales})`)
                 .then((result) => { 
                      if (result.affectedRows == 1) {
                         affectedRows++
