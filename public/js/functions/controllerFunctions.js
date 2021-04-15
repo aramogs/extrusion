@@ -85,6 +85,25 @@ funcion.insertProgramaExcel = (base, tabla, titulos, valores,sup_num) => {
 
 
     })
+
+
+    
+}
+
+
+funcion.getProgramacion = (fecha) => {
+    return new Promise((resolve, reject) => {
+        dbEX(`
+        SELECT 
+            *
+        FROM
+            production_plan
+        WHERE
+            fecha = '${fecha}'
+        `)
+            .then((result) => { resolve(result) })
+            .catch((error) => { reject(error) })
+    })
 }
 
 module.exports = funcion;

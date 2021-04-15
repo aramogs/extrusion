@@ -306,6 +306,36 @@ function amqpRequest(estacion, serial, proceso, material, material_description, 
 }
 
 
+controller.editarProgramacion_GET = (req, res) => {
+
+    user = req.connection.user
+    let access = ""
+    acceso(req)
+        .then((result) => {
+            result.forEach(element => {
+                if (element === "TFT\\TFT.DEL.PAGES_BTS_CargaProduccion") access = "ok"
+            });
+            if (access == "ok") {
+                res.render("editarProgramacion.ejs", { user })
+            } else {
+                res.redirect("/acceso_denegado")
+            }
+        })
+        .catch((err) => { res.redirect("/acceso_denegado") })
+
+}
+
+
+controller.tablaProgramacion_GET = (req, res) => {
+    let fecha= req.params.fecha
+
+
+    funcion.getProgramacion(fecha)
+    .then((result)=>{res.json(result)})
+    .catch((err)=>{console.log(err)})
+
+}
+
 
 
 module.exports = controller;
