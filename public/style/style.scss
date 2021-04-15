@@ -1,0 +1,136 @@
+@import 'main';
+@import 'sidebar';
+@import 'buttonsBoostrap';
+@import 'datatableBootstrap';
+@import 'backToTop';
+
+*{
+    -moz-appearance: textfield
+}
+
+img {
+    width: $imgSize;
+}
+
+
+.jumbotronBg {
+    background: url('../img/white-background.jpg') no-repeat center center;
+    background-size: cover;
+   // height: 50%;
+}
+
+.btnNavbar {
+    &:hover {
+        background-color: $blue;
+        border-block: $blue;
+    }
+}
+
+
+.carousel-inner img {
+    margin: auto;
+  }
+
+.carousel-control-next,
+.carousel-control-prev,
+.carousel-indicators {
+    filter: invert(100%);
+}
+
+.cdelay-1 {
+    animation-delay: .25s;
+}
+
+.cdelay-2 {
+    animation-delay: .35s;
+}
+
+.cdelay-3 {
+    animation-delay: .45s;
+}
+
+.cdelay-4 {
+    animation-delay: 1s;
+}
+
+.grow {
+    &:hover {
+        -webkit-transform: scale(1.1);
+        -ms-transform: scale(1.1);
+        transform: scale(1.1);
+        transition: .2s;
+    }
+}
+
+table{
+    width: 100%;
+    td{
+        white-space: nowrap !important;
+        width: fit-content !important;
+        padding: 2pt !important;
+        vertical-align: middle !important;
+    }
+}
+
+#selectFecha{
+    cursor:pointer;
+}
+
+.popover {
+    max-width: 600px;
+  }
+  
+.card-mov{
+    display: inline-block;
+}
+
+
+.borderless td, .borderless th {
+    border: none;
+}
+
+.card-body {
+    padding: .5rem !important;
+}
+
+#page-content-wrapper{
+    background-image: url("/img/white-background.jpg");
+    background-repeat: no-repeat;
+    background-position: center;
+    background-size: cover;
+    background-attachment: fixed;
+}
+
+
+
+.alert{
+    padding: 0 !important;
+    border-radius: .50rem !important;
+}
+
+
+.manu_footer{
+    padding: 0 !important;
+}
+
+#navbarSupportedContent{
+    float: right;
+  }
+
+  .logoSize{
+    width: 150%;
+}
+
+/* On screens that are 992px or less, set the background color to blue */
+@media screen and (max-width: 992px) {
+    .logoSize{
+        width: 30%;
+    }
+  }
+  
+  /* On screens that are 600px or less, set the background color to olive */
+  @media screen and (max-width: 600px) {
+    .logoSize{
+        width: 50%;
+    }
+  }
