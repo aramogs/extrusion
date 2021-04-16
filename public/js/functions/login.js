@@ -1,6 +1,6 @@
 let inputPassword = document.getElementById("inputPassword")
 let submitPassword = document.getElementById("submitPassword")
-
+let section = document.getElementById("section")
 inputPassword.focus()
 
 submitPassword.addEventListener("submit", (e) => {
@@ -15,14 +15,21 @@ submitPassword.addEventListener("submit", (e) => {
     }
 
     axios.post("/userAccess", {
-        user: pass
+        user: pass,
+        section: section.innerText
     })
         .then((result) => {
             let response = result.data
             if (response != "unathorized") {
                 soundOk()
                 setTimeout(() => {
-                    window.location.replace(window.location.origin + "/mainMenu")
+                    console.log(section);
+                    if (section.innerText === "Acreditacion") {
+                        window.location.replace(window.location.origin + "/mainMenu")
+                    }else if (section.innerText === "Impresion") {
+                        window.location.replace(window.location.origin + "/impresion")
+                    }
+                    
                 }, 200);
                 
             } else {

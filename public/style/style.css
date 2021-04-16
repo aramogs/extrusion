@@ -1,9 +1,10 @@
+@import url("https://fonts.googleapis.com/css?family=Orbitron");
 #sidebar-wrapper {
   min-height: 100vh;
   margin-left: -15rem;
   -webkit-transition: margin .25s ease-out;
   transition: margin .25s ease-out;
-  background-image: url("../img/white-lines.png");
+  background-image: url("../img/white-lines2.png");
   background-repeat: no-repeat;
   background-position-x: -150px;
   background-position-y: 90px;
@@ -19,7 +20,7 @@
 }
 
 #sidebar-wrapper .list-group-item {
-  background-color: rgba(0, 0, 0, 0.4) !important;
+  background-color: rgba(0, 0, 0, 0.267) !important;
   border-radius: 90px/5px;
 }
 
@@ -709,20 +710,28 @@ table td {
 }
 
 .logoSize {
-  width: 150%;
+  width: 100%;
+}
+
+.rmbullet {
+  list-style-type: none;
 }
 
 /* On screens that are 992px or less, set the background color to blue */
 @media screen and (max-width: 992px) {
   .logoSize {
-    width: 30%;
+    width: 100%;
   }
 }
 
 /* On screens that are 600px or less, set the background color to olive */
 @media screen and (max-width: 600px) {
   .logoSize {
-    width: 50%;
+    width: 100%;
   }
+}
+
+#clock {
+  font-family: 'Orbitron', sans-serif;
 }
 /*# sourceMappingURL=style.css.map */

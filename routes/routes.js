@@ -1,23 +1,25 @@
 const express = require('express');
 const router = express.Router();
 const routesController = require('./routesController')
+const middleware = require('../public/js/middlewares/middleware')
 const multer = require('multer')
 const upload = multer()
-const jwt = require('jsonwebtoken');
+
 
 //Routes
 
 router.get('/', routesController.index_GET);
-router.get('/login/', routesController.login);
+router.get('/login/:id', routesController.login);
 router.get('/acceso_denegado',routesController.accesoDenegado_GET);
-router.get('/mainMenu',verifyToken,routesController.mainMenu_GET);
+router.get('/mainMenu',middleware.verifyToken,routesController.mainMenu_GET);
 router.post('/userAccess', routesController.userAccess_POST);
-router.get('/backflushEx',verifyToken, routesController.backflushEx_GET);
-router.get('/consultaEx',verifyToken, routesController.consultaEx_GET);
+router.get('/backflushEx',middleware.verifyToken, routesController.backflushEx_GET);
+router.get('/consultaEx',middleware.verifyToken, routesController.consultaEx_GET);
 router.get('/cargaProgramacion', routesController.cargaProgramacion_GET);
 router.get('/getTurnos',routesController.getTurnos_GET);
 router.post('/verificarSAP/:id_carga', upload.single("excelFile"), routesController.verificarSAP_POST);
 router.get('/editarProgramacion', routesController.editarProgramacion_GET);
+<<<<<<< HEAD
 router.post('/tablaProgramacion', routesController.tablaProgramacion_POST);
 router.post('/getProgramacion',routesController.getProgramacion_POST);
 router.post('/cancelarIdPlan',routesController.cancelarIdPlan_POST);
@@ -43,24 +45,15 @@ function verifyToken(req, res, next) {
             }
         })
 
+=======
+router.get('/tablaProgramacion/:fecha', routesController.tablaProgramacion_GET);
+router.get('/impresion/', middleware.verifyToken, routesController.impresion_GET);
 
-        if (token_name == "accessToken") {
-            jwt.verify(token_jwt, 'tristone', (err, authData) => {
-                if (err) {
-                    res.render('login.ejs')
+router.post('/getProgramacion',routesController.getProgramacion_POST);
+>>>>>>> 152052b87ed17f2491daac131c9bd16e62d49609
 
-                } else {
 
-                    res.locals.authData = authData
-                    next()
-                }
-            })
-        }
-        else {
-            res.render('login.ejs')
-        }
-    }
 
-}
+
 
 module.exports = router;

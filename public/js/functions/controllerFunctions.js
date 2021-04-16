@@ -16,7 +16,7 @@ funcion.getUsers = (user) => {
         WHERE
             emp_num = ${user}
         AND 
-            emp_area = "TO"
+            emp_area = "EX"
         `)
             .then((result) => { resolve(result) })
             .catch((error) => { reject(error) })
