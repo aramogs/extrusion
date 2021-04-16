@@ -355,7 +355,6 @@ controller.tablaProgramacion_GET = (req, res) => {
     .then((result)=>{res.json(result)})
     .catch((err)=>{console.log(err)})
 
-<<<<<<< HEAD
 }
 
 
@@ -366,7 +365,6 @@ controller.cancelarIdPlan_POST = (req, res) => {
     funcion.cancelarIdPlan(midplan,motivo)
     .then((result)=>{res.json(result)})
     .catch((err)=>{console.log(err)})
-=======
     funcion.getProgramacion(fecha)
         .then((result) => { res.json(result) })
         .catch((err) => { console.log(err) })
@@ -380,7 +378,6 @@ controller.impresion_GET = (req, res) => {
         user_id,
         user_name
     })
->>>>>>> 152052b87ed17f2491daac131c9bd16e62d49609
 
 
 }

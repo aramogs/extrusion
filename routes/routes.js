@@ -19,7 +19,6 @@ router.get('/cargaProgramacion', routesController.cargaProgramacion_GET);
 router.get('/getTurnos',routesController.getTurnos_GET);
 router.post('/verificarSAP/:id_carga', upload.single("excelFile"), routesController.verificarSAP_POST);
 router.get('/editarProgramacion', routesController.editarProgramacion_GET);
-<<<<<<< HEAD
 router.post('/tablaProgramacion', routesController.tablaProgramacion_POST);
 router.post('/getProgramacion',routesController.getProgramacion_POST);
 router.post('/cancelarIdPlan',routesController.cancelarIdPlan_POST);
@@ -45,12 +44,10 @@ function verifyToken(req, res, next) {
             }
         })
 
-=======
 router.get('/tablaProgramacion/:fecha', routesController.tablaProgramacion_GET);
 router.get('/impresion/', middleware.verifyToken, routesController.impresion_GET);
 
 router.post('/getProgramacion',routesController.getProgramacion_POST);
->>>>>>> 152052b87ed17f2491daac131c9bd16e62d49609
 
 
 
