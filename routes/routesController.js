@@ -21,7 +21,9 @@ controller.index_GET = (req, res) => {
 }
 
 controller.login = (req, res) => {
+    section = req.params.id
     res.render('login.ejs', {
+        section
     });
 }
 
@@ -60,6 +62,7 @@ controller.mainMenu_GET = (req, res) => {
 
 controller.userAccess_POST = (req, res) => {
     let user_id = req.body.user
+    console.log(req.body);
     funcion.getUsers(user_id)
         .then((result) => {
             console.log(result);
@@ -77,7 +80,7 @@ controller.userAccess_POST = (req, res) => {
             }
         })
         .catch((err) => {
-            console.log(err);
+            console.error(err);
             res.json(err)
         })
 }
@@ -143,6 +146,7 @@ controller.getTurnos_GET = (req, res) => {
 
 controller.getProgramacion_POST = (req, res) => {
     let fecha = req.body.fecha
+    console.log(req.body);
     funcion.getProgramacion(fecha)
         .then((result) => {
 
@@ -189,10 +193,10 @@ const arreglosExcel = (base, tabla, bufferExcel) => {
                         titulos2.push((arreglo[0][i]).toLowerCase())
                     }
                     for (let i = 1; i < arreglo.length; i++) {
-                        
+
 
                         valores.push(arreglo[i])
-         
+
                     }
 
                 })
@@ -203,7 +207,7 @@ const arreglosExcel = (base, tabla, bufferExcel) => {
                         }
                     }
                     if (2 == count) {
-                   
+
                         resolve([titulos, valores])
                     } else {
                         reject("Verificar archivo de Excel")
@@ -217,7 +221,7 @@ const arreglosExcel = (base, tabla, bufferExcel) => {
 controller.verificarSAP_POST = (req, res) => {
     console.log(req.body);
     let body = JSON.parse(req.body.data)
-    
+
     let fecha = body.fecha
     let turno = body.turno
 
@@ -225,18 +229,18 @@ controller.verificarSAP_POST = (req, res) => {
     let bufferExcel = req.file.buffer
     let base = process.env.DB_CONN_EXTR
     let tabla = "extr"
-    
+
     arreglosExcel(base, tabla, bufferExcel)
-    .then((result)=>{
-        titulos = result[0]
-        valores= result[1]
-        //TODO cambiar base y tabla a .env
-        //TODO Crear funcion extra que verifique que los numeros de SAP coiniciden con la base da datos, en caso contrario regresar error
-        funcion.insertProgramaExcel("extrusion","production_plan",titulos,valores,user,fecha,turno)
-        .then((result)=>{res.json(result)})
-        .catch((err)=>{res.json(err)})
-    })
-    .catch((err)=>{console.error(err)})
+        .then((result) => {
+            titulos = result[0]
+            valores = result[1]
+            //TODO cambiar base y tabla a .env
+            //TODO Crear funcion extra que verifique que los numeros de SAP coiniciden con la base da datos, en caso contrario regresar error
+            funcion.insertProgramaExcel("extrusion", "production_plan", titulos, valores, user, fecha, turno)
+                .then((result) => { res.json(result) })
+                .catch((err) => { res.json(err) })
+        })
+        .catch((err) => { console.error(err) })
 
 }
 
@@ -343,12 +347,22 @@ controller.editarProgramacion_GET = (req, res) => {
 
 
 controller.tablaProgramacion_GET = (req, res) => {
-    let fecha= req.params.fecha
+    let fecha = req.params.fecha
 
 
     funcion.getProgramacion(fecha)
-    .then((result)=>{res.json(result)})
-    .catch((err)=>{console.log(err)})
+        .then((result) => { res.json(result) })
+        .catch((err) => { console.log(err) })
+
+}
+
+controller.impresion_GET = (req, res) => {
+    user_id = req.res.locals.authData.id.id
+    user_name = req.res.locals.authData.id.username
+    res.render('impresion.ejs', {
+        user_id,
+        user_name
+    })
 
 }
 

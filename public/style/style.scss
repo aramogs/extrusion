@@ -118,19 +118,27 @@ table{
   }
 
   .logoSize{
-    width: 150%;
+    width: 100%;
+}
+
+.rmbullet{
+    list-style-type: none;
 }
 
 /* On screens that are 992px or less, set the background color to blue */
 @media screen and (max-width: 992px) {
     .logoSize{
-        width: 30%;
+        width: 100%;
     }
   }
   
   /* On screens that are 600px or less, set the background color to olive */
   @media screen and (max-width: 600px) {
     .logoSize{
-        width: 50%;
+        width: 100%;
     }
+  }
+  @import url('https://fonts.googleapis.com/css?family=Orbitron');
+  #clock {
+    font-family: 'Orbitron', sans-serif;
   }

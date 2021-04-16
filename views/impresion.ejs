@@ -1,0 +1,120 @@
+<%- include ("./static/header") %>
+<%- include ("./static/sidebar") %>
+<%- include ("./static/navbar") %>
+
+            <nav aria-label="breadcrumb">
+                <ol class="breadcrumb">
+                    <li class="breadcrumb-item active text-info text-center" aria-current="page">
+                        <%=user_id%>
+                    </li>
+                    <li class="breadcrumb-item active" aria-current="page"><button type="button" id="btn_logoff"
+                            class="btn btn-danger btn-sm btn-block" btn-lg btn-block">Cerrar sesion</button></li>
+                </ol>
+            </nav>
+
+            <div class="container-fluid">
+                <h1 class="display-4 text-center csvTitulo">Etiquetas Extrusion</h1>
+            </div>
+
+            <div class="container-fluid">
+
+                <div class=" card-header text-white bg-dark ">
+                    <div class="row">
+            
+                        <div class="col-lg-2">
+                            <div class="form-group">
+                                <label>Fecha:</label>
+                                <input type="text" class="form-control text-center" id="currentFecha" disabled>
+                                
+                            </div>
+                        </div>
+                        <div class="col-lg-2">
+                            <div class="form-group">
+                                <label>Turno:</label>
+                                <input type="text" class="form-control text-center" id="currentTurno" disabled>
+                                
+                            </div>
+                        </div>
+
+                        <div class="col-lg-2">
+                            <div class="form-group">
+                                <label>Hora:</label>
+                                <input type="text" class="form-control text-center" id="clock" disabled>
+                                
+                            </div>
+                        </div>
+                        <div class="col-lg-6">
+                            <div class="form-group">
+                                <label>Linea</label>
+                                <select class="form-control text-center" id="selectedTurno" disabled>
+                                    <option value="">Seleccionar</option>
+
+                                </select>
+                            </div>
+                        </div>
+            
+                    </div>
+            
+                </div>
+                <br>
+            
+                <div class="table-responsive">
+                    <div class="containerTable">
+                        <div class="table table-responsive" id="table">
+                            <table id="myTable" class="table table-bordered table-striped table-sm hover">
+                                <thead class="thead-dark">
+                
+                                    <th><span class="fas fa-fingerprint"></span> ID</th>
+                                    <th><span class="fas fa-hashtag"></span> SAP</th>
+                                    <th><span class="fas fa-info-circle"></span> Descripcion </th>
+                                    <th><span class="fas fa-info-circle"></span> Mandril </th>
+                                    <th><span class="fas fa-info-circle"></span> Familia </th>
+                                    <th><span class="fas fa-info-circle"></span> Longitud </th>
+                                    <th><span class="fas fa-info-circle"></span> Cantidad </th>
+                
+                                </thead>
+                
+                                <tbody>
+             
+                                </tbody>
+            
+                            </table>
+                        </div>
+                    </div>
+                </div>
+            
+                <div class="card text-center" id="cardExcel" hidden>
+                    <h5 class="card-header bg-dark text-white"><span class="text-success fas fa-file-excel"> </span> Carga archivo excel</h5>
+                    <div class="card-body">
+            
+                        <form onsubmit="event.preventDefault(); sendData();">
+                            <div class="form-group ">
+                                <div class="row">
+                                    <div class="text-center col" id="insert_excel">
+                                        <div class="box">
+                                            <input id="excelFile" name="excelFile" type="file"
+                                                accept="application/vnd.openxmlformats-officedocument.spreadsheetml.sheet">
+                                            <label for="excelFile"></label>
+                                        </div>
+                                        <br>
+                                        <div class="form-group text-center col">
+                                            <input id="btn_excel" type="submit" formaction="/verificarSAP"
+                                                class="btn btn-secondary  btn-sm btn-block animate__animated animate__flipOutX"
+                                                disabled></input>
+                                        </div>
+            
+                                    </div>
+                                </div>
+                            </div>
+                        </form>
+            
+                    </div>
+            
+                </div>
+            </div>
+
+
+<%- include ("./static/footer") %>
+<script type="text/javascript" src="/js/functions/impresion.js"></script>
+</body>
+</html>
