@@ -111,7 +111,7 @@ funcion.insertProgramaExcel = (base, tabla, titulos, valores,sup_num,fecha,turno
 }
 
 
-funcion.getProgramacion = (fecha) => {
+funcion.getProgramacionFecha = (fecha) => {
     return new Promise((resolve, reject) => {
         dbEX(`
         SELECT 
@@ -120,6 +120,41 @@ funcion.getProgramacion = (fecha) => {
             production_plan
         WHERE
             fecha = '${fecha}'
+        `)
+            .then((result) => { resolve(result) })
+            .catch((error) => { reject(error) })
+    })
+}
+
+
+funcion.cancelarIdPlan = (idplan,motivo) => {
+    return new Promise((resolve, reject) => {
+        dbEX(`
+        UPDATE 
+            production_plan
+        SET
+            status = 'Cancelado', 
+            description ='${motivo}'
+        WHERE
+            plan_id= ${idplan}
+        
+        `)
+            .then((result) => { resolve(result) })
+            .catch((error) => { reject(error) })
+    })
+}
+
+
+funcion.getInfoIdPlan = (idplan) => {
+    return new Promise((resolve, reject) => {
+        dbEX(`
+        SELECT 
+            *
+        FROM
+            production_plan
+            
+        WHERE
+            plan_id = ${idplan}
         `)
             .then((result) => { resolve(result) })
             .catch((error) => { reject(error) })

@@ -1,201 +1,272 @@
 <%- include ("./static/header") %>
-<%- include ("./static/sidebar") %>
-<%- include ("./static/navbar") %>
+    <%- include ("./static/sidebar") %>
+        <%- include ("./static/navbar") %>
 
 
-<div class="col-xl-12 jumbotron jumbotron-fluid animated bounceInDown bg-transparent jumbotronBg">
-    <div class="container">
-        <img src="/img/TristoneLogo.png" class="img-logo rounded mx-auto d-block" alt="Tristone Flowtech">
-        <h1 class="display-4 text-center csvTitulo">Editar Programacion Extrusion</h1>
-        <p class="lead text-center"></p>
-    </div>
-</div>
-<div class="container">
-
-    <div class=" card-header text-white bg-secondary ">
-        <div class="row">
-
-            <div class="col-lg-6">
-                <div class="form-group">
-                    <label>Fecha</label>
-                    <input type="text" class="form-control text-center" name="date" id="selectFecha"
-                        aria-describedby="helpId" placeholder="Seleccionar Fecha" autocomplete="off">
-                    
+            <div class="col-xl-12 jumbotron jumbotron-fluid animated bounceInDown bg-transparent jumbotronBg">
+                <div class="container">
+                    <!-- <img src="/img/TristoneLogo.png" class="img-logo rounded mx-auto d-block" alt="Tristone Flowtech"> -->
+                    <h1 class="display-4 text-center csvTitulo">Editar Programacion Extrusion</h1>
+                    <p class="lead text-center"></p>
                 </div>
             </div>
+            <div class="container">
 
-        </div>
-
-    </div>
-
-
-    <div class="table-responsive">
-        <div class="containerTable">
-            <div class="table table-responsive" id="table">
-                <table id="myTable" class="table table-bordered table-striped table-sm hover">
-                    <thead class="thead-dark">
-    
-                        <th><span class="icoSidebar fas fa-history"></span> ID</th>
-                        <th><span class="icoSidebar fas fa-history"></span> SAP</th>
-                        <th><span class="icoSidebar fas fa-hashtag"></span> Supervisor </th>
-                        <th><span class="icoSidebar fas fa-info-circle"></span> Cantidad</th>
-                        <th><span class="icoSidebar fas fa-info-circle"></span> Fecha</th>
-                        <th><span class="icoSidebar fas fa-info-circle"></span> Turno</th>
-                        <th><span class="icoSidebar fas fa-info-circle"></span> Status</th>
-    
-                    </thead>
-    
-                    <tbody>
- 
-                    </tbody>
-
-                </table>
-            </div>
-        </div>
-    </div>
-
-    <div class="card text-center" id="cardExcel" hidden>
-        <h5 class="card-header bg-dark text-white"><span class="text-success fas fa-file-excel"> </span> Carga archivo excel</h5>
-        <div class="card-body">
-
-            <form onsubmit="event.preventDefault(); sendData();">
-                <div class="form-group ">
+                <div class=" card-header text-white bg-dark ">
                     <div class="row">
-                        <div class="text-center col" id="insert_excel">
-                            <div class="box">
-                                <input id="excelFile" name="excelFile" type="file"
-                                    accept="application/vnd.openxmlformats-officedocument.spreadsheetml.sheet">
-                                <label for="excelFile"></label>
+                        <div class="col-lg-6">
+
+                            <div class="form-group">
+                                <label>Fecha</label>
+                                <input type="text" class="form-control text-center" name="date" id="selectFecha"
+                                    aria-describedby="helpId" placeholder="Seleccionar Fecha" autocomplete="off">
                             </div>
-                            <br>
-                            <div class="form-group text-center col">
-                                <input id="btn_excel" type="submit" formaction="/verificarSAP"
-                                    class="btn btn-secondary  btn-sm btn-block animate__animated animate__flipOutX"
-                                    disabled></input>
+                        </div>
+                    </div>
+
+                </div>
+                <br>
+                <div>
+                    <button formAction="/cancelar_idplan" type="submit" id="btnCancelId" class="btn btn-success" onClick="agregar()"><span
+                            class="fas fa-plus"></span> Agregar</button>
+                </div>
+                <br>
+                <div class="table-responsive">
+                    <div class="containerTable">
+                        <div class="table table-responsive" id="table">
+                            <table id="myTable" class="table table-bordered table-striped table-sm hover">
+                                <thead class="thead-dark">
+
+                                    <th><span class="icoSidebar fas fa-history"></span> Accion</th>
+                                    <th><span class="icoSidebar fas fa-history"></span> ID</th>
+                                    <th><span class="icoSidebar fas fa-history"></span> SAP</th>
+                                    <th><span class="icoSidebar fas fa-info-circle"></span> Cantidad</th>
+                                    <th><span class="icoSidebar fas fa-info-circle"></span> Linea</th>
+                                    <th><span class="icoSidebar fas fa-hashtag"></span> Supervisor </th>
+                                    <th><span class="icoSidebar fas fa-info-circle"></span> Fecha</th>
+                                    <th><span class="icoSidebar fas fa-info-circle"></span> Turno</th>
+                                    <th><span class="icoSidebar fas fa-info-circle"></span> Status</th>
+                                    <th><span class="icoSidebar fas fa-info-circle"></span> Motivo</th>
+
+                                </thead>
+
+                                <tbody>
+
+                                </tbody>
+
+                            </table>
+                        </div>
+                    </div>
+                </div>
+
+
+                <div class="modal fade" id="modalMotivo" tabindex="-1" role="dialog"
+                    aria-labelledby="exampleModalCenterTitle" aria-hidden="true">
+                    <div class="modal-dialog " role="document">
+                        <div class="modal-content">
+
+                            <div class="modal-body">
+
+                                <div class="card">
+                                    <div class="card-header text-center d-none d-lg-block">
+                                        <!-- <img src="/img/sap.png" alt="SAP" srcset="" class="card-mov"> -->
+                                        <h4 class="card-mov"><span class="text-danger fas fa-ban"></span> Cancelacion
+                                        </h4>
+                                    </div>
+
+                                    <div class="card-body">
+
+                                        <div class="row">
+                                            <div class="col-5">
+                                                <h7>SAP:</h7>
+                                            </div>
+                                            <div class="col-7">
+                                                <h7 class="text-left"><span class="badge badge-info" id="msap"></span>
+                                                </h7>
+                                            </div>
+                                        </div>
+
+                                        <div class="row">
+                                            <div class="col-lg-5 col-sm-12">
+                                                <h7 class="text-left">Cantidad: </h7>
+                                            </div>
+                                            <div class="col-lg-7 col-sm-12">
+                                                <h7 class="text-left"><span class="badge badge-info"
+                                                        id="mcantidad"></span></h7>
+                                            </div>
+                                        </div>
+
+                                        <div class="d-none d-lg-block">
+                                            <div class="row ">
+                                                <div class="col-5">
+                                                    <h7 class="text-left">Fecha: </h7>
+                                                </div>
+                                                <div class="col-7">
+                                                    <h7 class="text-left"><span class="badge badge-info"
+                                                            id="mfecha"></span></h7>
+                                                </div>
+                                            </div>
+                                        </div>
+                                        <hr>
+
+                                        <div class="row d-none d-lg-block">
+                                            <div class="col-lg-12">
+                                                <h5>Motivo:</h5>
+                                            </div>
+                                        </div>
+
+                                        <form action="/cancelar_idplan" method="POST" id="formMotivo">
+                                            <div class="container">
+                                                <div class="row">
+
+                                                    <div class="input-group mb-3">
+                                                        <div class="input-group-prepend">
+                                                            <span class="input-group-text fas fa-ban"
+                                                                id="basic-addon1"></span>
+                                                        </div>
+                                                        <input type="text" class="form-control" name="motivo"
+                                                            id="motivo" placeholder="Ingrese motivo de cancelacion"
+                                                            min="1" max="500" required>
+                                                    </div>
+
+                                                </div>
+                                            </div>
+
+                                    </div>
+                                </div>
+
                             </div>
+
+                            <div class="modal-footer">
+                                <button type="button" class="btn btn-secondary btnCerrar"
+                                    data-dismiss="modal">Cerrar</button>
+                                <button formAction="/cancelar_idplan" type="submit" id="btnCancelId"
+                                    class="btn btn-info">Guardar</button>
+                            </div>
+                            <input type="text" class="form-control" name="midplan" id="midplan"
+                                aria-describedby="helpId" value="" hidden>
+                            </form>
 
                         </div>
                     </div>
                 </div>
-            </form>
 
 
+                <div class="modal fade" id="modalAgregar" tabindex="-1" role="dialog"
+                    aria-labelledby="exampleModalCenterTitle" aria-hidden="true">
+                    <div class="modal-dialog " role="document">
+                        <div class="modal-content">
 
+                            <div class="modal-body">
 
+                                <div class="card">
+                                    <div class="card-header text-center d-none d-lg-block">
+                                        <!-- <img src="/img/sap.png" alt="SAP" srcset="" class="card-mov"> -->
+                                        <h4 class="card-mov"><span class="text-danger fas fa-ban"></span> Cancelacion
+                                        </h4>
+                                    </div>
 
+                                    <div class="card-body">
 
+                                        <div class="row">
+                                            <div class="col-5">
+                                                <h7>SAP:</h7>
+                                            </div>
+                                            <div class="col-7">
+                                                <h7 class="text-left"><span class="badge badge-info" id="msap"></span>
+                                                </h7>
+                                            </div>
+                                        </div>
 
+                                        <div class="row">
+                                            <div class="col-lg-5 col-sm-12">
+                                                <h7 class="text-left">Cantidad: </h7>
+                                            </div>
+                                            <div class="col-lg-7 col-sm-12">
+                                                <h7 class="text-left"><span class="badge badge-info"
+                                                        id="mcantidad"></span></h7>
+                                            </div>
+                                        </div>
 
-            
+                                        <div class="d-none d-lg-block">
+                                            <div class="row ">
+                                                <div class="col-5">
+                                                    <h7 class="text-left">Fecha: </h7>
+                                                </div>
+                                                <div class="col-7">
+                                                    <h7 class="text-left"><span class="badge badge-info"
+                                                            id="mfecha"></span></h7>
+                                                </div>
+                                            </div>
+                                        </div>
+                                        <hr>
 
+                                        <div class="row d-none d-lg-block">
+                                            <div class="col-lg-12">
+                                                <h5>Motivo:</h5>
+                                            </div>
+                                        </div>
 
+                                        <form action="/cancelar_idplan" method="POST" id="formMotivo">
+                                            <div class="container">
+                                                <div class="row">
 
+                                                    <div class="input-group mb-3">
+                                                        <div class="input-group-prepend">
+                                                            <span class="input-group-text fas fa-ban"
+                                                                id="basic-addon1"></span>
+                                                        </div>
+                                                        <input type="text" class="form-control" name="motivo"
+                                                            id="motivo" placeholder="Ingrese motivo de cancelacion"
+                                                            min="1" max="500" required>
+                                                    </div>
 
+                                                </div>
+                                            </div>
 
+                                    </div>
+                                </div>
 
+                            </div>
 
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-            <!-- Modal
-            <div class="modal fade" id="myModal" tabindex="-1" aria-labelledby="myModalLabel" aria-hidden="true">
-                <div class="modal-dialog">
-                    <div class="modal-content">
-                        <div class="modal-header text-center">
-                            <h2 class="modal-title " id="myModalLabel"> <span
-                                    class="text-danger fas fa-exclamation-circle"></span> Ya existe una programacion
-                                para estas fechas</h2>
-                            </h2>
-                            <button type="button" class="btnCancelar close" data-dismiss="modal" aria-label="Close">
-                                <span aria-hidden="true">&times;</span>
+                            <div class="modal-footer">
+                                <button type="button" class="btn btn-secondary btnCerrar"
+                                    data-dismiss="modal">Cerrar</button>
+                                <button formAction="/cancelar_idplan" type="submit" id="btnCancelId"
+                                    class="btn btn-info">Guardar</button>
+                            </div>
+                            <input type="text" class="form-control" name="midplan" id="midplan"
+                                aria-describedby="helpId" value="" hidden>
+                            </form>
 
                         </div>
-                        <div class="modal-body">
-                            <p><span class="text-danger fas fa-exclamation-triangle"></span>Para sustituir una carga
-                                anterior seleccione la correspondiente</p> <br>
-                            <ul class="list-group" id="cargasAnteriores">
+                    </div>
+                </div>
 
-                            </ul class="list-group">
-                        </div>
-                        <br>
-                        <hr>
-                        <div class="modal-footer">
 
-                            <button type="button" id="btnGuardar" class="btn btn-success " data-dismiss="modal"><span
-                                    class="text-white fas fa-file-excel"></span>
-                                Cargar nuevo archivo</button>
-                            <button type="button" id="btnBorrarContinuar" class="btn btn-danger mr-auto" hidden><span
-                                    class="text-white fas fa-trash-alt" hidden></span>
-                                Borrar&Continuar</button>
+
+                <div class="modal fade" id="modalSpinner" tabindex="-1" aria-labelledby="myModalLabel"
+                    aria-hidden="true">
+                    <div class="modal-dialog">
+                        <div class="modal-content">
+                            <div class="modal-header text-center">
+                                <h2 class="modal-title "> <span class="text-secondary  fas fa-stopwatch"></span>
+                                    Cargando</h2>
+                                <div class="spinner-grow spinner-grow-sm text-warning mt-4 cdelay-1" role="status">
+                                    <span class="sr-only">Loading...</span>
+                                </div>
+                                <div class="spinner-grow spinner-grow-sm text-primary mt-4 cdelay-2" role="status">
+                                    <span class="sr-only">Loading...</span>
+                                </div>
+                                <div class="spinner-grow spinner-grow-sm text-secondary mt-4 cdelay-3" role="status">
+                                    <span class="sr-only">Loading...</span>
+                                </div>
+                            </div>
                         </div>
                     </div>
                 </div>
             </div>
-
-            <!-- Modal 
-            <div class="modal fade animate__animated animate__zoomInDown" id="myModal2" tabindex="-1"
-                aria-labelledby="myModalLabel" aria-hidden="true">
-                <div class="modal-dialog">
-                    <div class="modal-content">
-                        <!-- <div class="modal-header text-center">
-                            <h2 class="modal-title " id="myModalLabel"> <span
-                                    class="text-success  fas fa-exclamation-circle"></span>
-                                Cargado con exito</h2>
-                        </div> 
-                        <div class="modal-body">
-                            <h5 id="tituloSuccess"></h5>
-                            <p id="cantidadSuccess" style="font-size: x-large"></p>
-                        </div>
-                        <div class="modal-footer">
-                            <button type="button" class="btnCancelar btn btn-primary btn-block mr-auto"
-                                data-dismiss="modal"><span class="text-white fas fa-times-circle"></span>
-                                Terminar</button>
-                        </div>
-                    </div>
-                </div>
             </div>
-            -->
-            <!-- Modal 
-            <div class="modal fade" id="myModal3" tabindex="-1" aria-labelledby="myModalLabel" aria-hidden="true">
-                <div class="modal-dialog">
-                    <div class="modal-content">
-                        <div class="modal-header text-center">
-                            <h2 class="modal-title "> <span class="text-secondary  fas fa-stopwatch"></span>
-                                Procesando archivo</h2>
-                            <div class="spinner-grow spinner-grow-sm text-warning mt-4 cdelay-1" role="status">
-                                <span class="sr-only">Loading...</span>
-                            </div>
-                            <div class="spinner-grow spinner-grow-sm text-primary mt-4 cdelay-2" role="status">
-                                <span class="sr-only">Loading...</span>
-                            </div>
-                            <div class="spinner-grow spinner-grow-sm text-secondary mt-4 cdelay-3" role="status">
-                                <span class="sr-only">Loading...</span>
-                            </div>
-                        </div>
-                    </div>
-                </div>
-            </div> -->
-
-
-        </div>
-
-    </div>
-</div>
-</div>
 
 
 <%- include ("./static/footer") %>
