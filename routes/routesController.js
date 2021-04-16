@@ -346,13 +346,10 @@ controller.editarProgramacion_GET = (req, res) => {
 }
 
 
-<<<<<<< HEAD
 controller.tablaProgramacion_POST = (req, res) => {
     let fecha= req.body.fecha
-=======
 controller.tablaProgramacion_GET = (req, res) => {
     let fecha = req.params.fecha
->>>>>>> 152052b87ed17f2491daac131c9bd16e62d49609
 
     funcion.getProgramacionFecha(fecha)
     .then((result)=>{res.json(result)})
