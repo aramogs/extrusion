@@ -43,8 +43,10 @@ function verifyToken(req, res, next) {
                 token_jwt = Tjwt 
             }
         })
+    }
+}
 
-router.get('/tablaProgramacion/:fecha', routesController.tablaProgramacion_GET);
+//router.get('/tablaProgramacion/:fecha', routesController.tablaProgramacion_GET);
 router.get('/impresion/', middleware.verifyToken, routesController.impresion_GET);
 
 router.post('/getProgramacion',routesController.getProgramacion_POST);

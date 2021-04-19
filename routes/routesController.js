@@ -347,10 +347,8 @@ controller.editarProgramacion_GET = (req, res) => {
 
 
 controller.tablaProgramacion_POST = (req, res) => {
+    
     let fecha= req.body.fecha
-controller.tablaProgramacion_GET = (req, res) => {
-    let fecha = req.params.fecha
-
     funcion.getProgramacionFecha(fecha)
     .then((result)=>{res.json(result)})
     .catch((err)=>{console.log(err)})
@@ -365,9 +363,7 @@ controller.cancelarIdPlan_POST = (req, res) => {
     funcion.cancelarIdPlan(midplan,motivo)
     .then((result)=>{res.json(result)})
     .catch((err)=>{console.log(err)})
-    funcion.getProgramacion(fecha)
-        .then((result) => { res.json(result) })
-        .catch((err) => { console.log(err) })
+
 
 }
 
