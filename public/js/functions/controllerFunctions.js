@@ -161,4 +161,37 @@ funcion.getInfoIdPlan = (idplan) => {
     })
 }
 
+
+funcion.editarIdPlan = (idplan,cantidad, linea) => {
+    return new Promise((resolve, reject) => {
+        dbEX(`
+        UPDATE 
+            production_plan
+        SET
+            cantidad = ${cantidad}, 
+            linea =${linea}
+        WHERE
+            plan_id= ${idplan}
+        
+        `)
+            .then((result) => { resolve(result) })
+            .catch((error) => { reject(error) })
+    })
+}
+
+
+funcion.agregarIdPlan = (numero_sap,cantidad,linea,sup_name, fecha, turno) => {
+    return new Promise((resolve, reject) => {
+        dbEX(`
+        INSERT INTO 
+            production_plan (numero_sap,cantidad,linea,sup_name, fecha, turno)
+        VALUES
+            ('${numero_sap}',${cantidad},${linea},'${sup_name}',${fecha},'${turno}')
+        
+        `)
+            .then((result) => { resolve(result) })
+            .catch((error) => { reject(error) })
+    })
+}
+
 module.exports = funcion;

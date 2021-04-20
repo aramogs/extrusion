@@ -390,6 +390,33 @@ controller.idplanInfo_POST = (req, res) => {
 
 }
 
+controller.editarIdPlan_POST = (req, res) => {
+
+    let midplan= req.body.id
+    let cantidad= req.body.cantidad
+    let linea= req.body.linea
+    funcion.editarIdPlan(midplan,cantidad,linea)
+    .then((result)=>{res.json(result)})
+    .catch((err)=>{console.log(err)})
+
+
+}
+
+controller.agregarIdPlan_POST = (req, res) => {
+
+    let numero_sap= req.body.add_sap
+    let cantidad= req.body.add_cantidad
+    let linea= req.body.add_linea
+    let sup_name= "test"
+    let fecha=req.body.add_linea
+    let turno=req.body.add_turno
+    funcion.agregarIdPlan(numero_sap,cantidad,linea,sup_name, fecha, turno)
+    .then((result)=>{res.json(result)})
+    .catch((err)=>{console.log(err)})
+
+
+}
+
 
 
 module.exports = controller;

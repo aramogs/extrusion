@@ -27,8 +27,8 @@
                 </div>
                 <br>
                 <div>
-                    <button formAction="/cancelar_idplan" type="submit" id="btnCancelId" class="btn btn-success" onClick="agregar()"><span
-                            class="fas fa-plus"></span> Agregar</button>
+                    <button formAction="/cancelar_idplan" type="submit" id="btnAgregar" class="btn btn-success"
+                        onClick="agregar()"><span class="fas fa-plus"></span> Agregar</button>
                 </div>
                 <br>
                 <div class="table-responsive">
@@ -151,8 +151,7 @@
                     </div>
                 </div>
 
-
-                <div class="modal fade" id="modalAgregar" tabindex="-1" role="dialog"
+                <div class="modal fade" id="modalEditar" tabindex="-1" role="dialog"
                     aria-labelledby="exampleModalCenterTitle" aria-hidden="true">
                     <div class="modal-dialog " role="document">
                         <div class="modal-content">
@@ -162,7 +161,8 @@
                                 <div class="card">
                                     <div class="card-header text-center d-none d-lg-block">
                                         <!-- <img src="/img/sap.png" alt="SAP" srcset="" class="card-mov"> -->
-                                        <h4 class="card-mov"><span class="text-danger fas fa-ban"></span> Cancelacion
+                                        <h4 class="card-mov"><span class="text-secondary fas fa-edit"></span>
+                                            Editar
                                         </h4>
                                     </div>
 
@@ -173,7 +173,7 @@
                                                 <h7>SAP:</h7>
                                             </div>
                                             <div class="col-7">
-                                                <h7 class="text-left"><span class="badge badge-info" id="msap"></span>
+                                                <h7 class="text-left"><span class="badge badge-info" id="mesap"></span>
                                                 </h7>
                                             </div>
                                         </div>
@@ -184,7 +184,7 @@
                                             </div>
                                             <div class="col-lg-7 col-sm-12">
                                                 <h7 class="text-left"><span class="badge badge-info"
-                                                        id="mcantidad"></span></h7>
+                                                        id="mecantidad"></span></h7>
                                             </div>
                                         </div>
 
@@ -195,31 +195,48 @@
                                                 </div>
                                                 <div class="col-7">
                                                     <h7 class="text-left"><span class="badge badge-info"
-                                                            id="mfecha"></span></h7>
+                                                            id="mefecha"></span></h7>
                                                 </div>
                                             </div>
                                         </div>
                                         <hr>
 
-                                        <div class="row d-none d-lg-block">
-                                            <div class="col-lg-12">
-                                                <h5>Motivo:</h5>
-                                            </div>
-                                        </div>
+                                        
 
-                                        <form action="/cancelar_idplan" method="POST" id="formMotivo">
+                                        <form action="/editar_idplan" method="POST" id="formEditar">
                                             <div class="container">
                                                 <div class="row">
 
+                                                    <div class="row d-none d-lg-block">
+                                                        <div class="col-lg-12">
+                                                            <h5>Cantidad:</h5>
+                                                        </div>
+                                                    </div>
                                                     <div class="input-group mb-3">
                                                         <div class="input-group-prepend">
-                                                            <span class="input-group-text fas fa-ban"
+                                                            <span class="input-group-text fas fa-edit"
                                                                 id="basic-addon1"></span>
                                                         </div>
-                                                        <input type="text" class="form-control" name="motivo"
-                                                            id="motivo" placeholder="Ingrese motivo de cancelacion"
-                                                            min="1" max="500" required>
+                                                        <input type="text" class="form-control" name="edit_cantidad"
+                                                            id="edit_cantidad" placeholder="" min="1" max="500" required>
                                                     </div>
+
+                                                    <div class="row d-none d-lg-block">
+                                                        <div class="col-lg-12">
+                                                            <h5>Linea:</h5>
+                                                        </div>
+                                                    </div>
+
+                                                    <div class="input-group mb-3">
+                                                        <div class="input-group-prepend">
+                                                            <span class="input-group-text fas fa-edit"
+                                                                id="basic-addon1"></span>
+                                                        </div>
+                                                        <input type="text" class="form-control" name="edit_linea"
+                                                            id="edit_linea" placeholder="" min="1" max="500" required>
+                                                    </div>
+
+                                                    
 
                                                 </div>
                                             </div>
@@ -232,16 +249,125 @@
                             <div class="modal-footer">
                                 <button type="button" class="btn btn-secondary btnCerrar"
                                     data-dismiss="modal">Cerrar</button>
-                                <button formAction="/cancelar_idplan" type="submit" id="btnCancelId"
+                                <button formAction="/editar_idplan" type="submit" id="btnCancelId"
                                     class="btn btn-info">Guardar</button>
                             </div>
-                            <input type="text" class="form-control" name="midplan" id="midplan"
+                            <input type="text" class="form-control" name="midplane" id="midplane"
                                 aria-describedby="helpId" value="" hidden>
                             </form>
 
                         </div>
                     </div>
                 </div>
+
+                <div class="modal fade" id="modalAgregar" tabindex="-1" role="dialog"
+                    aria-labelledby="exampleModalCenterTitle" aria-hidden="true">
+                    <div class="modal-dialog " role="document">
+                        <div class="modal-content">
+
+                            <div class="modal-body">
+
+                                <div class="card">
+                                    <div class="card-header text-center d-none d-lg-block">
+                                        <!-- <img src="/img/sap.png" alt="SAP" srcset="" class="card-mov"> -->
+                                        <h4 class="card-mov"><span class="text-secondary fas fa-edit"></span>
+                                            Agregar
+                                        </h4>
+                                    </div>
+
+                                    <div class="card-body">   
+
+                                        <form action="/editar_idplan" method="POST" id="formEditar">
+                                            <div class="container">
+                                                <div class="row">
+
+                                                    <div class="row d-none d-lg-block">
+                                                        <div class="col-lg-12">
+                                                            <h5>SAP:</h5>
+                                                        </div>
+                                                    </div>
+                                                    <div class="input-group mb-3">
+                                                        <div class="input-group-prepend">
+                                                            <span class="input-group-text fas fa-edit"
+                                                                id="basic-addon1"></span>
+                                                        </div>
+                                                        <input type="text" class="form-control" name="add_sap"
+                                                            id="add_sap" placeholder="" min="1" max="500" required>
+                                                    </div>
+
+                                                    <div class="row d-none d-lg-block">
+                                                        <div class="col-lg-12">
+                                                            <h5>Cantidad:</h5>
+                                                        </div>
+                                                    </div>
+                                                    <div class="input-group mb-3">
+                                                        <div class="input-group-prepend">
+                                                            <span class="input-group-text fas fa-edit"
+                                                                id="basic-addon1"></span>
+                                                        </div>
+                                                        <input type="text" class="form-control" name="add_cantidad"
+                                                            id="add_cantidad" placeholder="" min="1" max="500" required>
+                                                    </div>
+
+                                                    <div class="row d-none d-lg-block">
+                                                        <div class="col-lg-12">
+                                                            <h5>Linea:</h5>
+                                                        </div>
+                                                    </div>
+
+                                                    <div class="input-group mb-3">
+                                                        <div class="input-group-prepend">
+                                                            <span class="input-group-text fas fa-edit"
+                                                                id="basic-addon1"></span>
+                                                        </div>
+                                                        <input type="text" class="form-control" name="add_linea"
+                                                            id="add_linea" placeholder="" min="1" max="500" required>
+                                                    </div>
+
+                                                    <div class="row d-none d-lg-block">
+                                                        <div class="col-lg-12">
+                                                            <h5>Turno:</h5>
+                                                        </div>
+                                                    </div>
+
+                                                    <div class="input-group mb-3">
+                                                        <div class="input-group-prepend">
+                                                            <span class="input-group-text fas fa-edit"
+                                                                id="basic-addon1"></span>
+                                                        </div>
+                                                        <input type="text" class="form-control" name="add_turno"
+                                                            id="add_turno" placeholder="" min="1" max="500" required>
+                                                    </div>
+
+
+                                                    
+
+                                                </div>
+                                            </div>
+
+                                    </div>
+                                </div>
+
+                            </div>
+
+                            <div class="modal-footer">
+                                <button type="button" class="btn btn-secondary btnCerrar"
+                                    data-dismiss="modal">Cerrar</button>
+                                <button formAction="/editar_idplan" type="submit" id="btnCancelId"
+                                    class="btn btn-info">Guardar</button>
+                            </div>
+                            <input type="text" class="form-control" name="midplane" id="midplane"
+                                aria-describedby="helpId" value="" hidden>
+                            </form>
+
+                        </div>
+                    </div>
+                </div>
+
+                
+
+
+
 
 
 
@@ -269,6 +395,6 @@
             </div>
 
 
-<%- include ("./static/footer") %>
+            <%- include ("./static/footer") %>
 
-<script src="/js/functions/editarProgramacion.js"></script>
+                <script src="/js/functions/editarProgramacion.js"></script>

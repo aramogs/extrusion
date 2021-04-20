@@ -23,6 +23,8 @@ router.post('/tablaProgramacion', routesController.tablaProgramacion_POST);
 router.post('/getProgramacion',routesController.getProgramacion_POST);
 router.post('/cancelarIdPlan',routesController.cancelarIdPlan_POST);
 router.post('/idplanInfo',routesController.idplanInfo_POST);
+router.post('/editarIdPlan',routesController.editarIdPlan_POST);
+router.post('/agregarIdPlan',routesController.agregarIdPlan_POST);
 
 
 
