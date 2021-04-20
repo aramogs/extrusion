@@ -25,7 +25,8 @@ router.post('/cancelarIdPlan',routesController.cancelarIdPlan_POST);
 router.post('/idplanInfo',routesController.idplanInfo_POST);
 router.post('/editarIdPlan',routesController.editarIdPlan_POST);
 router.post('/agregarIdPlan',routesController.agregarIdPlan_POST);
-
+router.post('/getCurrentProgramacion',routesController.getCurrentProgramacion_POST);
+router.post('/idplanImpresion',routesController.idplanImpresion_POST);
 
 
 function verifyToken(req, res, next) {
