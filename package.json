@@ -4,7 +4,7 @@
   "description": "<center><strong><h1>Extrusion Backflush</h1></strong></center>",
   "main": "ex.js",
   "scripts": {
-    "dev": "nodemon -e ejs,js,css -ignore .git/,node_modules/ -- ex.js",
+    "dev": "nodemon -e ejs,js,css -i .git/,node_modules/ -- ex.js",
     "start": "nodemon ex.js"
   },
   "dependencies": {

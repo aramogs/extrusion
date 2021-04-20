@@ -11,10 +11,13 @@ let mcantidad = document.getElementById("mcantidad")
 let mfecha = document.getElementById("mfecha")
 let cotenedorSection = document.getElementById("cotenedorSection")
 let btnCerrar = document.getElementsByClassName("btnCerrar")
+let regex1 = /\-(.*)/
+let regex2 = /^(.*?)\-/
 
 btn_logoff.addEventListener("click", () => { document.cookie = "accessToken" + '=; Max-Age=0', location.reload() })
 selectedLinea.addEventListener("change", () => { getSelectedTurno() })
-btnCerrar[0].addEventListener("click",()=>{clear()})
+btnCerrar[0].addEventListener("click", () => { clear() })
+
 
 
 function currentTime() {
@@ -59,6 +62,7 @@ function getSelectedTurno() {
     headers: { 'content-type': 'application/json' }
   })
     .then((result) => {
+      console.log(result.data);
       for (let y = 0; y < result.data.length; y++) {
         let imprimir
         if (result.data[y].status == "Pendiente") {
@@ -66,7 +70,7 @@ function getSelectedTurno() {
           imprimir =
             `
             <input type="text" name="idPlan" id="idPlan${result.data[y].plan_id}" value=${result.data[y].plan_id} hidden>
-            <button type="submit"  class="btn btn-info  rounded-pill" name="btnPrint" id="${result.data[y].plan_id}" onClick="imprimir(this.id)" ><span class="fas fa-print"></span>
+            <button type="submit"  class="btn btn-info  rounded-pill" name="btnPrint" id="${result.data[y].plan_id}" onClick="ImprimirModal(this.id)" ><span class="fas fa-print"></span>
             `
 
         } else { imprimir = `<button type="button" class="btn btn-success  rounded-pill " disabled><span class="fas fa-check-square" disabled></span>` }
@@ -79,7 +83,8 @@ function getSelectedTurno() {
           result.data[y].family,
           result.data[y].length,
           result.data[y].cantidad,
-          result.data[y].sup_name
+          result.data[y].sup_name,
+          result.data[y].status
 
         ]).draw(false);
 
@@ -94,7 +99,8 @@ function reload() {
 
 }
 
-function imprimir(idp) {
+function ImprimirModal(idp) {
+
 
   let data = { "id": `${idp}` }
   axios({
@@ -111,34 +117,42 @@ function imprimir(idp) {
           if (key.includes("std_pack") && value > 0) {
 
             // console.log(`${key} ${value}`);
-            addCard(key,value,currentInfo[0].cantidad)
+            addCard(key, value, currentInfo[0].cantidad)
           }
 
         });
       });
 
-      $('#modalImpresion').modal({ backdrop: 'static',keyboard: false })
+      $('#modalImpresion').modal({ backdrop: 'static', keyboard: false })
       msap.innerHTML = currentInfo[0].numero_sap
       mcantidad.innerHTML = currentInfo[0].cantidad
       mfecha.innerHTML = currentInfo[0].fecha
 
-
+      let btnImprimir = document.querySelectorAll(".btnImprimir")
+      btnImprimir.forEach(btn => {
+        btn.addEventListener("click", (e)=>{
+          e.preventDefault()
+          impresion(e)
+        })
+      })
     })
     .catch((err) => { console.error(err) })
 
 }
 
 
-addCard = function (key,value,cantidadProgramada) {
+addCard = function (key, value, cantidadProgramada) {
   let ul = document.getElementById("cotenedorSection")
   let li = document.createElement("li")
-  let card = 
-  `
+  let card =
+    `
   <div class="card text-center" style="width: 12rem;">
   <img class="card-img-top mx-auto" src="/img/contenedores/${key}.jpg" alt="Card image cap">
   <div class="card-body">
     <p>Capacidad: ${value}</p>
-    <a href="#" class="btn btn-info btn-block">Etiquetas: ${Math.floor(cantidadProgramada/value)}</a>
+
+      <button class="btn btn-info btnImprimir" type="submit" value="${key}-${value}">Etiquetas: ${Math.floor(cantidadProgramada / value)}</button>
+
   </div>
 </div>
   `
@@ -147,7 +161,7 @@ addCard = function (key,value,cantidadProgramada) {
 
   li.setAttribute("id", `${key}`)
   // li.appendChild(document.createTextNode(`Value`  + value));
-  li.innerHTML= card
+  li.innerHTML = card
   ul.appendChild(li)
 }
 
@@ -155,3 +169,25 @@ function clear() {
   let ul = document.getElementById("cotenedorSection")
   ul.innerHTML = ""
 }
+
+
+
+function impresion(e) {
+  let no_sap = msap.innerHTML
+  let cantidad = mcantidad.innerHTML
+  let contenedor = (e.target.value).replace(regex1,"")
+  let capacidad = (e.target.value).replace(regex2,"")
+  
+  
+  console.log(no_sap, cantidad,contenedor,capacidad);
+  // let data = { "id": `${idp}` }
+  // axios({
+  //   method: 'post',
+  //   url: `/idplanImpresion`,
+  //   data: JSON.stringify(data),
+  //   headers: { 'content-type': 'application/json' }
+  // })
+  //   .then((result) => { console.log(result) })
+  //   .catch((err) => { console.log(err) })
+}
+
