@@ -14,6 +14,7 @@ let table = $('#myTable').DataTable();
 let midplan = document.getElementById("midplan")
 let formMotivo = document.getElementById("formMotivo")
 let formEditar = document.getElementById("formEditar")
+let formAgregar = document.getElementById("formAgregar")
 let selectFecha= document.getElementById("selectFecha")
 let myDateString
 let motivo= document.getElementById("motivo")
@@ -30,6 +31,7 @@ let add_sap= document.getElementById("add_sap")
 let add_cantidad= document.getElementById("add_cantidad")
 let add_linea= document.getElementById("add_linea")
 let add_turno= document.getElementById("add_turno")
+let btnAgregar= document.getElementById("btnAgregar")
 
 
 
@@ -52,6 +54,7 @@ const picker = datepicker('#selectFecha', {
         myDateString = yy + '-' + mm + '-' + dd;
         input.value = myDateString
 
+        btnAgregar.disabled=false;
         table.clear().draw();
         fillTable();
     }
@@ -157,6 +160,10 @@ function cancel(clicked_id)
       table.clear().draw();
       fillTable();
 
+    }else if(modal=="add"){
+      $('#modalAgregar').modal('hide');
+      table.clear().draw();
+      fillTable();
     }
     
 
@@ -199,7 +206,7 @@ function cancel(clicked_id)
   formEditar.addEventListener("submit", (e)=>{
     e.preventDefault();
 
-    let data = {"id":`${midplane.value}`, "cantidad":`${edit_cantidad.value}`, "linea":`${edit_linea.value}`, "fecha":`${edit_linea.value}`}
+    let data = {"id":`${midplane.value}`, "cantidad":`${edit_cantidad.value}`, "linea":`${edit_linea.value}`}
 
     axios({
       method: 'post',
@@ -226,7 +233,7 @@ function agregar()
   formAgregar.addEventListener("submit", (e)=>{
     e.preventDefault();
 
-    let data = {"sap":`${add_sap.value}`, "cantidad":`${add_cantidad.value}`, "linea":`${add_linea.value}`, "turno":`${add_turno.value}`}
+    let data = {"sap":`${add_sap.value}`, "cantidad":`${add_cantidad.value}`, "linea":`${add_linea.value}`, "fecha":`${selectFecha.value}`, "turno":`${add_turno.value}`}
 
     axios({
       method: 'post',
@@ -242,4 +249,24 @@ function agregar()
   .catch((err) => { console.error(err) })
 
 })
+
+function checkSap()
+  {
+
+    let data = {"sap":`${add_sap.value}`}
+
+    axios({
+      method: 'post',
+      url: `/checkSap`,
+      data: JSON.stringify(data),
+      headers: { 'content-type': 'application/json' }
+  })
+  .then((result) => {
+
+    console.log(result);
+      
+  })
+  .catch((err) => { console.error(err) })
+    
+  }
 

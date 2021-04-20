@@ -28,7 +28,7 @@
                 <br>
                 <div>
                     <button formAction="/cancelar_idplan" type="submit" id="btnAgregar" class="btn btn-success"
-                        onClick="agregar()"><span class="fas fa-plus"></span> Agregar</button>
+                        onClick="agregar()" disabled><span class="fas fa-plus"></span> Agregar</button>
                 </div>
                 <br>
                 <div class="table-responsive">
@@ -140,7 +140,7 @@
                             <div class="modal-footer">
                                 <button type="button" class="btn btn-secondary btnCerrar"
                                     data-dismiss="modal">Cerrar</button>
-                                <button formAction="/cancelar_idplan" type="submit" id="btnCancelId"
+                                <button formAction="/cancelar_idplan" type="submit" id="btnCancel_c"
                                     class="btn btn-info">Guardar</button>
                             </div>
                             <input type="text" class="form-control" name="midplan" id="midplan"
@@ -249,7 +249,7 @@
                             <div class="modal-footer">
                                 <button type="button" class="btn btn-secondary btnCerrar"
                                     data-dismiss="modal">Cerrar</button>
-                                <button formAction="/editar_idplan" type="submit" id="btnCancelId"
+                                <button formAction="/editar_idplan" type="submit" id="btnCancel_e"
                                     class="btn btn-info">Guardar</button>
                             </div>
                             <input type="text" class="form-control" name="midplane" id="midplane"
@@ -277,7 +277,7 @@
 
                                     <div class="card-body">   
 
-                                        <form action="/editar_idplan" method="POST" id="formEditar">
+                                        <form action="/agregar_idplan" method="POST" id="formAgregar">
                                             <div class="container">
                                                 <div class="row">
 
@@ -353,11 +353,10 @@
                             <div class="modal-footer">
                                 <button type="button" class="btn btn-secondary btnCerrar"
                                     data-dismiss="modal">Cerrar</button>
-                                <button formAction="/editar_idplan" type="submit" id="btnCancelId"
+                                <button formAction="/agregar_idplan" type="submit" id="btnCancel_a"
                                     class="btn btn-info">Guardar</button>
                             </div>
-                            <input type="text" class="form-control" name="midplane" id="midplane"
-                                aria-describedby="helpId" value="" hidden>
+
                             </form>
 
                         </div>

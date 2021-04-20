@@ -440,12 +440,12 @@ controller.editarIdPlan_POST = (req, res) => {
 
 controller.agregarIdPlan_POST = (req, res) => {
 
-    let numero_sap= req.body.add_sap
-    let cantidad= req.body.add_cantidad
-    let linea= req.body.add_linea
-    let sup_name= "test"
-    let fecha=req.body.add_linea
-    let turno=req.body.add_turno
+    let numero_sap= req.body.sap
+    let cantidad= req.body.cantidad
+    let linea= req.body.linea
+    let sup_name= (req.res.socket.user).substring(3)
+    let fecha=req.body.fecha
+    let turno=req.body.turno
     funcion.agregarIdPlan(numero_sap,cantidad,linea,sup_name, fecha, turno)
     .then((result)=>{res.json(result)})
     .catch((err)=>{console.log(err)})
