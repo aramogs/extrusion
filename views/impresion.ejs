@@ -31,7 +31,7 @@
                         <div class="col-lg-2">
                             <div class="form-group">
                                 <label>Turno:</label>
-                                <input type="text" class="form-control text-center" id="currentTurno" disabled>
+                                <input type="text" class="form-control text-center" id="currentTurno" value = "<%= currentShift %> "disabled>
                                 
                             </div>
                         </div>
@@ -39,16 +39,18 @@
                         <div class="col-lg-2">
                             <div class="form-group">
                                 <label>Hora:</label>
-                                <input type="text" class="form-control text-center" id="clock" disabled>
+                                <input type="text" class="form-control text-center text-success" id="clock" disabled>
                                 
                             </div>
                         </div>
                         <div class="col-lg-6">
                             <div class="form-group">
-                                <label>Linea</label>
-                                <select class="form-control text-center" id="selectedTurno" disabled>
+                                <label>Linea:</label>
+                                <select class="form-control text-center" id="selectedLinea" >
                                     <option value="">Seleccionar</option>
-
+                                   <% turnos.forEach(element => { %>
+                                    <option value="<%= element.linea %> "><%= element.linea %> </option>
+                                   <% }) %>
                                 </select>
                             </div>
                         </div>
@@ -56,7 +58,7 @@
                     </div>
             
                 </div>
-                <br>
+               <br> 
             
                 <div class="table-responsive">
                     <div class="containerTable">
@@ -71,6 +73,7 @@
                                     <th><span class="fas fa-info-circle"></span> Familia </th>
                                     <th><span class="fas fa-info-circle"></span> Longitud </th>
                                     <th><span class="fas fa-info-circle"></span> Cantidad </th>
+                                    <th><span class="fas fa-info-circle"></span> Supervisor </th>
                 
                                 </thead>
                 
@@ -112,6 +115,87 @@
             
                 </div>
             </div>
+
+    
+            <div class="modal fade bd-example-modal-xl" id="modalImpresion" tabindex="-1" role="dialog" aria-labelledby="myExtraLargeModalLabel" aria-hidden="true">
+                <div class="modal-dialog modal-xl">
+                  <div class="modal-content">
+                    <div class="modal-body">
+
+                        <div class="card">
+                            <div class="card-header text-center d-none d-lg-block">
+                                <!-- <img src="/img/sap.png" alt="SAP" srcset="" class="card-mov"> -->
+                                <h4 class="card-mov"><span class="text-info fas fa-box"></span> Seleccion de Contenedor
+                                </h4>
+                            </div>
+
+                            <div class="card-body">
+
+                                <div class="row">
+                                    <div class="col-5">
+                                        <h7>SAP:</h7>
+                                    </div>
+                                    <div class="col-7">
+                                        <h7 class="text-left"><span class="badge badge-info" id="msap"></span>
+                                        </h7>
+                                    </div>
+                                </div>
+
+                                <div class="row">
+                                    <div class="col-lg-5 col-sm-12">
+                                        <h7 class="text-left">Cantidad programada: </h7>
+                                    </div>
+                                    <div class="col-lg-7 col-sm-12">
+                                        <h7 class="text-left"><span class="badge badge-info"
+                                                id="mcantidad"></span></h7>
+                                    </div>
+                                </div>
+
+                                <div class="d-none d-lg-block">
+                                    <div class="row ">
+                                        <div class="col-5">
+                                            <h7 class="text-left">Fecha: </h7>
+                                        </div>
+                                        <div class="col-7">
+                                            <h7 class="text-left"><span class="badge badge-info"
+                                                    id="mfecha"></span></h7>
+                                        </div>
+                                    </div>
+                                </div>
+                                <hr>
+
+                                <div class="row d-none d-lg-block">
+                                    <div class="col-lg-12">
+                                        <h5>Contenedor:</h5>
+                                    </div>
+                                </div>
+
+                                <form action="/imprimir_idplan" method="POST" id="formMotivo">
+                                    <div class="container">
+                                        <div class="row" id="cotenedorSection">
+
+                                            <!-- Agregado desde Javascript -->
+
+                                        </div>
+                                    </div>
+
+                            </div>
+                        </div>
+
+                    </div>
+
+                    <div class="modal-footer">
+                        <button type="button" class="btn btn-secondary btnCerrar"
+                            data-dismiss="modal">Cerrar</button>
+                    </div>
+                    <input type="text" class="form-control" name="midplan" id="midplan"
+                        aria-describedby="helpId" value="" hidden>
+                    </form>
+
+                </div>
+            </div>
+        </div>
+
 
 
 <%- include ("./static/footer") %>

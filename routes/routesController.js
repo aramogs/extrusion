@@ -4,6 +4,7 @@ const controller = {};
 var amqp = require('amqplib/callback_api');
 const { v4: uuidv4 } = require('uuid');
 const jwt = require('jsonwebtoken');
+const moment = require('moment')
 
 //Require Funciones
 const funcion = require('../public/js/functions/controllerFunctions');
@@ -370,12 +371,47 @@ controller.cancelarIdPlan_POST = (req, res) => {
 controller.impresion_GET = (req, res) => {
     user_id = req.res.locals.authData.id.id
     user_name = req.res.locals.authData.id.username
-    res.render('impresion.ejs', {
-        user_id,
-        user_name
+    let todayDate = moment().format("YYYY-MM-DD")
+
+    funcion.getTurnosAll()
+    .then((result)=>{
+        turnos = result
+        //TODO cambiar esto
+        turnos.forEach(element => {
+            let start = moment(element.turno_inicio, 'HH:mm:ss')
+            if (moment(start, 'HH:mm:ss') <= moment()) {
+                currentShift = (element.turno_descripcion).substring(0,2);
+
+                funcion.getProgramacionTurno(todayDate,currentShift)
+                .then((result)=>{
+                    turnos = result
+                    res.render('impresion.ejs', {
+                        user_id,
+                        user_name,
+                        turnos,
+                        currentShift
+                    })
+                })
+                .catch((err)=>{
+                    console.error(err);
+                })
+ 
+              }
+        });
     })
+    .catch((err)=>{console.log(err);})
 
+}
 
+controller.getCurrentProgramacion_POST = (req,res)=>{
+
+    fecha = req.body.fecha
+    turno = req.body.turno
+    linea = req.body.linea
+    funcion.getCurrentProgramacion(fecha,turno,linea)
+    .then((result)=>{
+        res.json(result)})
+    .catch((err)=>{res.json(err)})
 }
 
 
@@ -384,6 +420,17 @@ controller.idplanInfo_POST = (req, res) => {
     let idplan= req.body.id
 
     funcion.getInfoIdPlan(idplan)
+    .then((result)=>{res.json(result)})
+    .catch((err)=>{console.log(err)})
+
+
+}
+
+controller.idplanImpresion_POST = (req, res) => {
+
+    let idplan= req.body.id
+
+    funcion.getPlanImpresion(idplan)
     .then((result)=>{res.json(result)})
     .catch((err)=>{console.log(err)})
 

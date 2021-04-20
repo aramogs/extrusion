@@ -36,6 +36,19 @@ funcion.getTurnos = () => {
     })
 }
 
+funcion.getTurnosAll = () =>{
+    return new Promise((resolve, reject)=>{
+        dbA(`
+        SELECT
+            *
+        FROM
+            turnos`)
+            .then((result) => { resolve(result) })
+            .catch((error) => { reject(error) })
+    })
+
+}
+
 funcion.getProgramacion = (fecha) => {
     return new Promise((resolve, reject) => {
         dbEX(`
@@ -126,6 +139,26 @@ funcion.getProgramacionFecha = (fecha) => {
     })
 }
 
+funcion.getCurrentProgramacion = (fecha,turno,linea) => {
+    return new Promise((resolve, reject) => {
+        dbEX(`
+        SELECT 
+            *
+        FROM
+            production_plan, b10_bartender.extr
+        WHERE
+            fecha = '${fecha}'
+        AND
+            turno = '${turno}'
+        AND 
+            linea = '${linea}' 
+        AND
+            numero_sap = no_sap
+            `)
+            .then((result) => { resolve(result) })
+            .catch((error) => { reject(error) })
+    })
+}
 
 funcion.cancelarIdPlan = (idplan,motivo) => {
     return new Promise((resolve, reject) => {
@@ -155,6 +188,45 @@ funcion.getInfoIdPlan = (idplan) => {
             
         WHERE
             plan_id = ${idplan}
+        `)
+            .then((result) => { resolve(result) })
+            .catch((error) => { reject(error) })
+    })
+}
+
+funcion.getPlanImpresion = (idplan) => {
+    return new Promise((resolve, reject) => {
+        dbEX(`
+        SELECT 
+            *
+        FROM
+            extrusion.production_plan,
+            b10_bartender.extr
+        WHERE
+            extrusion.production_plan.plan_id = ${idplan}
+        AND 
+            extrusion.production_plan.numero_sap = b10_bartender.extr.no_sap;
+
+
+        `)
+            .then((result) => { resolve(result) })
+            .catch((error) => { reject(error) })
+    })
+}
+
+
+funcion.getProgramacionTurno = (fecha,turno) => {
+    return new Promise((resolve, reject) => {
+        dbEX(`
+        SELECT 
+        DISTINCT
+            (linea)
+        FROM
+            production_plan
+        WHERE
+            fecha = '${fecha}'
+        AND 
+            turno = '${turno}'
         `)
             .then((result) => { resolve(result) })
             .catch((error) => { reject(error) })

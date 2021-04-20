@@ -23,7 +23,8 @@ router.post('/tablaProgramacion', routesController.tablaProgramacion_POST);
 router.post('/getProgramacion',routesController.getProgramacion_POST);
 router.post('/cancelarIdPlan',routesController.cancelarIdPlan_POST);
 router.post('/idplanInfo',routesController.idplanInfo_POST);
-
+router.post('/getCurrentProgramacion',routesController.getCurrentProgramacion_POST);
+router.post('/idplanImpresion',routesController.idplanImpresion_POST);
 
 
 function verifyToken(req, res, next) {

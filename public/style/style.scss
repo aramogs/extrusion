@@ -125,6 +125,11 @@ table{
     list-style-type: none;
 }
 
+.card-img-top{
+    width: 10rem;
+    height: 10rem;;
+}
+
 /* On screens that are 992px or less, set the background color to blue */
 @media screen and (max-width: 992px) {
     .logoSize{
