@@ -276,6 +276,22 @@ funcion.checkSap = (sap) => {
             
         WHERE
             no_sap = '${sap}'
+            `)
+            .then((result) => { resolve(result) })
+            .catch((error) => { reject(error) })
+    })
+}
+
+
+funcion.getBaseExtr = (no_sap) => {
+    return new Promise((resolve, reject) => {
+        db(`
+        SELECT
+            *
+        FROM
+            extr
+        WHERE
+            no_sap = '${no_sap}'
         `)
             .then((result) => { resolve(result) })
             .catch((error) => { reject(error) })
@@ -294,6 +310,24 @@ funcion.getSerialesFecha = (fecha) => {
             extrusion_labels
         WHERE
             datetime LIKE '${fecha}%'
+            
+            `)
+            .then((result) => { resolve(result) })
+            .catch((error) => { reject(error) })
+    })
+}
+            
+funcion.getColumnsExtr = () => {
+    return new Promise((resolve, reject) => {
+        db(`
+        SELECT 
+            column_name
+        FROM
+            information_schema.columns
+        WHERE
+            table_schema = 'b10_bartender'
+        AND 
+            table_name = 'extr'
         `)
             .then((result) => { resolve(result) })
             .catch((error) => { reject(error) })
@@ -320,7 +354,41 @@ funcion.cancelarSeriales = (arraySeriales, motivo) => {
                 .catch((error) => { reject(error) })           
         }
 
+    })
+}
+funcion.insertImpresion = (plan_id, numero_parte, emp_num, cantidad, numero_etiquetas) => {
+    return new Promise((resolve, reject) => {
 
+        for (let i = 0; i < numero_etiquetas; i++) {
+            dbEX(`INSERT INTO extrusion_labels (plan_id, numero_parte, emp_num, cantidad) 
+                VALUES ('${plan_id}','${numero_parte}',${emp_num},${cantidad})`)
+                .then((result) => { resolve(result) })
+                .catch((error) => { reject(error) })
+        }
+    })
+}
+
+funcion.getPrinter = (linea) => {
+    return new Promise((resolve, reject) => {
+
+        dbEX(`SELECT printer FROM extrusion_conf WHERE linea = ${linea};`)
+            .then((result) => { resolve(result) })
+            .catch((error) => { reject(error) })
+    })
+}
+
+funcion.UpdatePlan = (plan_id) => {
+    return new Promise((resolve,reject)=>{
+        dbEX(`
+        UPDATE 
+            production_plan 
+        SET 
+            status = 'Impreso'
+        WHERE
+            plan_id = ${plan_id};
+        `)
+        .then((result) => { resolve(result) })
+        .catch((error) => { reject(error) })
     })
 }
 

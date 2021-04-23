@@ -31,6 +31,7 @@ router.post('/checkSap',routesController.checkSap_POST);
 router.get('/etiquetasImpresas',routesController.etiquetasImpresas_GET);
 router.post('/tablaSeriales',routesController.tablaSeriales_POST);
 router.post('/cancelarSeriales',routesController.cancelarSeriales_POST);
+router.post('/impresion', middleware.verifyToken,routesController.impresion_POST);
 
 
 function verifyToken(req, res, next) {

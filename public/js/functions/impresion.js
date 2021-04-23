@@ -9,15 +9,19 @@ let modalImpresion = document.getElementById("modalImpresion")
 let msap = document.getElementById("msap")
 let mcantidad = document.getElementById("mcantidad")
 let mfecha = document.getElementById("mfecha")
+let midplan = document.getElementById("midplan")
 let cotenedorSection = document.getElementById("cotenedorSection")
 let btnCerrar = document.getElementsByClassName("btnCerrar")
 let regex1 = /\-(.*)/
 let regex2 = /^(.*?)\-/
+let tituloSuccess = document.getElementById("tituloSuccess")
+let cantidadSuccess = document.getElementById("cantidadSuccess")
+let btnModalTerminar = document.getElementById("btnModalTerminar")
 
 btn_logoff.addEventListener("click", () => { document.cookie = "accessToken" + '=; Max-Age=0', location.reload() })
 selectedLinea.addEventListener("change", () => { getSelectedTurno() })
 btnCerrar[0].addEventListener("click", () => { clear() })
-
+btnModalTerminar.addEventListener("click", ()=>{refreshTable()})
 
 
 function currentTime() {
@@ -69,11 +73,14 @@ function getSelectedTurno() {
 
           imprimir =
             `
-            <input type="text" name="idPlan" id="idPlan${result.data[y].plan_id}" value=${result.data[y].plan_id} hidden>
-            <button type="submit"  class="btn btn-info  rounded-pill" name="btnPrint" id="${result.data[y].plan_id}" onClick="ImprimirModal(this.id)" ><span class="fas fa-print"></span>
+            <button type="submit"  class="btn btn-info  rounded-pill" name="btnPrint" id="${result.data[y].plan_id}" onClick="ImprimirModal(this.id)" ><span class="fas fa-print"><span hidden>${result.data[y].plan_id}</span></span>
             `
 
-        } else { imprimir = `<button type="button" class="btn btn-success  rounded-pill " disabled><span class="fas fa-check-square" disabled></span>` }
+        } else {
+          imprimir =
+          `
+            <button type="button" class="btn btn-success  rounded-pill " disabled><span class="fas fa-check-square" disabled><span hidden>${result.data[y].plan_id}</span></span>
+            ` }
 
         table.row.add([
           imprimir,
@@ -127,10 +134,11 @@ function ImprimirModal(idp) {
       msap.innerHTML = currentInfo[0].numero_sap
       mcantidad.innerHTML = currentInfo[0].cantidad
       mfecha.innerHTML = currentInfo[0].fecha
+      midplan.innerHTML = idp
 
       let btnImprimir = document.querySelectorAll(".btnImprimir")
       btnImprimir.forEach(btn => {
-        btn.addEventListener("click", (e)=>{
+        btn.addEventListener("click", (e) => {
           e.preventDefault()
           impresion(e)
         })
@@ -173,21 +181,47 @@ function clear() {
 
 
 function impresion(e) {
+  $('#modalImpresion').modal('hide')
+  $('#modalSpinner').modal({ backdrop: 'static', keyboard: false })
+  clear()
+  let plan_id = midplan.innerHTML
   let no_sap = msap.innerHTML
   let cantidad = mcantidad.innerHTML
-  let contenedor = (e.target.value).replace(regex1,"")
-  let capacidad = (e.target.value).replace(regex2,"")
-  
-  
-  console.log(no_sap, cantidad,contenedor,capacidad);
-  // let data = { "id": `${idp}` }
-  // axios({
-  //   method: 'post',
-  //   url: `/idplanImpresion`,
-  //   data: JSON.stringify(data),
-  //   headers: { 'content-type': 'application/json' }
-  // })
-  //   .then((result) => { console.log(result) })
-  //   .catch((err) => { console.log(err) })
+  let contenedor = (e.target.value).replace(regex1, "")
+  let capacidad = (e.target.value).replace(regex2, "")
+  let linea = selectedLinea.options[selectedLinea.selectedIndex].text
+
+  console.log(no_sap, cantidad, contenedor, capacidad);
+  let data = { "plan_id": `${plan_id}`, "no_sap": `${no_sap}`, "cantidad": `${cantidad}`, "contenedor": `${contenedor}`, "capacidad": `${capacidad}`, "linea": `${linea}` }
+  axios({
+    method: 'post',
+    url: `/impresion`,
+    data: JSON.stringify(data),
+    headers: { 'content-type': 'application/json' }
+  })
+    .then((result) => {
+      console.log(result)
+
+      let last_id = result.data.last_id
+      let first_id = last_id - Math.floor(cantidad / capacidad) + 1
+
+      
+
+      setTimeout(() => {
+        $('#modalSpinner').modal('hide')
+
+      }, 500);
+
+      $('#modalSuccess').modal({ backdrop: 'static', keyboard: false })
+      tituloSuccess.innerHTML = `<h2><span class="badge badge-info"><pan class="fas fa-barcode"></span></span> Seriales impresos:</h2>`
+      cantidadSuccess.innerHTML = `${first_id} - ${last_id}`
+
+
+    })
+    .catch((err) => { console.log(err) })
 }
 
+function refreshTable() {
+  table.clear().draw();
+  getSelectedTurno()
+}
