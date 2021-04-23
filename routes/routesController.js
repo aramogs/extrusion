@@ -1,16 +1,17 @@
 //Conexion a base de datos
 const controller = {};
 
-var amqp = require('amqplib/callback_api');
+let amqp = require('amqplib/callback_api');
 const { v4: uuidv4 } = require('uuid');
 const jwt = require('jsonwebtoken');
 const moment = require('moment')
-
+const axios = require('axios')
 //Require Funciones
 const funcion = require('../public/js/functions/controllerFunctions');
 
 //Require ExcelJs
 const Excel = require('exceljs');
+
 
 
 
@@ -275,7 +276,7 @@ function amqpRequest(estacion, serial, proceso, material, material_description, 
     return new Promise((resolve, reject) => {
         let send = `{"station":"${estacion}","serial_num":"${serial}","process":"${proceso}", "material": "${material}", "material_description": "${material_description}","storage_bin": "${storage_bin}", "cantidad":"${cantidad}", "cantidad_restante":"${cantidad_restante}", "user_id":${user_id},"lower_gr_date":"${lower_gr_date}","single_container":"${single_container}"}`
 
-        var args = process.argv.slice(2);
+        let args = process.argv.slice(2);
         if (args.length == 0) {
             // console.log("Usage: rpc_client.js num");
             // process.exit(1);
@@ -298,7 +299,7 @@ function amqpRequest(estacion, serial, proceso, material, material_description, 
                         // throw error2;
                         reject(error2)
                     }
-                    var correlationId = estacion;
+                    let correlationId = estacion;
                     console.log(' [x] Requesting: ', send);
 
                     channel.consume(q.queue, function (msg) {
@@ -348,22 +349,22 @@ controller.editarProgramacion_GET = (req, res) => {
 
 
 controller.tablaProgramacion_POST = (req, res) => {
-    
-    let fecha= req.body.fecha
+
+    let fecha = req.body.fecha
     funcion.getProgramacionFecha(fecha)
-    .then((result)=>{res.json(result)})
-    .catch((err)=>{console.log(err)})
+        .then((result) => { res.json(result) })
+        .catch((err) => { console.log(err) })
 
 }
 
 
 controller.cancelarIdPlan_POST = (req, res) => {
 
-    let midplan= req.body.id
-    let motivo= req.body.motivo
-    funcion.cancelarIdPlan(midplan,motivo)
-    .then((result)=>{res.json(result)})
-    .catch((err)=>{console.log(err)})
+    let midplan = req.body.id
+    let motivo = req.body.motivo
+    funcion.cancelarIdPlan(midplan, motivo)
+        .then((result) => { res.json(result) })
+        .catch((err) => { console.log(err) })
 
 
 }
@@ -373,94 +374,164 @@ controller.impresion_GET = (req, res) => {
     user_name = req.res.locals.authData.id.username
     let todayDate = moment().format("YYYY-MM-DD")
 
-    funcion.getTurnosAll()
-    .then((result)=>{
-        turnos = result
-        //TODO cambiar esto
-        turnos.forEach(element => {
+    async function waitForPromise() {
+        let getTurnos = await funcion.getTurnosAll()
+
+        getTurnos.forEach(element => {
             let start = moment(element.turno_inicio, 'HH:mm:ss')
             if (moment(start, 'HH:mm:ss') <= moment()) {
-                currentShift = (element.turno_descripcion).substring(0,2);
-
-                funcion.getProgramacionTurno(todayDate,currentShift)
-                .then((result)=>{
-                    turnos = result
-                    res.render('impresion.ejs', {
-                        user_id,
-                        user_name,
-                        turnos,
-                        currentShift
-                    })
-                })
-                .catch((err)=>{
-                    console.error(err);
-                })
- 
-              }
+                currentShift = (element.turno_descripcion).substring(0, 2);
+            }
         });
-    })
-    .catch((err)=>{console.log(err);})
+
+        funcion.getProgramacionTurno(todayDate, currentShift)
+            .then((result) => {
+                turnos = result
+                res.render('impresion.ejs', {
+                    user_id,
+                    user_name,
+                    turnos,
+                    currentShift
+                })
+            })
+            .catch((err) => {
+                console.error(err);
+            })
+    }
+    waitForPromise()
+
 
 }
 
-controller.getCurrentProgramacion_POST = (req,res)=>{
+controller.getCurrentProgramacion_POST = (req, res) => {
 
     fecha = req.body.fecha
     turno = req.body.turno
     linea = req.body.linea
-    funcion.getCurrentProgramacion(fecha,turno,linea)
-    .then((result)=>{
-        res.json(result)})
-    .catch((err)=>{res.json(err)})
+    funcion.getCurrentProgramacion(fecha, turno, linea)
+        .then((result) => {
+            res.json(result)
+        })
+        .catch((err) => { res.json(err) })
 }
 
 
 controller.idplanInfo_POST = (req, res) => {
 
-    let idplan= req.body.id
+    let idplan = req.body.id
 
     funcion.getInfoIdPlan(idplan)
-    .then((result)=>{res.json(result)})
-    .catch((err)=>{console.log(err)})
+        .then((result) => { res.json(result) })
+        .catch((err) => { console.log(err) })
 
 
 }
 
 controller.editarIdPlan_POST = (req, res) => {
 
-    let midplan= req.body.id
-    let cantidad= req.body.cantidad
-    let linea= req.body.linea
-    funcion.editarIdPlan(midplan,cantidad,linea)
-    .then((result)=>{res.json(result)})
-    .catch((err)=>{console.log(err)})
+    let midplan = req.body.id
+    let cantidad = req.body.cantidad
+    let linea = req.body.linea
+    funcion.editarIdPlan(midplan, cantidad, linea)
+        .then((result) => { res.json(result) })
+        .catch((err) => { console.log(err) })
 
 
 }
 
 controller.agregarIdPlan_POST = (req, res) => {
 
-    let numero_sap= req.body.sap
-    let cantidad= req.body.cantidad
-    let linea= req.body.linea
-    let sup_name= (req.res.socket.user).substring(3)
-    let fecha=req.body.fecha
-    let turno=req.body.turno
-    funcion.agregarIdPlan(numero_sap,cantidad,linea,sup_name, fecha, turno)
-    .then((result)=>{res.json(result)})
-    .catch((err)=>{console.log(err)})
+    let numero_sap = req.body.sap
+    let cantidad = req.body.cantidad
+    let linea = req.body.linea
+    let sup_name = (req.res.socket.user).substring(3)
+    let fecha = req.body.fecha
+    let turno = req.body.turno
+    funcion.agregarIdPlan(numero_sap, cantidad, linea, sup_name, fecha, turno)
+        .then((result) => { res.json(result) })
+        .catch((err) => { console.log(err) })
 
 
 }
-    
-    
+
+
 controller.idplanImpresion_POST = (req, res) => {
 
-    let idplan= req.body.id
+    let idplan = req.body.id
 
     funcion.getPlanImpresion(idplan)
-    .then((result)=>{res.json(result)})
-    .catch((err)=>{console.log(err)})
+        .then((result) => { res.json(result) })
+        .catch((err) => { console.log(err) })
+
+
+}
+
+controller.impresion_POST = (req, res) => {
+
+    let plan_id = req.body.plan_id
+    let no_sap = req.body.no_sap
+    let operador_id = req.res.locals.authData.id.id
+    let cantidad = req.body.cantidad
+    let contenedor = req.body.contenedor
+    let capacidad = req.body.capacidad
+    let linea = req.body.linea
+
+
+
+    numero_etiquetas = Math.floor(cantidad / capacidad)
+
+
+    async function waitForPromise() {
+
+        let insert = await funcion.insertImpresion(plan_id, no_sap, operador_id, capacidad, numero_etiquetas);
+        let values = await funcion.getBaseExtr(no_sap)
+        let impre = await funcion.getPrinter(linea)
+        let data = {}
+        let serial_num = insert.insertId + numero_etiquetas -1
+        Promise.all([insert, values, impre])
+            .then((result) => {
+
+                inserted = result[0]
+                values_ = result[1]
+                impresora = result[2][0].printer
+
+                for (let i = 0; i < numero_etiquetas; i++) {
+                    let serial = inserted.insertId++
+                    printLabel(i, serial)
+                }
+
+                function printLabel(i,serial) {
+                    setTimeout(() => {
+                        for (const [key, value] of Object.entries(values_[0])) {
+
+                            if (`${key}` === `${contenedor}`) data['quant'] = value
+                            data[`${key}`] = value  
+                            data[`printer`] = impresora
+                            data['serial'] = serial
+                            data['line'] = linea
+                            data['emp_num'] = operador_id
+    
+                        }
+    
+                        axios({
+                            method: 'post',
+                            url: `http://${process.env.BARTENDER_SERVER}:${process.env.BARTENDER_PORT}/Integration/EXT/Execute/`,
+                            data: JSON.stringify(data),
+                            headers: { 'content-type': 'application/json' }
+                        })
+                    }, 1000* i);
+                }
+                
+            })
+            .then(()=>{
+                res.json({"last_id":serial_num})
+                funcion.UpdatePlan(plan_id)
+            })
+    }
+
+    
+    waitForPromise()
+
 
 
 }

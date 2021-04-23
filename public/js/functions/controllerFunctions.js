@@ -36,8 +36,8 @@ funcion.getTurnos = () => {
     })
 }
 
-funcion.getTurnosAll = () =>{
-    return new Promise((resolve, reject)=>{
+funcion.getTurnosAll = () => {
+    return new Promise((resolve, reject) => {
         dbA(`
         SELECT
             *
@@ -60,9 +60,10 @@ funcion.getProgramacion = (fecha) => {
             fecha = '${fecha}'
         `)
             .then((result) => { resolve(result) })
-            .catch((error) => { 
+            .catch((error) => {
                 console.log(error);
-                reject(error) })
+                reject(error)
+            })
     })
 }
 
@@ -80,7 +81,7 @@ funcion.verifySAP = (base, tabla, callback) => {
 
 }
 
-funcion.insertProgramaExcel = (base, tabla, titulos, valores,sup_num,fecha,turno) => {
+funcion.insertProgramaExcel = (base, tabla, titulos, valores, sup_num, fecha, turno) => {
     return new Promise((resolve, reject) => {
 
         let valor
@@ -88,16 +89,16 @@ funcion.insertProgramaExcel = (base, tabla, titulos, valores,sup_num,fecha,turno
         let affectedRows = 0
 
         for (let i = 0; i < valores.length; i++) {
-            valores_finales = []    
+            valores_finales = []
             for (let y = 0; y < titulos.length; y++) {
 
                 if (typeof (valores[i][y]) === "string") {
                     valor = `"${valores[i][y]}"`
                 } else if (typeof (valores[i][y])) {
                     valor = valores[i][y]
-                } 
+                }
                 valores_finales.push(valor)
-                
+
             }
             valores_finales.push(`"${sup_num}"`)
             valores_finales.push(`"${fecha}"`)
@@ -105,14 +106,14 @@ funcion.insertProgramaExcel = (base, tabla, titulos, valores,sup_num,fecha,turno
 
 
             dbEX(`INSERT INTO ${tabla} (${titulos.join()},sup_name,fecha,turno) VALUES (${valores_finales})`)
-                .then((result) => { 
-                     if (result.affectedRows == 1) {
+                .then((result) => {
+                    if (result.affectedRows == 1) {
                         affectedRows++
-                    } 
+                    }
                     if (affectedRows == valores.length) {
                         resolve(affectedRows)
                     }
-                 })
+                })
                 .catch((error) => { reject(error) })
         }
 
@@ -120,7 +121,7 @@ funcion.insertProgramaExcel = (base, tabla, titulos, valores,sup_num,fecha,turno
     })
 
 
-    
+
 }
 
 
@@ -139,7 +140,7 @@ funcion.getProgramacionFecha = (fecha) => {
     })
 }
 
-funcion.getCurrentProgramacion = (fecha,turno,linea) => {
+funcion.getCurrentProgramacion = (fecha, turno, linea) => {
     return new Promise((resolve, reject) => {
         dbEX(`
         SELECT 
@@ -160,7 +161,7 @@ funcion.getCurrentProgramacion = (fecha,turno,linea) => {
     })
 }
 
-funcion.cancelarIdPlan = (idplan,motivo) => {
+funcion.cancelarIdPlan = (idplan, motivo) => {
     return new Promise((resolve, reject) => {
         dbEX(`
         UPDATE 
@@ -195,7 +196,7 @@ funcion.getInfoIdPlan = (idplan) => {
 }
 
 
-funcion.editarIdPlan = (idplan,cantidad, linea) => {
+funcion.editarIdPlan = (idplan, cantidad, linea) => {
     return new Promise((resolve, reject) => {
         dbEX(`
         UPDATE 
@@ -210,7 +211,7 @@ funcion.editarIdPlan = (idplan,cantidad, linea) => {
             .catch((error) => { reject(error) })
     })
 }
-        
+
 funcion.getPlanImpresion = (idplan) => {
     return new Promise((resolve, reject) => {
         dbEX(`
@@ -232,7 +233,7 @@ funcion.getPlanImpresion = (idplan) => {
 }
 
 
-funcion.agregarIdPlan = (numero_sap,cantidad,linea,sup_name, fecha, turno) => {
+funcion.agregarIdPlan = (numero_sap, cantidad, linea, sup_name, fecha, turno) => {
 
     return new Promise((resolve, reject) => {
         dbEX(`
@@ -245,8 +246,8 @@ funcion.agregarIdPlan = (numero_sap,cantidad,linea,sup_name, fecha, turno) => {
             .catch((error) => { reject(error) })
     })
 }
-        
-funcion.getProgramacionTurno = (fecha,turno) => {
+
+funcion.getProgramacionTurno = (fecha, turno) => {
     return new Promise((resolve, reject) => {
         dbEX(`
         SELECT 
@@ -261,6 +262,75 @@ funcion.getProgramacionTurno = (fecha,turno) => {
         `)
             .then((result) => { resolve(result) })
             .catch((error) => { reject(error) })
+    })
+}
+
+funcion.getBaseExtr = (no_sap) => {
+    return new Promise((resolve, reject) => {
+        db(`
+        SELECT
+            *
+        FROM
+            extr
+        WHERE
+            no_sap = '${no_sap}'
+        `)
+            .then((result) => { resolve(result) })
+            .catch((error) => { reject(error) })
+    })
+}
+
+funcion.getColumnsExtr = () => {
+    return new Promise((resolve, reject) => {
+        db(`
+        SELECT 
+            column_name
+        FROM
+            information_schema.columns
+        WHERE
+            table_schema = 'b10_bartender'
+        AND 
+            table_name = 'extr'
+        `)
+            .then((result) => { resolve(result) })
+            .catch((error) => { reject(error) })
+    })
+}
+
+
+funcion.insertImpresion = (plan_id, numero_parte, emp_num, cantidad, numero_etiquetas) => {
+    return new Promise((resolve, reject) => {
+
+        for (let i = 0; i < numero_etiquetas; i++) {
+            dbEX(`INSERT INTO extrusion_labels (plan_id, numero_parte, emp_num, cantidad) 
+                VALUES ('${plan_id}','${numero_parte}',${emp_num},${cantidad})`)
+                .then((result) => { resolve(result) })
+                .catch((error) => { reject(error) })
+        }
+    })
+}
+
+funcion.getPrinter = (linea) => {
+    return new Promise((resolve, reject) => {
+
+        dbEX(`SELECT printer FROM extrusion_conf WHERE linea = ${linea};`)
+            .then((result) => { resolve(result) })
+            .catch((error) => { reject(error) })
+    })
+}
+
+funcion.UpdatePlan = (plan_id) => {
+    return new Promise((resolve,reject)=>{
+        dbEX(`
+        UPDATE 
+            production_plan 
+        SET 
+            status = 'Impreso'
+        WHERE
+            plan_id = ${plan_id};
+        `)
+        .then((result) => { resolve(result) })
+        .catch((error) => { reject(error) })
     })
 }
 

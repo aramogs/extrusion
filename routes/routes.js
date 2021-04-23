@@ -27,6 +27,7 @@ router.post('/editarIdPlan',routesController.editarIdPlan_POST);
 router.post('/agregarIdPlan',routesController.agregarIdPlan_POST);
 router.post('/getCurrentProgramacion',routesController.getCurrentProgramacion_POST);
 router.post('/idplanImpresion',routesController.idplanImpresion_POST);
+router.post('/impresion', middleware.verifyToken,routesController.impresion_POST);
 
 
 function verifyToken(req, res, next) {
