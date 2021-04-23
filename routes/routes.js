@@ -27,6 +27,10 @@ router.post('/editarIdPlan',routesController.editarIdPlan_POST);
 router.post('/agregarIdPlan',routesController.agregarIdPlan_POST);
 router.post('/getCurrentProgramacion',routesController.getCurrentProgramacion_POST);
 router.post('/idplanImpresion',routesController.idplanImpresion_POST);
+router.post('/checkSap',routesController.checkSap_POST);
+router.get('/etiquetasImpresas',routesController.etiquetasImpresas_GET);
+router.post('/tablaSeriales',routesController.tablaSeriales_POST);
+router.post('/cancelarSeriales',routesController.cancelarSeriales_POST);
 
 
 function verifyToken(req, res, next) {

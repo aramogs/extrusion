@@ -12,7 +12,7 @@
             </div> -->
             <br>
             <div class="container-fluid">
-                <h1 class="display-4 text-center csvTitulo">Programacion Extrusion</h1>
+                <h1 class="display-4 text-center csvTitulo">Etiquetas Impresas Extrusion</h1>
             </div>
 
             <div class="container">
@@ -33,24 +33,24 @@
                 </div>
                 <br>
                 <div>
-                    <button formAction="/cancelar_idplan" type="submit" id="btnAgregar" class="btn btn-success"
-                        onClick="agregar()" disabled><span class="fas fa-plus"></span> Agregar</button>
+                    <button formAction="/cancelarSeriales" type="submit" id="btnCancelarSeriales" class="btn btn-danger"
+                        onClick="agregar()" disabled><span class="fas fa-times"></span> Cancelar</button>
+                        
                 </div>
                 <br>
                 <div class="table-responsive">
                     <div class="containerTable">
                         <div class="table table-responsive" id="table">
-                            <table id="myTable" class="table table-bordered table-striped table-sm hover">
+                            <table id="myTable" class="table table-bordered table-striped table-sm hover text-center">
                                 <thead class="thead-dark">
 
-                                    <th><span class="icoSidebar fas fa-history"></span> Accion</th>
-                                    <th><span class="icoSidebar fas fa-history"></span> ID</th>
-                                    <th><span class="icoSidebar fas fa-history"></span> SAP</th>
-                                    <th><span class="icoSidebar fas fa-info-circle"></span> Cantidad</th>
-                                    <th><span class="icoSidebar fas fa-info-circle"></span> Linea</th>
-                                    <th><span class="icoSidebar fas fa-hashtag"></span> Supervisor </th>
+                                    <th><span class="icoSidebar fas fa-ban text-danger"></span></th>
+                                    <th><span class="icoSidebar fas fa-history"></span> Serial</th>
+                                    <th><span class="icoSidebar fas fa-history"></span> Id Plan</th>
+                                    <th><span class="icoSidebar fas fa-info-circle"></span> Numero Parte</th>
+                                    <th><span class="icoSidebar fas fa-info-circle"></span> Empleado</th>
+                                    <th><span class="icoSidebar fas fa-hashtag"></span> Cantidad </th>
                                     <th><span class="icoSidebar fas fa-info-circle"></span> Fecha</th>
-                                    <th><span class="icoSidebar fas fa-info-circle"></span> Turno</th>
                                     <th><span class="icoSidebar fas fa-info-circle"></span> Status</th>
                                     <th><span class="icoSidebar fas fa-info-circle"></span> Motivo</th>
 
@@ -82,46 +82,13 @@
 
                                     <div class="card-body">
 
-                                        <div class="row">
-                                            <div class="col-5">
-                                                <h7>SAP:</h7>
-                                            </div>
-                                            <div class="col-7">
-                                                <h7 class="text-left"><span class="badge badge-info" id="msap"></span>
-                                                </h7>
-                                            </div>
-                                        </div>
-
-                                        <div class="row">
-                                            <div class="col-lg-5 col-sm-12">
-                                                <h7 class="text-left">Cantidad: </h7>
-                                            </div>
-                                            <div class="col-lg-7 col-sm-12">
-                                                <h7 class="text-left"><span class="badge badge-info"
-                                                        id="mcantidad"></span></h7>
-                                            </div>
-                                        </div>
-
-                                        <div class="d-none d-lg-block">
-                                            <div class="row ">
-                                                <div class="col-5">
-                                                    <h7 class="text-left">Fecha: </h7>
-                                                </div>
-                                                <div class="col-7">
-                                                    <h7 class="text-left"><span class="badge badge-info"
-                                                            id="mfecha"></span></h7>
-                                                </div>
-                                            </div>
-                                        </div>
-                                        <hr>
-
                                         <div class="row d-none d-lg-block">
                                             <div class="col-lg-12">
                                                 <h5>Motivo:</h5>
                                             </div>
                                         </div>
 
-                                        <form action="/cancelar_idplan" method="POST" id="formMotivo">
+                                        <form action="/cancelarSeriales" method="POST" id="formMotivo">
                                             <div class="container">
                                                 <div class="row">
 
@@ -146,7 +113,7 @@
                             <div class="modal-footer">
                                 <button type="button" class="btn btn-secondary btnCerrar"
                                     data-dismiss="modal">Cerrar</button>
-                                <button formAction="/cancelar_idplan" type="submit" id="btnCancel_c"
+                                <button formAction="/cancelarSeriales" type="submit" id="btnCancel_c"
                                     class="btn btn-info">Guardar</button>
                             </div>
                             <input type="text" class="form-control" name="midplan" id="midplan"
@@ -404,4 +371,4 @@
 
             <%- include ("./static/footer") %>
 
-                <script src="/js/functions/editarProgramacion.js"></script>
+                <script src="/js/functions/etiquetasImpresas.js"></script>

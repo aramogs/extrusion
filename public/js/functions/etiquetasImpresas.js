@@ -12,9 +12,8 @@ let btnGuardar = document.getElementById("btnGuardar")
 let cardExcel = document.getElementById("cardExcel")
 let table = $('#myTable').DataTable();
 let midplan = document.getElementById("midplan")
-let formMotivo = document.getElementById("formMotivo")
 let formEditar = document.getElementById("formEditar")
-let formAgregar = document.getElementById("formAgregar")
+let formMotivo = document.getElementById("formMotivo")
 let selectFecha= document.getElementById("selectFecha")
 let myDateString
 let motivo= document.getElementById("motivo")
@@ -31,9 +30,9 @@ let add_sap= document.getElementById("add_sap")
 let add_cantidad= document.getElementById("add_cantidad")
 let add_linea= document.getElementById("add_linea")
 let add_turno= document.getElementById("add_turno")
-let btnAgregar= document.getElementById("btnAgregar")
 let msg_add_sap= document.getElementById("msg_add_sap")
 let btn_save_agregar= document.getElementById("btn_save_agregar")
+let btnCancelarSeriales= document.getElementById("btnCancelarSeriales")
 
 
 
@@ -57,7 +56,7 @@ const picker = datepicker('#selectFecha', {
         myDateString = yy + '-' + mm + '-' + dd;
         input.value = myDateString
 
-        btnAgregar.disabled=false;
+        btnCancelarSeriales.disabled=false;
         table.clear().draw();
         fillTable();
     }
@@ -70,38 +69,48 @@ function fillTable() {
     let data = {"fecha":`${myDateString}`}
     axios({
         method: 'post',
-        url: `/tablaProgramacion`,
+        url: `/tablaSeriales`,
         data: JSON.stringify(data),
         headers: { 'content-type': 'application/json' }
     }).then((result)=>{ 
-            
            
                 for (let y = 0; y < result.data.length; y++) {
                     let cancelar
-                    if (result.data[y].status=="Pendiente") {
+                    if (result.data[y].status=="Impreso") {
 
-                        cancelar= `<input type="text" name="idPlan" id="idPlan${result.data[y].plan_id}" value=${result.data[y].plan_id} hidden><button type="submit" formaction="/cancelar"
-                        class="btn btn-danger  rounded-pill" name="btnCancel" id="btnCancel-${result.data[y].plan_id}" onClick="cancel(this.id)" ><span class="fas fa-times"></span>
-                        <button type="submit" formaction="/actualizar" class="btn btn-info  rounded-pill"
-                                        nname="btnCancel" id="btnCancel-${result.data[y].plan_id}" onClick="edit(this.id)"><span class="fas fa-pencil-alt">` 
+                      cancelar= `
+                      <div class="form-check">
+                      <input class="form-check-input" type="checkbox" value="${result.data[y].serial}" id="flexCheckDefault">
+                      </div>
+                      ` 
+                      acreditado=`<span class="icoSidebar fas fa-print text-info"></span>` 
 
-                    }else{cancelar=""}
+                    }else if(result.data[y].status=="Cancelado"){
+                      cancelar=`<span class="icoSidebar fas fa-ban text-secondary"></span>`
+                      acreditado=`<span class="icoSidebar fas fa-ban text-secondary"></span>`
+                  }else if(result.data[y].status=="Acreditado"){
+
+                    cancelar=`<span class="icoSidebar fas fa-ban text-secondary"></span>`
+                    acreditado=`<span class="icoSidebar fas fa-check text-success"></span>`
+
+                  }
                    
-
                     table.row.add( [
                         cancelar,
+                        result.data[y].serial,
                         result.data[y].plan_id,
-                        result.data[y].numero_sap,
+                        result.data[y].numero_parte,
+                        result.data[y].emp_num,
                         result.data[y].cantidad,
-                        result.data[y].linea,
-                        result.data[y].sup_name,
-                        result.data[y].fecha,
-                        result.data[y].turno,
-                        result.data[y].status,
-                        result.data[y].description,
+                        result.data[y].datetime,
+                        acreditado+" "+result.data[y].status,
+                        result.data[y].descripcion,
                     ] ).draw( false );
 
             }
+
+
+            
         })
         .catch((err) => { console.error(err) })
 }
@@ -129,51 +138,17 @@ function cancel(clicked_id)
     
   }
 
-  formMotivo.addEventListener("submit", (e)=>{
-      e.preventDefault();
-
-      let data = {"id":`${midplan.value}`, "motivo":`${motivo.value}`}
-
-      axios({
-        method: 'post',
-        url: `/cancelarIdPlan`,
-        data: JSON.stringify(data),
-        headers: { 'content-type': 'application/json' }
-    })
-    .then((result) => {
-
-      reload("cancel")
-        
-    })
-    .catch((err) => { console.error(err) })
-
-  })
 
 
-  function reload(modal){
-    if(modal=="cancel"){
+
+  function reload(){
+
       motivo.value="";
       $('#modalMotivo').modal('hide');
       table.clear().draw();
-      fillTable();
-    }else if(modal=="edit"){
-      edit_cantidad.value="";
-      edit_linea.value="";
-      $('#modalEditar').modal('hide');
-      table.clear().draw();
-      fillTable();
-
-    }else if(modal=="add"){
-      $('#modalAgregar').modal('hide');
-      add_sap.value=""
-      add_cantidad.value=""
-      add_linea.value=""
-      add_turno.value=""
-      msg_add_sap.innerHTML =""
-      table.clear().draw();
-      fillTable();
-    }
-    
+      
+      setTimeout(function(){ fillTable();  }, 100);
+       
 
   }
 
@@ -224,7 +199,7 @@ function cancel(clicked_id)
   })
   .then((result) => {
 
-    reload("edit")
+    reload()
       
   })
   .catch((err) => { console.error(err) })
@@ -233,35 +208,39 @@ function cancel(clicked_id)
 
 function agregar()
   {
-    $('#modalAgregar').modal({ keyboard: false })
-    enableTurno()
+
+    let checkInputs = document.querySelectorAll(".form-check-input:checked")
+    // checkInputs.forEach(input =>{console.log(input.value)})
+    let myArray = Array.from(checkInputs)
+    console.log(myArray);
+
+    $('#modalMotivo').modal({ keyboard: false })
+
     
   }
 
 
-  formAgregar.addEventListener("submit", (e)=>{
+  formMotivo.addEventListener("submit", (e)=>{
     e.preventDefault();
 
-    if(add_turno.value !="Seleccionar"){
+    let serialesInputs = document.querySelectorAll(".form-check-input:checked")
+    let seriales= [] 
+    serialesInputs.forEach(input =>{seriales.push(input.value)})
+    
 
-      let turno= add_turno.value.substring(0,2);
-      let data = {"sap":`${add_sap.value}`, "cantidad":`${add_cantidad.value}`, "linea":`${add_linea.value}`, "fecha":`${selectFecha.value}`, "turno":`${turno}`}
-  
-      axios({
-        method: 'post',
-        url: `/agregarIdPlan`,
-        data: JSON.stringify(data),
-        headers: { 'content-type': 'application/json' }
-    })
-    .then((result) => {
-  
-      reload("add")
-        
-    })
-    .catch((err) => { console.error(err) })
+    let data = {"seriales":`${seriales}`, "motivo":`${motivo.value}`}
+    axios({
+      method: 'post',
+      url: `/cancelarSeriales`,
+      data: JSON.stringify(data),
+      headers: { 'content-type': 'application/json' }
+  })
+  .then((result) => {
+
+    reload()
       
-    }
-
+  })
+  .catch((err) => { console.error(err) })
 
 })
 

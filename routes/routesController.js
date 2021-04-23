@@ -462,6 +462,59 @@ controller.idplanImpresion_POST = (req, res) => {
     .then((result)=>{res.json(result)})
     .catch((err)=>{console.log(err)})
 
+}
+
+
+controller.checkSap_POST = (req, res) => {
+
+    let sap= req.body.sap
+
+    funcion.checkSap(sap)
+    .then((result)=>{res.json(result)})
+    .catch((err)=>{console.log(err)})
+
+}
+
+
+controller.etiquetasImpresas_GET = (req, res) => {
+
+    user = req.connection.user
+    let access = ""
+    acceso(req)
+        .then((result) => {
+            result.forEach(element => {
+                if (element === "TFT\\TFT.DEL.PAGES_BTS_CargaProduccion") access = "ok"
+            });
+            if (access == "ok") {
+                res.render("etiquetasImpresas.ejs", { user })
+            } else {
+                res.redirect("/acceso_denegado")
+            }
+        })
+        .catch((err) => { res.redirect("/acceso_denegado") })
+
+}
+
+
+controller.tablaSeriales_POST = (req, res) => {
+    
+    let fecha= req.body.fecha
+    funcion.getSerialesFecha(fecha)
+    .then((result)=>{res.json(result)})
+    .catch((err)=>{console.log(err)})
+
+}
+
+
+controller.cancelarSeriales_POST = (req, res) => {
+
+    seriales=req.body.seriales
+    motivo= req.body.motivo
+    let arraySeriales=JSON.parse("[" + seriales + "]");
+    funcion.cancelarSeriales(arraySeriales, motivo)
+    .then((result)=>{res.json(result)})
+    .catch((err)=>{console.log(err)})
+
 
 }
 
