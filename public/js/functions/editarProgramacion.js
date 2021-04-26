@@ -37,7 +37,6 @@ let btn_save_agregar= document.getElementById("btn_save_agregar")
 
 
 
-
 btnCancelar.forEach(element => {
     element.addEventListener('click', deleteFile)
 });

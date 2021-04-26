@@ -19,20 +19,39 @@
           </a>
           <!-- Dropdown - User Information -->
           <div class="dropdown-menu dropdown-menu-right shadow animated--grow-in" aria-labelledby="userDropdown">
-            <a class="dropdown-item" href="/cargaProgramacion">
-              <span class="fas fa-table"> </span>
-              Carga de programacion
-            </a>
 
-            <a class="dropdown-item" href="/editarProgramacion">
-              <span class="fas fa-edit"> </span>
-              Editar Programacion
-            </a>
+            <ul class="list-group">
 
-            <a class="dropdown-item" href="/etiquetasImpresas">
-              <span class="fas fa-edit"> </span>
-              Seriales Impresos
-            </a>
+              <li class="list-group-item border-0">
+                  <span class="fas fa-user-shield text-info"> </span> Supervisor Extrusion
+                <ul class="list-group">
+                  <li class="list-group-item border-0">
+                    <a class="dropdown-item" href="/cargaProgramacion">
+                      <span class="fas fa-table text-info"> </span>
+                      Carga de programacion
+                    </a>
+
+                    <a class="dropdown-item" href="/editarProgramacion">
+                      <span class="fas fa-edit text-info"> </span>
+                      Editar Programacion
+                    </a>
+
+                    <a class="dropdown-item" href="/etiquetasImpresas">
+                      <span class="fas fa-edit text-info"> </span>
+                      Seriales Impresos
+                    </a>
+                  </li>
+                </ul>
+
+                <span class="fas fa-user-shield text-secondary"> </span> Supervisor Procesos
+                <a class="dropdown-item" href="http://tftdelsrv001:3010/consulta_extrusion">
+                  <span class="fas fa-table text-secondary"> </span>
+                  Carga de Base de datos
+                </a>
+              </li>
+
+            </ul>
+
           </div>
         </li>
       </ul>
