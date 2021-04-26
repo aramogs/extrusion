@@ -299,9 +299,9 @@ funcion.getBaseExtr = (no_sap) => {
 }
 
 
+
 funcion.getSerialesFecha = (fecha) => {
     
-    fecha = "2021-04-22"
     return new Promise((resolve, reject) => {
         dbEX(`
         SELECT 
@@ -389,6 +389,67 @@ funcion.UpdatePlan = (plan_id) => {
         `)
         .then((result) => { resolve(result) })
         .catch((error) => { reject(error) })
+    })
+}
+
+funcion.getIdPlans = (fecha) => {
+    return new Promise((resolve, reject) => {
+
+        dbEX(`SELECT  plan_id, COUNT(*)      
+            AS count
+        FROM 
+            extrusion_labels 
+        WHERE 
+            datetime 
+        LIKE 
+            '${fecha}%'
+
+        GROUP BY(plan_id)
+            
+
+            `)
+            .then((result) => { resolve(result) })
+            .catch((error) => { reject(error) })
+    })
+}
+
+funcion.cancelSerialesPlan = (plan_id, motivo) => {
+    return new Promise((resolve,reject)=>{
+        dbEX(`
+        UPDATE 
+            extrusion_labels 
+        SET 
+            status = 'Cancelado',
+            descripcion = '${motivo}'
+        WHERE
+            plan_id = ${plan_id};
+        `)
+        .then((result) => { resolve(result) })
+        .catch((error) => { reject(error) })
+    })
+}
+
+funcion.getCountCanceled = (fecha) => {
+    return new Promise((resolve, reject) => {
+
+        dbEX(`SELECT  plan_id, COUNT(*)      
+            AS count
+        FROM 
+            extrusion_labels 
+        WHERE 
+            datetime
+
+        LIKE 
+            '${fecha}%'
+        AND
+            status != 'Impreso'
+            
+        GROUP BY(plan_id)
+            
+
+            `)
+            .then((result) => { resolve(result) })
+            .catch((error) => { reject(error) })
     })
 }
 

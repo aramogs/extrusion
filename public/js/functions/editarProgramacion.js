@@ -4,7 +4,7 @@
 
 
 
-let btnCancelar = document.querySelectorAll(".btnCancelar")
+let btnCerrar = document.querySelectorAll(".btnCerrar")
 let tituloSuccess = document.getElementById("tituloSuccess")
 let cantidadSuccess = document.getElementById("cantidadSuccess")
 let cargasAnteriores = document.getElementById("cargasAnteriores")
@@ -41,8 +41,8 @@ const fecha = urlParams.get('fecha')
 
 
 
-btnCancelar.forEach(element => {
-    element.addEventListener('click', deleteFile)
+btnCerrar.forEach(element => {
+    element.addEventListener('click', clearAll)
 });
 
 
@@ -118,7 +118,7 @@ function fillTable() {
 
 function cancel(clicked_id)
   {
-    $('#modalMotivo').modal({ keyboard: false })
+    $('#modalMotivo').modal({ backdrop: 'static', keyboard: false })
     let id = clicked_id.split('-');
     let idp = id[id.length - 1];
     midplan.value=idp;
@@ -129,7 +129,7 @@ function cancel(clicked_id)
 
   function edit(clicked_id)
   {
-    $('#modalEditar').modal({ keyboard: false })
+    $('#modalEditar').modal({ backdrop: 'static', keyboard: false })
     let id = clicked_id.split('-');
     let idp = id[id.length - 1];
     midplane.value=idp;
@@ -242,7 +242,7 @@ function cancel(clicked_id)
 
 function agregar()
   {
-    $('#modalAgregar').modal({ keyboard: false })
+    $('#modalAgregar').modal({ backdrop: 'static', keyboard: false })
     enableTurno()
     
   }
@@ -330,4 +330,24 @@ function checkSap()
             add_turno.add(option)
         });
     })
+}
+
+function clearAll() {
+
+  add_sap.value=""
+  add_cantidad.value=""
+  add_linea.value=""
+  motivo.value=""
+  edit_cantidad.value=""
+  edit_linea.value=""
+  msg_add_sap.innerHTML=""
+
+
+  for (i = add_turno.options.length-1; i >= 0; i--) {
+    add_turno.options[i] = null;
+  }
+
+
+
+    
 }

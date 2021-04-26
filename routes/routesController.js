@@ -591,5 +591,63 @@ controller.cancelarSeriales_POST = (req, res) => {
 }
 
 
+controller.getIdPlans_POST = (req, res) => {
+    
+    let fecha= req.body.fecha
+
+    async function waitForPromise() {
+
+        let getIdPlansFecha= await funcion.getIdPlans(fecha)
+        let getCountCanceled= await funcion.getCountCanceled(fecha)
+
+        Promise.all([getIdPlansFecha,getCountCanceled])
+        .then((result) => {
+
+            ids = result[0]
+            canceled_acreditado= result[1]
+
+            for (let i = 0; i < ids.length; i++) {
+
+               for (let y = 0; y < canceled_acreditado.length; y++) {
+                   
+                    if(ids[i].plan_id==canceled_acreditado[y].plan_id){
+                        ids.splice(i,1)
+                    }
+                   
+               }
+                
+            }
+
+        }).then(()=>{
+            res.json({ids})
+        })
+
+    }
+
+    waitForPromise()
+    
+
+}
+
+controller.cancelarSerialesPlan_POST = (req, res) => {
+
+    let plan_id=req.body.id
+    let motivo=req.body.motivo
+
+    funcion.cancelSerialesPlan(plan_id, motivo)
+    .then((result)=>{res.json(result)})
+    .catch((err)=>{console.log(err)})
+
+
+}
+
+
+controller.procesarSeriales_POST = (req, res) => {
+
+    console.log(req.body);
+
+}
+
+
 
 module.exports = controller;

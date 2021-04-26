@@ -21,7 +21,7 @@ let modal_errorText = document.getElementById("modal_errorText")
 let modal_btnCerrar_Error = document.getElementById("modal_btnCerrar_Error")
 
 btnCancelar.forEach(element => {
-    element.addEventListener('click', deleteFile)
+    element.addEventListener('click', clearAll)
 });
 
 
@@ -60,7 +60,6 @@ function cleanPage() {
     selectedTurno.disabled = true
     cardExcel.hidden = true
     formData = new FormData()
-    deleteFile()
     
 }
 
@@ -148,9 +147,8 @@ function sendData() {
 
 
 
-function deleteFile() {
-    excelFile.value = ""
-    btn_excel.disabled = true;
-    btn_excel.classList.remove("animate__flipInX")
-    btn_excel.classList.add("animate__flipOutX")
+function clearAll() {
+
+
+    
 }
