@@ -583,8 +583,7 @@ controller.cancelarSeriales_POST = (req, res) => {
 
     let seriales=req.body.seriales
     let motivo= req.body.motivo
-    //TODO
-    let arraySeriales=JSON.parse("[" + seriales + "]");
+    let arraySeriales=seriales.split(',')
     funcion.cancelarSeriales(arraySeriales, motivo)
     .then((result)=>{res.json(result)})
     .catch((err)=>{console.log(err)})
@@ -654,21 +653,27 @@ controller.procesarSeriales_POST = (req, res) => {
     async function getStatus(){
 
         let allStatus=await statusSeriales(arraySeriales)
-        let info = await infoSeriales(arraySeriales)    
-        const sumPartes = (array, all = {}) => (
-            array.forEach(({ numero_parte, cantidad }) => (all[numero_parte] = (all[numero_parte] ?? 0) + cantidad)), all
-          )
-          let sendAcreditar=sumPartes(info);
+        let checkStatus = await checkAllStatus(allStatus)
 
-          console.log(sendAcreditar);
-          let send = `{"station":"${estacion}","serial_num":"","process":"${process}", "material":"",  "cantidad":"", "data":"${sendAcreditar}"}`
-          amqpRequest(send)
-          .then((result)=>{res.json(result)})
-          .catch((err)=>{console.error(err)})
+        if(checkStatus.length>0){
 
-        
- //   let send = `{"station":"${estacion}","serial_num":"${serial}","process":"${proceso}", "material": "${material}", "material_description": "${material_description}","storage_bin": "${storage_bin}", "cantidad":"${cantidad}", "cantidad_restante":"${cantidad_restante}", "user_id":${user_id},"lower_gr_date":"${lower_gr_date}","single_container":"${single_container}"}`
+            console.log(checkStatus)
+            res.json(checkStatus)
 
+        }else{
+
+            let info = await infoSeriales(arraySeriales)  
+            const sumPartes = async (array, all = {}) => (
+                array.forEach(({ numero_parte, cantidad }) => (all[numero_parte] = (all[numero_parte] ?? 0) + cantidad)), all
+              )
+              let sendAcreditar= await sumPartes(info);
+              console.log(sendAcreditar);
+              let send = `{"station":"${estacion}","serial_num":"","process":"${process}", "material":"",  "cantidad":"", "data":"${sendAcreditar}"}`
+              amqpRequest(send)
+              .then((result)=>{res.json(result)})
+              .catch((err)=>{console.error(err)})
+
+        }
     }
     getStatus()
 
@@ -703,6 +708,23 @@ function infoSeriales(seriales) {
             resolve(result)
         })
         .catch((err)=>{reject(err)})
+    })     
+}
+
+function checkAllStatus(seriales) {
+    return new Promise((resolve, reject) => {
+        let noAcreditar=[]
+        seriales.forEach(serial => {
+
+            if(serial.status != "Impreso"){
+                let obj ={}
+                obj['serial']=serial.serial
+                obj['status']=serial.status
+                noAcreditar.push(obj)
+            }
+            
+        });
+        resolve(noAcreditar)
     })     
 }
 
