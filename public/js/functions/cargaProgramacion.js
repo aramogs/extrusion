@@ -124,7 +124,7 @@ function sendData() {
 
     
     $('#modalSpinner').modal({ backdrop: 'static', keyboard: false })
-    // $('#myModal').modal('hide');
+
     formData.delete('excelFile')
     formData.append('excelFile', excelFile.files[0])
     formData.append("data", JSON.stringify({"fecha":myDateString,"turno":turno}));
