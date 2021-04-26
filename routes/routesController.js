@@ -11,6 +11,7 @@ const funcion = require('../public/js/functions/controllerFunctions');
 
 //Require ExcelJs
 const Excel = require('exceljs');
+const { resolveInclude } = require('ejs');
 
 
 
@@ -580,8 +581,8 @@ controller.tablaSeriales_POST = (req, res) => {
 
 controller.cancelarSeriales_POST = (req, res) => {
 
-    seriales=req.body.seriales
-    motivo= req.body.motivo
+    let seriales=req.body.seriales
+    let motivo= req.body.motivo
     let arraySeriales=JSON.parse("[" + seriales + "]");
     funcion.cancelarSeriales(arraySeriales, motivo)
     .then((result)=>{res.json(result)})
@@ -592,7 +593,7 @@ controller.cancelarSeriales_POST = (req, res) => {
 
 
 controller.getIdPlans_POST = (req, res) => {
-    
+
     let fecha= req.body.fecha
 
     async function waitForPromise() {
@@ -644,9 +645,38 @@ controller.cancelarSerialesPlan_POST = (req, res) => {
 
 controller.procesarSeriales_POST = (req, res) => {
 
-    console.log(req.body);
+    let seriales=req.body.seriales
+    seriales=["10","9","500"]
+   
+    async function getStatus() {
+        let allStatus=await statusSeriales(seriales)
+        let info = await infoSeriales(seriales)
+    }
+    getStatus()
 
 }
+
+
+function statusSeriales(seriales) {
+    return new Promise((resolve, reject) => {
+        funcion.statusSerial(seriales) 
+        .then((result)=>{
+            resolve(result)
+        })
+        .catch((err)=>{reject(err)})
+    })     
+}
+     
+function infoSeriales(seriales) {
+    return new Promise((resolve, reject) => {
+        funcion.infoSerial(seriales) 
+        .then((result)=>{
+            resolve(result)
+        })
+        .catch((err)=>{reject(err)})
+    })     
+}
+
 
 
 

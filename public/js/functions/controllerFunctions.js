@@ -4,6 +4,7 @@ const db = require('../../db/conn_b10_bartender');
 const dbE = require('../../db/conn_empleados');
 const dbEX = require('../../db/conn_extr');
 const dbA = require('../../db/conn_areas');
+const { resolveInclude } = require('ejs');
 
 
 funcion.getUsers = (user) => {
@@ -450,6 +451,56 @@ funcion.getCountCanceled = (fecha) => {
             `)
             .then((result) => { resolve(result) })
             .catch((error) => { reject(error) })
+    })
+}
+
+
+funcion.statusSerial = (seriales) => {
+    return new Promise((resolve, reject) => {
+        let resultado=[]
+        seriales.forEach(serial => {
+            
+            dbEX(`SELECT serial, status FROM extrusion_labels WHERE serial = ${serial}`)
+            .then((result) => { 
+
+                if(result.length==0){
+                    let obj ={}
+                    obj['serial']=serial
+                    obj['status']="No Encontrado"
+                    resultado.push(obj)
+                }else{
+                    resultado.push(result[0])
+                }
+             
+                if(resultado.length==seriales.length){
+                    resolve(resultado)
+                }
+            })
+            .catch((error) => { reject(error) })
+        });
+        
+
+    })
+}
+
+
+funcion.infoSerial = (seriales) => {
+    return new Promise((resolve, reject) => {
+        let resultado=[]
+        seriales.forEach(serial => {
+            
+            dbEX(`SELECT serial, status FROM extrusion_labels WHERE serial = ${serial}`)
+            .then((result) => { 
+                    resultado.push(result[0])
+             
+                if(resultado.length==seriales.length){
+                    resolve(resultado)
+                }
+            })
+            .catch((error) => { reject(error) })
+        });
+        
+
     })
 }
 
