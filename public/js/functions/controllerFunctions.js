@@ -489,7 +489,7 @@ funcion.infoSerial = (seriales) => {
         let resultado=[]
         seriales.forEach(serial => {
             
-            dbEX(`SELECT serial, status FROM extrusion_labels WHERE serial = ${serial}`)
+            dbEX(`SELECT serial, numero_parte, cantidad FROM extrusion_labels WHERE serial = ${serial}`)
             .then((result) => { 
                     resultado.push(result[0])
              

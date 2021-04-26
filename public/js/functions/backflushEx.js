@@ -160,7 +160,7 @@ function submitSerials(e) {
     $('#modalCantidad').modal('hide')
     $('#modalSpinner').modal({ backdrop: 'static', keyboard: false })
 
-    let data = { "serial": `${serialsArray}` };
+    let data = { "seriales": `${serialsArray}` };
     axios({
         method: 'post',
         url: "/procesarSeriales",
