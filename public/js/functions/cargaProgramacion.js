@@ -140,7 +140,7 @@ function sendData() {
 
             setTimeout(function(){ $('#modalSpinner').modal('hide') }, 1000);
             
-            cleanPage()
+            window.location = `/editarProgramacion/?fecha=${myDateString}`
 
         })
         .catch((err) => { console.error(err) });

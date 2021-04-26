@@ -34,6 +34,10 @@ let add_turno= document.getElementById("add_turno")
 let btnAgregar= document.getElementById("btnAgregar")
 let msg_add_sap= document.getElementById("msg_add_sap")
 let btn_save_agregar= document.getElementById("btn_save_agregar")
+const queryString = window.location.search;
+const urlParams = new URLSearchParams(queryString);
+const fecha = urlParams.get('fecha')
+
 
 
 
@@ -41,6 +45,12 @@ btnCancelar.forEach(element => {
     element.addEventListener('click', deleteFile)
 });
 
+
+if (fecha != "") {
+  selectFecha.value = fecha
+  myDateString = fecha
+  fillTable()
+}
 
 
 const picker = datepicker('#selectFecha', {

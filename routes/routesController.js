@@ -331,6 +331,7 @@ function amqpRequest(estacion, serial, proceso, material, material_description, 
 controller.editarProgramacion_GET = (req, res) => {
 
     user = req.connection.user
+    fecha = req.params.fecha
     let access = ""
     acceso(req)
         .then((result) => {
@@ -338,7 +339,7 @@ controller.editarProgramacion_GET = (req, res) => {
                 if (element === "TFT\\TFT.DEL.PAGES_BTS_CargaProduccion") access = "ok"
             });
             if (access == "ok") {
-                res.render("editarProgramacion.ejs", { user })
+                res.render("editarProgramacion.ejs", { user,fecha })
             } else {
                 res.redirect("/acceso_denegado")
             }
@@ -542,7 +543,7 @@ controller.checkSap_POST = (req, res) => {
 
     funcion.checkSap(sap)
     .then((result)=>{res.json(result)})
-    .catch((err)=>{console.log(err)})
+    .catch((err)=>{console.error(err)})
 
 }
 
