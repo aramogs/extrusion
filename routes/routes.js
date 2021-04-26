@@ -33,7 +33,7 @@ router.post('/tablaSeriales',routesController.tablaSeriales_POST);
 router.post('/cancelarSeriales',routesController.cancelarSeriales_POST);
 router.post('/impresion', middleware.verifyToken,routesController.impresion_POST);
 router.post('/getIdPlans',routesController.getIdPlans_POST);
-router.post('/cancelarSerialesPlan', middleware.verifyToken,routesController.cancelarSerialesPlan_POST);
+router.post('/cancelarSerialesPlan',routesController.cancelarSerialesPlan_POST);
 
 
 

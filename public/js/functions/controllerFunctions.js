@@ -395,14 +395,17 @@ funcion.UpdatePlan = (plan_id) => {
 funcion.getIdPlans = (fecha) => {
     return new Promise((resolve, reject) => {
 
-        dbEX(`SELECT DISTINCT 
-            plan_id 
+        dbEX(`SELECT  plan_id, COUNT(*)      
+            AS count
         FROM 
             extrusion_labels 
         WHERE 
             datetime 
         LIKE 
             '${fecha}%'
+
+        GROUP BY(plan_id)
+            
 
             `)
             .then((result) => { resolve(result) })
@@ -423,6 +426,30 @@ funcion.cancelSerialesPlan = (plan_id, motivo) => {
         `)
         .then((result) => { resolve(result) })
         .catch((error) => { reject(error) })
+    })
+}
+
+funcion.getCountCanceled = (fecha) => {
+    return new Promise((resolve, reject) => {
+
+        dbEX(`SELECT  plan_id, COUNT(*)      
+            AS count
+        FROM 
+            extrusion_labels 
+        WHERE 
+            datetime
+
+        LIKE 
+            '${fecha}%'
+        AND
+            status != 'Impreso'
+            
+        GROUP BY(plan_id)
+            
+
+            `)
+            .then((result) => { resolve(result) })
+            .catch((error) => { reject(error) })
     })
 }
 
