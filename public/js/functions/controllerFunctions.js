@@ -299,9 +299,9 @@ funcion.getBaseExtr = (no_sap) => {
 }
 
 
+
 funcion.getSerialesFecha = (fecha) => {
     
-    fecha = "2021-04-22"
     return new Promise((resolve, reject) => {
         dbEX(`
         SELECT 
@@ -384,6 +384,40 @@ funcion.UpdatePlan = (plan_id) => {
             production_plan 
         SET 
             status = 'Impreso'
+        WHERE
+            plan_id = ${plan_id};
+        `)
+        .then((result) => { resolve(result) })
+        .catch((error) => { reject(error) })
+    })
+}
+
+funcion.getIdPlans = (fecha) => {
+    return new Promise((resolve, reject) => {
+
+        dbEX(`SELECT DISTINCT 
+            plan_id 
+        FROM 
+            extrusion_labels 
+        WHERE 
+            datetime 
+        LIKE 
+            '${fecha}%'
+
+            `)
+            .then((result) => { resolve(result) })
+            .catch((error) => { reject(error) })
+    })
+}
+
+funcion.cancelSerialesPlan = (plan_id, motivo) => {
+    return new Promise((resolve,reject)=>{
+        dbEX(`
+        UPDATE 
+            extrusion_labels 
+        SET 
+            status = 'Cancelado',
+            descripcion = '${motivo}'
         WHERE
             plan_id = ${plan_id};
         `)

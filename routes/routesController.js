@@ -590,5 +590,33 @@ controller.cancelarSeriales_POST = (req, res) => {
 }
 
 
+controller.getIdPlans_POST = (req, res) => {
+    
+    let fecha= req.body.fecha
+    funcion.getIdPlans(fecha)
+    .then((result)=>{res.json(result)})
+    .catch((err)=>{console.log(err)})
+
+}
+
+controller.cancelarSerialesPlan_POST = (req, res) => {
+
+    
+    let plan_id=req.body.id
+    let motivo=req.body.motivo
+    console.log(plan_id);
+    console.log(motivo);
+
+    funcion.cancelSerialesPlan(plan_id, motivo)
+    .then((result)=>{res.json(result)})
+    .catch((err)=>{console.log(err)})
+
+
+}
+
+
+
+
+
 
 module.exports = controller;

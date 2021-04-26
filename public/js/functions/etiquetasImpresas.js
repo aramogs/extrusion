@@ -14,9 +14,11 @@ let table = $('#myTable').DataTable();
 let midplan = document.getElementById("midplan")
 let formEditar = document.getElementById("formEditar")
 let formMotivo = document.getElementById("formMotivo")
+let formMotivoPlan = document.getElementById("formMotivoPlan")
 let selectFecha= document.getElementById("selectFecha")
 let myDateString
 let motivo= document.getElementById("motivo")
+let motivoPlan= document.getElementById("motivoPlan")
 let msap= document.getElementById("msap")
 let mcantidad= document.getElementById("mcantidad")
 let mfecha= document.getElementById("mfecha")
@@ -29,10 +31,13 @@ let edit_cantidad= document.getElementById("edit_cantidad")
 let add_sap= document.getElementById("add_sap")
 let add_cantidad= document.getElementById("add_cantidad")
 let add_linea= document.getElementById("add_linea")
-let add_turno= document.getElementById("add_turno")
+let select_idPlan= document.getElementById("select_idPlan")
 let msg_add_sap= document.getElementById("msg_add_sap")
 let btn_save_agregar= document.getElementById("btn_save_agregar")
 let btnCancelarSeriales= document.getElementById("btnCancelarSeriales")
+let checkInputsAll = document.querySelectorAll(".form-check-input")
+let btnCancelarIdPlan = document.querySelectorAll("btnCancelarIdPlan")
+
 
 
 
@@ -53,10 +58,12 @@ const picker = datepicker('#selectFecha', {
         let mm = date.getMonth() + 1;
         let dd = date.getDate();
         let yy = date.getFullYear();
+        if(mm <= 9) mm = '0'+mm;
         myDateString = yy + '-' + mm + '-' + dd;
         input.value = myDateString
 
-        btnCancelarSeriales.disabled=false;
+
+        btnCancelarIdPlan.disabled=true;
         table.clear().draw();
         fillTable();
     }
@@ -145,6 +152,7 @@ function cancel(clicked_id)
 
       motivo.value="";
       $('#modalMotivo').modal('hide');
+      $('#modalMotivoPlan').modal('hide');
       table.clear().draw();
       
       setTimeout(function(){ fillTable();  }, 100);
@@ -206,7 +214,7 @@ function cancel(clicked_id)
 
 })
 
-function agregar()
+function modalMotivo()
   {
 
     let checkInputs = document.querySelectorAll(".form-check-input:checked")
@@ -215,6 +223,20 @@ function agregar()
     console.log(myArray);
 
     $('#modalMotivo').modal({ keyboard: false })
+
+    
+  }
+
+
+  function motivoIdPlan()
+  {
+
+    // checkInputs.forEach(input =>{console.log(input.value)})
+    // let myArray = Array.from(checkInputs)
+    // console.log(myArray);
+
+    $('#modalCancelFullId').modal({ keyboard: false })
+    enableIdPlan()
 
     
   }
@@ -279,25 +301,54 @@ function checkSap()
   }
 
 
-  function enableTurno(){
-    add_turno.disabled = false
+  function enableIdPlan(){
+    select_idPlan.disabled = false
+    let data = {"fecha":`${myDateString}`}
+    
     axios({
-        method: 'get',
-        url: `/getTurnos`,
-        data: "",
-        headers: { 'content-type': 'application/x-www-form-urlencoded' }
+        method: 'post',
+        url: `/getIdPlans`,
+        data: JSON.stringify(data),
+        headers: { 'content-type': 'application/json' }
     }).then((response)=>{
+
+      console.log(response.data)
         
-        turnos = response.data
+        plans= response.data
+        console.log(plans)
  
         option = document.createElement('option')
         option.text = "Seleccionar"
-        add_turno.add(option)
-        turnos.forEach(element => {
-            turno = element.turno_descripcion
+        select_idPlan.add(option)
+        plans.forEach(element => {
+            turno = element.plan_id
             option = document.createElement('option')
             option.text = turno
-            add_turno.add(option)
+            select_idPlan.add(option)
         });
     })
 }
+
+
+formMotivoPlan.addEventListener("submit", (e)=>{
+  console.log("formMotivoPlan");
+  e.preventDefault();
+
+  let data = {"id":`${select_idPlan.value}`, "motivo":`${motivoPlan.value}`}
+
+  axios({
+    method: 'post',
+    url: `/cancelarSerialesPlan`,
+    data: JSON.stringify(data),
+    headers: { 'content-type': 'application/json' }
+})
+.then((result) => {
+
+  reload()
+    
+})
+.catch((err) => { console.error(err) })
+
+})
+
+
