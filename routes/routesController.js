@@ -656,6 +656,11 @@ controller.procesarSeriales_POST = (req, res) => {
 
 }
 
+controller.consultarSeriales_POST = (req, res) => {
+
+    console.log(req.body);
+    console.log(req.body.serial);
+}
 
 function statusSeriales(seriales) {
     return new Promise((resolve, reject) => {

@@ -37,7 +37,7 @@ router.post('/cancelarSerialesPlan',routesController.cancelarSerialesPlan_POST);
 router.get('/impresion/', middleware.verifyToken, routesController.impresion_GET);
 router.post('/getProgramacion',routesController.getProgramacion_POST);
 router.post('/procesarSeriales/', routesController.procesarSeriales_POST);
-
+router.post('/consultarSeriales/', routesController.consultarSeriales_POST);
 
 
 
