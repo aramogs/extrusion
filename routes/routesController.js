@@ -645,9 +645,14 @@ controller.cancelarSerialesPlan_POST = (req, res) => {
 controller.procesarSeriales_POST = (req, res) => {
 
     console.log(req.body);
-
+    console.log(req.body.serial);
 }
 
+controller.consultarSeriales_POST = (req, res) => {
+
+    console.log(req.body);
+    console.log(req.body.serial);
+}
 
 
 module.exports = controller;
