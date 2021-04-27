@@ -35,7 +35,7 @@ btn_transferFG.addEventListener("click", () => { $('#modalCantidad').modal({ bac
 submitArray_form.addEventListener("submit", submitSerials)
 
 
-btnCerrar_Success.addEventListener("click", () => { location.href = "/consultaFG" })
+btnCerrar_Success.addEventListener("click", cleanInput())
 
 btnCerrar_Error.addEventListener("click", cleanInput())
 
@@ -173,65 +173,49 @@ function submitSerials(e) {
         .then((result) => {
 
 
-
             response = JSON.parse(result.data)
 
+            soundOk()
+            errorText.hidden = true
+            tabla_consulta_container.hidden = false
+            let arregloResultados = response.result
+            let errors = 0
 
+            arregloResultados.forEach(element => {
+                if (element.error != "N/A") {
+                    errors++
+                }
+            });
 
-            if (response.error !== "N/A") {
-
-                errorTextField.innerHTML = response.error
-                errorText.hidden = false
-                tabla_consulta_container.hidden = true
-                serialsArray = []
-                currentST.innerHTML = ""
-                btn_transferFG.disabled = true
-
-                setTimeout(() => { soundWrong(), $('#modalSpinner').modal('hide') }, 500);
-                $('#modalError').modal({ backdrop: 'static', keyboard: false })
-
-            } else {
-                soundOk()
-                errorText.hidden = true
-                tabla_consulta_container.hidden = false
-                let result = response.result
-                let result_mod = ""
-
-                result_mod = result.replace("[", "").replace("]", "").replace(/'/g, '"')
-                let objectStringArray = (new Function("return [" + result_mod + "];")());
-                let errors = 0
-
-                objectStringArray.forEach(element => {
-                    if (typeof (element.result) != "number") {
-                        errors++
-                    }
-                });
-
-                if (errors != 0) {
-                    tabla_consulta.innerHTML = ""
-                    objectStringArray.forEach(element => {
-                        let newRow = tabla_consulta.insertRow(tabla_consulta.rows.length);
-                        if (typeof (element.result) != "number") {
-                            let row = `
+            if (errors != 0) {
+                tabla_consulta.innerHTML = ""
+                arregloResultados.forEach(element => {
+                    let newRow = tabla_consulta.insertRow(tabla_consulta.rows.length);
+                    if (element.error != "N/A") {
+                        let row = `
                                 <tr class="bg-danger">
                                     <td>${element.serial_num}</td>
-                                    <td>${element.result}</td>
+                                    <td>${element.error}</td>
                                 </tr>
                                 `
-                            newRow.classList.add("bg-danger", "text-white")
-                            return newRow.innerHTML = row;
-                        }
+                        newRow.classList.add("bg-danger", "text-white")
+                        return newRow.innerHTML = row;
+                    }
 
 
-                    })
-                    cantidadErrores.innerHTML = errors
+                })
+                cantidadErrores.innerHTML = errors
+              
+                setTimeout(function () { 
                     $('#modalSpinner').modal('hide')
                     $('#modalError').modal({ backdrop: 'static', keyboard: false })
-                } else {
-                    $('#modalSpinner').modal('hide')
-                    $('#modalSuccess').modal({ backdrop: 'static', keyboard: false })
-                }
+                 }, 500);
+              
+            } else {
+                $('#modalSpinner').modal('hide')
+                $('#modalSuccess').modal({ backdrop: 'static', keyboard: false })
             }
+
         })
         .catch((err) => {
             console.error(err);

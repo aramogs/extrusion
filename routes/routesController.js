@@ -657,25 +657,24 @@ controller.procesarSeriales_POST = (req, res) => {
 
         if(checkStatus.length>0){
 
-            console.log(checkStatus)
-            res.json(checkStatus)
+            let obj ={}
+            obj['result']=checkStatus
+            obj['error']="N/A"
+            console.log(JSON.stringify(obj))
+            res.json(JSON.stringify(obj))
 
         }else{
 
             let info = await infoSeriales(arraySeriales)  
-            // Send Acreditar agrupado por numero de parte
-            // const sumPartes = async (array, all = {}) => (
-            //     array.forEach(({ numero_parte, cantidad }) => (all[numero_parte] = (all[numero_parte] ?? 0) + cantidad)), all
-            //   )
-            //   let sendAcreditar= await sumPartes(info);
-
-            console.log(info)
-              let send = `{"station":"${estacion}","serial_num":"","process":"${process}", "material":"",  "cantidad":"", "data":"${info}"}`
+            let jsonInfo=JSON.stringify(info)
+              let send = `{"station":"${estacion}","serial_num":"","process":"${process}", "material":"",  "cantidad":"", "data":${jsonInfo}}`
               amqpRequest(send)
               .then((result)=>{
                 async function updateAcred(){
-                  let acreditado = await updateAcreditado(arraySeriales);
-                  console.log(acreditado)
+                    let resultado= JSON.parse(result)
+                    let resultadArray= resultado.result
+                    let acreditado = await updateAcreditado(resultadArray);
+                    console.log(result)
                   res.json(result)
                 }updateAcred()
                 })
@@ -691,11 +690,11 @@ controller.consultarSeriales_POST = (req, res) => {
 
     let seriales=req.body.seriales
     let arraySeriales=seriales.split(',')
-    async function getStatus(){
+    async function getStatusInfo(){
         let allStatus=await statusSeriales(arraySeriales)
         res.json(allStatus)
     }
-    getStatus()
+    getStatusInfo()
 
 }
 
@@ -726,8 +725,13 @@ function checkAllStatus(seriales) {
 
             if(serial.status != "Impreso"){
                 let obj ={}
-                obj['serial']=serial.serial
-                obj['status']=serial.status
+                let error
+                if(serial.status=="Cancelado")error="Serial Cancelado"
+                if(serial.status=="Acreditado")error="Serial Ya Acreditado"
+                if(serial.status=="No Encontrado")error="Serial No Encontrado"
+                obj['serial_num']=serial.serial
+                obj['error']=error
+                obj['result']="N/A"
                 noAcreditar.push(obj)
             }
             
