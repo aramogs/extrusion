@@ -666,21 +666,6 @@ controller.procesarSeriales_POST = (req, res) => {
         }else{
 
             let info = await infoSeriales(arraySeriales)  
-<<<<<<< HEAD
-            // Send Acreditar agrupado por numero de parte
-            // const sumPartes = async (array, all = {}) => (
-            //     array.forEach(({ numero_parte, cantidad }) => (all[numero_parte] = (all[numero_parte] ?? 0) + cantidad)), all
-            //   )
-            //   let sendAcreditar= await sumPartes(info);
-
-            console.log(info)
-              let send = `{"station":"${estacion}","serial_num":"","process":"${process}", "material":"",  "cantidad":"", "data":${JSON.stringify(info)}}`
-              amqpRequest(send)
-              .then((result)=>{
-                async function updateAcred(){
-                //   let acreditado = await updateAcreditado(arraySeriales);
-                //   console.log(acreditado)
-=======
             let jsonInfo=JSON.stringify(info)
               let send = `{"station":"${estacion}","serial_num":"","process":"${process}", "material":"",  "cantidad":"", "data":${jsonInfo}}`
               amqpRequest(send)
@@ -690,7 +675,6 @@ controller.procesarSeriales_POST = (req, res) => {
                     let resultadArray= resultado.result
                     let acreditado = await updateAcreditado(resultadArray);
                     console.log(result)
->>>>>>> 4422d123546270594906e6de0f74b62b710b9542
                   res.json(result)
                 }updateAcred()
                 })

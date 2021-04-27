@@ -495,12 +495,6 @@ funcion.infoSerial = (seriales) => {
     return new Promise((resolve, reject) => {
         let resultado = []
         seriales.forEach(serial => {
-<<<<<<< HEAD
-            
-            dbEX(`SELECT serial, plan_id, numero_parte, cantidad   FROM extrusion_labels WHERE serial = ${serial}`)
-            .then((result) => { 
-                console.log(result[0]);
-=======
             dbEX(`
             SELECT 
                 serial,plan_id, numero_parte, cantidad 
@@ -510,7 +504,6 @@ funcion.infoSerial = (seriales) => {
                 serial = ${serial}
                 `)
                 .then((result) => {
->>>>>>> 4422d123546270594906e6de0f74b62b710b9542
                     resultado.push(result[0])
 
                     if (resultado.length == seriales.length) {
