@@ -489,8 +489,9 @@ funcion.infoSerial = (seriales) => {
         let resultado=[]
         seriales.forEach(serial => {
             
-            dbEX(`SELECT serial, plan_id, numero_parte, cantidad FROM extrusion_labels WHERE serial = ${serial}`)
+            dbEX(`SELECT serial, plan_id, numero_parte, cantidad   FROM extrusion_labels WHERE serial = ${serial}`)
             .then((result) => { 
+                console.log(result[0]);
                     resultado.push(result[0])
              
                 if(resultado.length==seriales.length){
