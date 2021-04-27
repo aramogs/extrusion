@@ -172,66 +172,34 @@ function submitSerials(e) {
     })
         .then((result) => {
 
+            console.log(result.data)
 
+            let resultado = result.data
 
-            response = JSON.parse(result.data)
-
-
-
-            if (response.error !== "N/A") {
-
-                errorTextField.innerHTML = response.error
-                errorText.hidden = false
-                tabla_consulta_container.hidden = true
-                serialsArray = []
-                currentST.innerHTML = ""
-                btn_transferFG.disabled = true
-
-                setTimeout(() => { soundWrong(), $('#modalSpinner').modal('hide') }, 500);
-                $('#modalError').modal({ backdrop: 'static', keyboard: false })
-
-            } else {
                 soundOk()
                 errorText.hidden = true
                 tabla_consulta_container.hidden = false
-                let result = response.result
-                let result_mod = ""
-
-                result_mod = result.replace("[", "").replace("]", "").replace(/'/g, '"')
-                let objectStringArray = (new Function("return [" + result_mod + "];")());
-                let errors = 0
-
-                objectStringArray.forEach(element => {
-                    if (typeof (element.result) != "number") {
-                        errors++
-                    }
-                });
-
-                if (errors != 0) {
+     
                     tabla_consulta.innerHTML = ""
-                    objectStringArray.forEach(element => {
+                    resultado.forEach(element => {
                         let newRow = tabla_consulta.insertRow(tabla_consulta.rows.length);
-                        if (typeof (element.result) != "number") {
+
                             let row = `
-                                <tr class="bg-danger">
-                                    <td>${element.serial_num}</td>
-                                    <td>${element.result}</td>
+                                <tr class="bg-light">
+                                    <td>${element.serial}</td>
+                                    <td>${element.status}</td>
                                 </tr>
                                 `
-                            newRow.classList.add("bg-danger", "text-white")
+                            newRow.classList.add( "text-dark")
                             return newRow.innerHTML = row;
-                        }
-
-
                     })
-                    cantidadErrores.innerHTML = errors
-                    $('#modalSpinner').modal('hide')
-                    $('#modalError').modal({ backdrop: 'static', keyboard: false })
-                } else {
-                    $('#modalSpinner').modal('hide')
-                    $('#modalSuccess').modal({ backdrop: 'static', keyboard: false })
-                }
-            }
+                    cantidadErrores.innerHTML = ""
+                    setTimeout(function () { 
+                        $('#modalSpinner').modal('hide')
+                        $('#modalError').modal({ backdrop: 'static', keyboard: false })
+                     }, 500);
+  
+            
         })
         .catch((err) => {
             console.error(err);

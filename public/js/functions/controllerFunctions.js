@@ -169,7 +169,7 @@ funcion.cancelarIdPlan = (idplan, motivo) => {
             production_plan
         SET
             status = 'Cancelado', 
-            description ='${motivo}'
+            motivo_cancel ='${motivo}'
         WHERE
             plan_id= ${idplan}
         
@@ -302,7 +302,7 @@ funcion.getBaseExtr = (no_sap) => {
 
 
 funcion.getSerialesFecha = (fecha) => {
-    
+
     return new Promise((resolve, reject) => {
         dbEX(`
         SELECT 
@@ -317,7 +317,7 @@ funcion.getSerialesFecha = (fecha) => {
             .catch((error) => { reject(error) })
     })
 }
-            
+
 funcion.getColumnsExtr = () => {
     return new Promise((resolve, reject) => {
         db(`
@@ -346,13 +346,13 @@ funcion.cancelarSeriales = (arraySeriales, motivo) => {
                 extrusion_labels
             SET
                 status = 'Cancelado', 
-                descripcion ='${motivo}'
+                motivo_cancel ='${motivo}'
             WHERE
                 serial= ${arraySeriales[i]}
             
             `)
                 .then((result) => { resolve(result) })
-                .catch((error) => { reject(error) })           
+                .catch((error) => { reject(error) })
         }
 
     })
@@ -379,7 +379,7 @@ funcion.getPrinter = (linea) => {
 }
 
 funcion.UpdatePlan = (plan_id) => {
-    return new Promise((resolve,reject)=>{
+    return new Promise((resolve, reject) => {
         dbEX(`
         UPDATE 
             production_plan 
@@ -388,8 +388,8 @@ funcion.UpdatePlan = (plan_id) => {
         WHERE
             plan_id = ${plan_id};
         `)
-        .then((result) => { resolve(result) })
-        .catch((error) => { reject(error) })
+            .then((result) => { resolve(result) })
+            .catch((error) => { reject(error) })
     })
 }
 
@@ -415,18 +415,18 @@ funcion.getIdPlans = (fecha) => {
 }
 
 funcion.cancelSerialesPlan = (plan_id, motivo) => {
-    return new Promise((resolve,reject)=>{
+    return new Promise((resolve, reject) => {
         dbEX(`
         UPDATE 
             extrusion_labels 
         SET 
             status = 'Cancelado',
-            descripcion = '${motivo}'
+            motivo_cancel = '${motivo}'
         WHERE
             plan_id = ${plan_id};
         `)
-        .then((result) => { resolve(result) })
-        .catch((error) => { reject(error) })
+            .then((result) => { resolve(result) })
+            .catch((error) => { reject(error) })
     })
 }
 
@@ -457,28 +457,35 @@ funcion.getCountCanceled = (fecha) => {
 
 funcion.statusSerial = (seriales) => {
     return new Promise((resolve, reject) => {
-        let resultado=[]
+        let resultado = []
         seriales.forEach(serial => {
-            
-            dbEX(`SELECT serial, status FROM extrusion_labels WHERE serial = ${serial}`)
-            .then((result) => { 
 
-                if(result.length==0){
-                    let obj ={}
-                    obj['serial']=serial
-                    obj['status']="No Encontrado"
-                    resultado.push(obj)
-                }else{
-                    resultado.push(result[0])
-                }
-             
-                if(resultado.length==seriales.length){
-                    resolve(resultado)
-                }
-            })
-            .catch((error) => { reject(error) })
+            dbEX(`
+            SELECT 
+                serial, status 
+            FROM 
+                extrusion_labels 
+            WHERE 
+                serial = ${serial}
+                `)
+                .then((result) => {
+
+                    if (result.length == 0) {
+                        let obj = {}
+                        obj['serial'] = serial
+                        obj['status'] = "No Encontrado"
+                        resultado.push(obj)
+                    } else {
+                        resultado.push(result[0])
+                    }
+
+                    if (resultado.length == seriales.length) {
+                        resolve(resultado)
+                    }
+                })
+                .catch((error) => { reject(error) })
         });
-        
+
 
     })
 }
@@ -486,46 +493,94 @@ funcion.statusSerial = (seriales) => {
 
 funcion.infoSerial = (seriales) => {
     return new Promise((resolve, reject) => {
-        let resultado=[]
+        let resultado = []
         seriales.forEach(serial => {
+<<<<<<< HEAD
             
             dbEX(`SELECT serial, plan_id, numero_parte, cantidad   FROM extrusion_labels WHERE serial = ${serial}`)
             .then((result) => { 
                 console.log(result[0]);
+=======
+            dbEX(`
+            SELECT 
+                serial,plan_id, numero_parte, cantidad 
+            FROM 
+                extrusion_labels 
+            WHERE 
+                serial = ${serial}
+                `)
+                .then((result) => {
+>>>>>>> 4422d123546270594906e6de0f74b62b710b9542
                     resultado.push(result[0])
-             
-                if(resultado.length==seriales.length){
-                    resolve(resultado)
-                }
-            })
-            .catch((error) => { reject(error) })
+
+                    if (resultado.length == seriales.length) {
+                        resolve(resultado)
+                    }
+                })
+                .catch((error) => { reject(error) })
         });
-        
+
 
     })
 }
 
 
 funcion.updateSerialesAcred = (seriales) => {
-    return new Promise((resolve, reject) => {
-        let affectedRows=0
-        seriales.forEach(serial => {
-            
-            dbEX(`UPDATE extrusion_labels SET status='Acreditado'WHERE serial = ${serial}`)
-            .then((result) => { 
 
-                if (result.affectedRows == 1) {
-                    affectedRows++
-                }
-                if (affectedRows == seriales.length) {
-                    resolve(affectedRows)
-                }
- 
-  
-            })
-            .catch((error) => { reject(error) })
+    return new Promise((resolve, reject) => {
+        let affectedRows = 0
+
+
+        seriales.forEach(serial => {
+            if (serial.result != "N/A") {
+                dbEX(`
+                UPDATE 
+                    extrusion_labels 
+                SET 
+                    status='Acreditado',
+                    resultado_sap='${serial.result}'
+                WHERE 
+                    serial = ${serial.serial_num}
+                    `)
+                    .then((result) => {
+
+                        if (result.affectedRows == 1) {
+                            affectedRows++
+                            if (affectedRows == seriales.length) {
+
+                                resolve(affectedRows)
+                            }
+                        }
+                    })
+                    .catch((error) => { reject(error) })
+
+            } else {
+                dbEX(`
+                UPDATE 
+                    extrusion_labels 
+                SET 
+                    resultado_sap='${serial.result}'
+                WHERE 
+                    serial = ${serial.serial_num}
+                    `)
+                    .then((result) => {
+
+                        if (result.affectedRows == 1) {
+                            affectedRows++
+                            if (affectedRows == seriales.length) {
+
+                                resolve(affectedRows)
+                            }
+                        }
+                    })
+                    .catch((error) => { reject(error) })
+            }
+
+
+
+
         });
-        
+
 
     })
 }
