@@ -663,14 +663,22 @@ controller.procesarSeriales_POST = (req, res) => {
         }else{
 
             let info = await infoSeriales(arraySeriales)  
-            const sumPartes = async (array, all = {}) => (
-                array.forEach(({ numero_parte, cantidad }) => (all[numero_parte] = (all[numero_parte] ?? 0) + cantidad)), all
-              )
-              let sendAcreditar= await sumPartes(info);
-              console.log(sendAcreditar);
-              let send = `{"station":"${estacion}","serial_num":"","process":"${process}", "material":"",  "cantidad":"", "data":"${sendAcreditar}"}`
+            // Send Acreditar agrupado por numero de parte
+            // const sumPartes = async (array, all = {}) => (
+            //     array.forEach(({ numero_parte, cantidad }) => (all[numero_parte] = (all[numero_parte] ?? 0) + cantidad)), all
+            //   )
+            //   let sendAcreditar= await sumPartes(info);
+
+            console.log(info)
+              let send = `{"station":"${estacion}","serial_num":"","process":"${process}", "material":"",  "cantidad":"", "data":"${info}"}`
               amqpRequest(send)
-              .then((result)=>{res.json(result)})
+              .then((result)=>{
+                async function updateAcred(){
+                  let acreditado = await updateAcreditado(arraySeriales);
+                  console.log(acreditado)
+                  res.json(result)
+                }updateAcred()
+                })
               .catch((err)=>{console.error(err)})
 
         }
@@ -725,6 +733,16 @@ function checkAllStatus(seriales) {
             
         });
         resolve(noAcreditar)
+    })     
+}
+
+function updateAcreditado(seriales) {
+    return new Promise((resolve, reject) => {
+        funcion.updateSerialesAcred(seriales) 
+        .then((result)=>{
+            resolve(result)
+        })
+        .catch((err)=>{reject(err)})
     })     
 }
 

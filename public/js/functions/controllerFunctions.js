@@ -489,13 +489,38 @@ funcion.infoSerial = (seriales) => {
         let resultado=[]
         seriales.forEach(serial => {
             
-            dbEX(`SELECT serial, numero_parte, cantidad FROM extrusion_labels WHERE serial = ${serial}`)
+            dbEX(`SELECT serial, plan_id, numero_parte, cantidad FROM extrusion_labels WHERE serial = ${serial}`)
             .then((result) => { 
                     resultado.push(result[0])
              
                 if(resultado.length==seriales.length){
                     resolve(resultado)
                 }
+            })
+            .catch((error) => { reject(error) })
+        });
+        
+
+    })
+}
+
+
+funcion.updateSerialesAcred = (seriales) => {
+    return new Promise((resolve, reject) => {
+        let affectedRows=0
+        seriales.forEach(serial => {
+            
+            dbEX(`UPDATE extrusion_labels SET status='Acreditado'WHERE serial = ${serial}`)
+            .then((result) => { 
+
+                if (result.affectedRows == 1) {
+                    affectedRows++
+                }
+                if (affectedRows == seriales.length) {
+                    resolve(affectedRows)
+                }
+ 
+  
             })
             .catch((error) => { reject(error) })
         });
