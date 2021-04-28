@@ -1,0 +1,72 @@
+<%- include ("./static/header") %>
+    <%- include ("./static/sidebar") %>
+        <%- include ("./static/navbar") %>
+
+
+
+
+            <div class="container-fluid">
+                <h1 class="display-4 text-center csvTitulo">Reportes Extrusion</h1>
+            </div>
+
+            <div class="container-fluid">
+
+                <div class=" card-header text-white bg-dark ">
+                    <div class="row">
+                        <div class="col-lg-6  text-center">
+                            <div class="col-lg-8 offset-lg-2">
+                                <div class="form-group">
+                                    <label>Desde</label>
+                                    <input type="text" class="form-control text-center" name="date" id="selectDesde"
+                                        aria-describedby="helpId" placeholder="Seleccionar Fecha" autocomplete="off">
+                                </div>
+                            </div>
+                        </div>
+                        <div class="col-lg-6  text-center">
+                            <div class="col-lg-8 offset-lg-2">
+                                <div class="form-group">
+                                    <label>Hasta</label>
+                                    <input type="text" class="form-control text-center" name="date" id="selectHasta"
+                                        aria-describedby="helpId" placeholder="Seleccionar Fecha" autocomplete="off">
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                </div>
+
+                <div class="table-responsive">
+                    <div class="containerTable">
+                        <div class="table table-responsive" >
+                            <table id="tableSerials" class="table table-bordered table-striped table-sm hover">
+                                <thead class="thead-dark">
+
+                                    <th><span class="fas fa-history"></span> Serial </th>
+                                    <th><span class="fas fa-history"></span> Plan_ID </th>
+                                    <th><span class="fas fa-history"></span> SAP </th>
+                                    <th><span class="fas fa-history"></span> Operador </th>
+                                    <th><span class="fas fa-history"></span> Cantidad </th>
+                                    <th><span class="fas fa-history"></span> Fecha </th>
+                                    <th><span class="fas fa-history"></span> Motivo_Cancel </th>
+                                    <th><span class="fas fa-history"></span> Status </th>
+                                    <th><span class="fas fa-history"></span> Resultado_SAP </th>
+
+                                </thead>
+
+                                <tbody>
+                                    <!-- Agregado directamente desde Javascript -->
+                                </tbody>
+
+                            </table>
+                        </div>
+                    </div>
+                </div>
+
+
+
+            </div>
+
+
+
+<%- include ("./static/footer") %>
+<script src="/js/functions/reportes.js"></script>

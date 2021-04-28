@@ -277,7 +277,7 @@ function amqpRequest(data) {
     return new Promise((resolve, reject) => {
         let send = data
         let args = process.argv.slice(2);
-        let estacion= data.station
+        let estacion = data.station
         if (args.length == 0) {
             // console.log("Usage: rpc_client.js num");
             // process.exit(1);
@@ -340,7 +340,7 @@ controller.editarProgramacion_GET = (req, res) => {
                 if (element === "TFT\\TFT.DEL.PAGES_BTS_CargaProduccion") access = "ok"
             });
             if (access == "ok") {
-                res.render("editarProgramacion.ejs", { user,fecha })
+                res.render("editarProgramacion.ejs", { user, fecha })
             } else {
                 res.redirect("/acceso_denegado")
             }
@@ -489,7 +489,7 @@ controller.impresion_POST = (req, res) => {
         let values = await funcion.getBaseExtr(no_sap)
         let impre = await funcion.getPrinter(linea)
         let data = {}
-        let serial_num = insert.insertId + numero_etiquetas -1
+        let serial_num = insert.insertId + numero_etiquetas - 1
         Promise.all([insert, values, impre])
             .then((result) => {
 
@@ -502,36 +502,36 @@ controller.impresion_POST = (req, res) => {
                     printLabel(i, serial)
                 }
 
-                function printLabel(i,serial) {
+                function printLabel(i, serial) {
                     setTimeout(() => {
                         for (const [key, value] of Object.entries(values_[0])) {
 
                             if (`${key}` === `${contenedor}`) data['quant'] = value
-                            data[`${key}`] = value  
+                            data[`${key}`] = value
                             data[`printer`] = impresora
                             data['serial'] = serial
                             data['line'] = linea
                             data['emp_num'] = operador_id
-    
+
                         }
-    
+
                         axios({
                             method: 'post',
                             url: `http://${process.env.BARTENDER_SERVER}:${process.env.BARTENDER_PORT}/Integration/EXT/Execute/`,
                             data: JSON.stringify(data),
                             headers: { 'content-type': 'application/json' }
                         })
-                    }, 1000* i);
+                    }, 1000 * i);
                 }
-                
+
             })
-            .then(()=>{
-                res.json({"last_id":serial_num})
+            .then(() => {
+                res.json({ "last_id": serial_num })
                 funcion.UpdatePlan(plan_id)
             })
     }
 
-    
+
     waitForPromise()
 
 
@@ -540,11 +540,11 @@ controller.impresion_POST = (req, res) => {
 
 controller.checkSap_POST = (req, res) => {
 
-    let sap= req.body.sap
+    let sap = req.body.sap
 
     funcion.checkSap(sap)
-    .then((result)=>{res.json(result)})
-    .catch((err)=>{console.error(err)})
+        .then((result) => { res.json(result) })
+        .catch((err) => { console.error(err) })
 
 }
 
@@ -570,23 +570,33 @@ controller.etiquetasImpresas_GET = (req, res) => {
 
 
 controller.tablaSeriales_POST = (req, res) => {
-    
-    let fecha= req.body.fecha
+
+    let fecha = req.body.fecha
     funcion.getSerialesFecha(fecha)
-    .then((result)=>{res.json(result)})
-    .catch((err)=>{console.log(err)})
+        .then((result) => { res.json(result) })
+        .catch((err) => { console.log(err) })
+
+}
+
+controller.tablaSerialesFechasMultiples_POST = (req, res) => {
+
+    let desde = req.body.desde
+    let hasta = req.body.hasta
+    funcion.getSerialesFechasMultiples(desde, hasta)
+        .then((result) => { res.json(result) })
+        .catch((err) => { console.log(err) })
 
 }
 
 
 controller.cancelarSeriales_POST = (req, res) => {
 
-    let seriales=req.body.seriales
-    let motivo= req.body.motivo
-    let arraySeriales=seriales.split(',')
+    let seriales = req.body.seriales
+    let motivo = req.body.motivo
+    let arraySeriales = seriales.split(',')
     funcion.cancelarSeriales(arraySeriales, motivo)
-    .then((result)=>{res.json(result)})
-    .catch((err)=>{console.log(err)})
+        .then((result) => { res.json(result) })
+        .catch((err) => { console.log(err) })
 
 
 }
@@ -594,50 +604,50 @@ controller.cancelarSeriales_POST = (req, res) => {
 
 controller.getIdPlans_POST = (req, res) => {
 
-    let fecha= req.body.fecha
+    let fecha = req.body.fecha
 
     async function waitForPromise() {
 
-        let getIdPlansFecha= await funcion.getIdPlans(fecha)
-        let getCountCanceled= await funcion.getCountCanceled(fecha)
+        let getIdPlansFecha = await funcion.getIdPlans(fecha)
+        let getCountCanceled = await funcion.getCountCanceled(fecha)
 
-        Promise.all([getIdPlansFecha,getCountCanceled])
-        .then((result) => {
+        Promise.all([getIdPlansFecha, getCountCanceled])
+            .then((result) => {
 
-            ids = result[0]
-            canceled_acreditado= result[1]
+                ids = result[0]
+                canceled_acreditado = result[1]
 
-            for (let i = 0; i < ids.length; i++) {
+                for (let i = 0; i < ids.length; i++) {
 
-               for (let y = 0; y < canceled_acreditado.length; y++) {
-                   
-                    if(ids[i].plan_id==canceled_acreditado[y].plan_id){
-                        ids.splice(i,1)
+                    for (let y = 0; y < canceled_acreditado.length; y++) {
+
+                        if (ids[i].plan_id == canceled_acreditado[y].plan_id) {
+                            ids.splice(i, 1)
+                        }
+
                     }
-                   
-               }
-                
-            }
 
-        }).then(()=>{
-            res.json({ids})
-        })
+                }
+
+            }).then(() => {
+                res.json({ ids })
+            })
 
     }
 
     waitForPromise()
-    
+
 
 }
 
 controller.cancelarSerialesPlan_POST = (req, res) => {
 
-    let plan_id=req.body.id
-    let motivo=req.body.motivo
+    let plan_id = req.body.id
+    let motivo = req.body.motivo
 
     funcion.cancelSerialesPlan(plan_id, motivo)
-    .then((result)=>{res.json(result)})
-    .catch((err)=>{console.log(err)})
+        .then((result) => { res.json(result) })
+        .catch((err) => { console.log(err) })
 
 
 }
@@ -645,24 +655,25 @@ controller.cancelarSerialesPlan_POST = (req, res) => {
 
 controller.procesarSeriales_POST = (req, res) => {
 
-    let seriales=req.body.seriales
-    let arraySeriales=seriales.split(',')
+    let seriales = req.body.seriales
+    let arraySeriales = seriales.split(',')
     let estacion = uuidv4();
-    let process="confirm_ext_hu"
-   
-    async function getStatus(){
+    let process = "confirm_ext_hu"
 
-        let allStatus=await statusSeriales(arraySeriales)
+    async function getStatus() {
+
+        let allStatus = await statusSeriales(arraySeriales)
         let checkStatus = await checkAllStatus(allStatus)
 
-        if(checkStatus.length>0){
+        if (checkStatus.length > 0) {
 
-            let obj ={}
-            obj['result']=checkStatus
-            obj['error']="N/A"
+            let obj = {}
+            obj['result'] = checkStatus
+            obj['error'] = "N/A"
             console.log(JSON.stringify(obj))
             res.json(JSON.stringify(obj))
 
+<<<<<<< HEAD
         }else{
 
             let user_id=req.body.user
@@ -678,8 +689,24 @@ controller.procesarSeriales_POST = (req, res) => {
                     console.log(result)
                   res.json(result)
                 }updateAcred()
+=======
+        } else {
+
+            let info = await infoSeriales(arraySeriales)
+            let jsonInfo = JSON.stringify(info)
+            let send = `{"station":"${estacion}","serial_num":"","process":"${process}", "material":"",  "cantidad":"", "data":${jsonInfo}}`
+            amqpRequest(send)
+                .then((result) => {
+                    async function updateAcred() {
+                        let resultado = JSON.parse(result)
+                        let resultadArray = resultado.result
+                        let acreditado = await updateAcreditado(resultadArray);
+                        console.log(result)
+                        res.json(result)
+                    } updateAcred()
+>>>>>>> 94747f8aca5dd92cec54567d61cb5a7449c0bc2b
                 })
-              .catch((err)=>{console.error(err)})
+                .catch((err) => { console.error(err) })
 
         }
     }
@@ -689,10 +716,10 @@ controller.procesarSeriales_POST = (req, res) => {
 
 controller.consultarSeriales_POST = (req, res) => {
 
-    let seriales=req.body.seriales
-    let arraySeriales=seriales.split(',')
-    async function getStatusInfo(){
-        let allStatus=await statusSeriales(arraySeriales)
+    let seriales = req.body.seriales
+    let arraySeriales = seriales.split(',')
+    async function getStatusInfo() {
+        let allStatus = await statusSeriales(arraySeriales)
         res.json(allStatus)
     }
     getStatusInfo()
@@ -701,57 +728,71 @@ controller.consultarSeriales_POST = (req, res) => {
 
 function statusSeriales(seriales) {
     return new Promise((resolve, reject) => {
-        funcion.statusSerial(seriales) 
-        .then((result)=>{
-            resolve(result)
-        })
-        .catch((err)=>{reject(err)})
-    })     
+        funcion.statusSerial(seriales)
+            .then((result) => {
+                resolve(result)
+            })
+            .catch((err) => { reject(err) })
+    })
 }
-     
+
 function infoSeriales(seriales) {
     return new Promise((resolve, reject) => {
-        funcion.infoSerial(seriales) 
-        .then((result)=>{
-            resolve(result)
-        })
-        .catch((err)=>{reject(err)})
-    })     
+        funcion.infoSerial(seriales)
+            .then((result) => {
+                resolve(result)
+            })
+            .catch((err) => { reject(err) })
+    })
 }
 
 function checkAllStatus(seriales) {
     return new Promise((resolve, reject) => {
-        let noAcreditar=[]
+        let noAcreditar = []
         seriales.forEach(serial => {
 
-            if(serial.status != "Impreso"){
-                let obj ={}
+            if (serial.status != "Impreso") {
+                let obj = {}
                 let error
-                if(serial.status=="Cancelado")error="Serial Cancelado"
-                if(serial.status=="Acreditado")error="Serial Ya Acreditado"
-                if(serial.status=="No Encontrado")error="Serial No Encontrado"
-                obj['serial_num']=serial.serial
-                obj['error']=error
-                obj['result']="N/A"
+                if (serial.status == "Cancelado") error = "Serial Cancelado"
+                if (serial.status == "Acreditado") error = "Serial Ya Acreditado"
+                if (serial.status == "No Encontrado") error = "Serial No Encontrado"
+                obj['serial_num'] = serial.serial
+                obj['error'] = error
+                obj['result'] = "N/A"
                 noAcreditar.push(obj)
             }
-            
+
         });
         resolve(noAcreditar)
-    })     
+    })
 }
 
 function updateAcreditado(seriales, user_id) {
     return new Promise((resolve, reject) => {
+<<<<<<< HEAD
         funcion.updateSerialesAcred(seriales, user_id) 
         .then((result)=>{
             resolve(result)
         })
         .catch((err)=>{reject(err)})
     })     
+=======
+        funcion.updateSerialesAcred(seriales)
+            .then((result) => {
+                resolve(result)
+            })
+            .catch((err) => { reject(err) })
+    })
+>>>>>>> 94747f8aca5dd92cec54567d61cb5a7449c0bc2b
 }
 
 
+controller.reportes_GET = (req, res) => {
 
+    res.render('reportes.ejs', {
+
+    });
+}
 
 module.exports = controller;

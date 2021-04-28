@@ -76,11 +76,18 @@ function getSelectedTurno() {
             <button type="submit"  class="btn btn-info  rounded-pill" name="btnPrint" id="${result.data[y].plan_id}" onClick="ImprimirModal(this.id)" ><span class="fas fa-print"><span hidden>${result.data[y].plan_id}</span></span>
             `
 
-        } else {
+        } else if(result.data[y].status == "Cancelado"){
           imprimir =
+          `
+            <button type="button" class="btn btn-secondary  rounded-pill " disabled><span class="fas fa-ban" disabled><span hidden>${result.data[y].plan_id}</span></span>
+            ` 
+          } else{
+            imprimir =
           `
             <button type="button" class="btn btn-success  rounded-pill " disabled><span class="fas fa-check-square" disabled><span hidden>${result.data[y].plan_id}</span></span>
             ` }
+          
+          
 
         table.row.add([
           imprimir,
@@ -152,6 +159,7 @@ function ImprimirModal(idp) {
 addCard = function (key, value, cantidadProgramada) {
   let ul = document.getElementById("cotenedorSection")
   let li = document.createElement("li")
+  let etiquetas = Math.floor(cantidadProgramada / value)
   let card =
     `
   <div class="card text-center" style="width: 12rem;">
@@ -159,7 +167,7 @@ addCard = function (key, value, cantidadProgramada) {
   <div class="card-body">
     <p>Capacidad: ${value}</p>
 
-      <button class="btn btn-info btnImprimir" type="submit" value="${key}-${value}">Etiquetas: ${Math.floor(cantidadProgramada / value)}</button>
+      <button class="btn btn-info btnImprimir" type="submit" value="${key}-${value}">Etiquetas: ${etiquetas}</button>
 
   </div>
 </div>
@@ -169,8 +177,11 @@ addCard = function (key, value, cantidadProgramada) {
 
   li.setAttribute("id", `${key}`)
   // li.appendChild(document.createTextNode(`Value`  + value));
-  li.innerHTML = card
-  ul.appendChild(li)
+  if (etiquetas!=0) {
+    li.innerHTML = card
+    ul.appendChild(li)
+  }
+  
 }
 
 function clear() {
