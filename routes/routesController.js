@@ -673,7 +673,6 @@ controller.procesarSeriales_POST = (req, res) => {
             console.log(JSON.stringify(obj))
             res.json(JSON.stringify(obj))
 
-<<<<<<< HEAD
         }else{
 
             let user_id=req.body.user
@@ -689,22 +688,6 @@ controller.procesarSeriales_POST = (req, res) => {
                     console.log(result)
                   res.json(result)
                 }updateAcred()
-=======
-        } else {
-
-            let info = await infoSeriales(arraySeriales)
-            let jsonInfo = JSON.stringify(info)
-            let send = `{"station":"${estacion}","serial_num":"","process":"${process}", "material":"",  "cantidad":"", "data":${jsonInfo}}`
-            amqpRequest(send)
-                .then((result) => {
-                    async function updateAcred() {
-                        let resultado = JSON.parse(result)
-                        let resultadArray = resultado.result
-                        let acreditado = await updateAcreditado(resultadArray);
-                        console.log(result)
-                        res.json(result)
-                    } updateAcred()
->>>>>>> 94747f8aca5dd92cec54567d61cb5a7449c0bc2b
                 })
                 .catch((err) => { console.error(err) })
 
@@ -770,21 +753,12 @@ function checkAllStatus(seriales) {
 
 function updateAcreditado(seriales, user_id) {
     return new Promise((resolve, reject) => {
-<<<<<<< HEAD
         funcion.updateSerialesAcred(seriales, user_id) 
         .then((result)=>{
             resolve(result)
         })
         .catch((err)=>{reject(err)})
     })     
-=======
-        funcion.updateSerialesAcred(seriales)
-            .then((result) => {
-                resolve(result)
-            })
-            .catch((err) => { reject(err) })
-    })
->>>>>>> 94747f8aca5dd92cec54567d61cb5a7449c0bc2b
 }
 
 
