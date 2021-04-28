@@ -30,6 +30,7 @@ router.post('/idplanImpresion',routesController.idplanImpresion_POST);
 router.post('/checkSap',routesController.checkSap_POST);
 router.get('/etiquetasImpresas',routesController.etiquetasImpresas_GET);
 router.post('/tablaSeriales',routesController.tablaSeriales_POST);
+router.post('/tablaSerialesFechasMultiples',routesController.tablaSerialesFechasMultiples_POST);
 router.post('/cancelarSeriales',routesController.cancelarSeriales_POST);
 router.post('/impresion', middleware.verifyToken,routesController.impresion_POST);
 router.post('/getIdPlans',routesController.getIdPlans_POST);
@@ -38,6 +39,7 @@ router.get('/impresion/', middleware.verifyToken, routesController.impresion_GET
 router.post('/getProgramacion',routesController.getProgramacion_POST);
 router.post('/procesarSeriales/', routesController.procesarSeriales_POST);
 router.post('/consultarSeriales/', routesController.consultarSeriales_POST);
+router.get('/reportes/', routesController.reportes_GET);
 
 
 

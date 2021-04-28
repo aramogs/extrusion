@@ -310,8 +310,27 @@ funcion.getSerialesFecha = (fecha) => {
         FROM
             extrusion_labels
         WHERE
-            datetime LIKE '${fecha}%'
+            DATE(datetime) LIKE '${fecha}'
             
+            `)
+            .then((result) => { resolve(result) })
+            .catch((error) => { reject(error) })
+    })
+}
+
+funcion.getSerialesFechasMultiples = (desde,hasta) => {
+    return new Promise((resolve, reject) => {
+        dbEX(`
+        SELECT 
+            *
+        FROM
+            extrusion_labels
+        WHERE
+            DATE(datetime) 
+        BETWEEN 
+            '${desde}'
+        AND     
+            '${hasta}'
             `)
             .then((result) => { resolve(result) })
             .catch((error) => { reject(error) })

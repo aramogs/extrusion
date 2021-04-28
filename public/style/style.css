@@ -721,6 +721,10 @@ table td {
   height: 10rem;
 }
 
+.form-check-input {
+  position: relative !important;
+}
+
 /* On screens that are 992px or less, set the background color to blue */
 @media screen and (max-width: 992px) {
   .logoSize {

@@ -114,7 +114,7 @@ function fillTable() {
         result.data[y].cantidad,
         result.data[y].datetime,
         acreditado + " " + result.data[y].status,
-        result.data[y].descripcion,
+        result.data[y].motivo_cancel,
       ]).draw(false);
 
     }
