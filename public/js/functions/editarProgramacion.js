@@ -107,7 +107,7 @@ function fillTable() {
                         result.data[y].fecha,
                         result.data[y].turno,
                         result.data[y].status,
-                        result.data[y].description,
+                        result.data[y].motivo_cancel,
                     ] ).draw( false );
 
             }

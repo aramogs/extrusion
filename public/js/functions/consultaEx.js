@@ -17,6 +17,7 @@ let tabla_consulta_container = document.getElementById("tabla_consulta_container
 let btn_verificar_cantidad = document.getElementById("btn_verificar_cantidad")
 let div_btn_procesar_seriales = document.getElementById("div_btn_procesar_seriales")
 let submitArray_form = document.getElementById("submitArray_form")
+let submitArray_form2 = document.getElementById("submitArray_form2")
 let serialsArray = []
 let modalStorage = document.getElementById("modalStorage")
 
@@ -30,9 +31,10 @@ btnCerrar.forEach(element => {
 
 submitSerial.addEventListener("submit", listAdd)
 
-btn_transferFG.addEventListener("click", () => { $('#modalCantidad').modal({ backdrop: 'static', keyboard: false }) })
+btn_transferFG.addEventListener("click", () => { })
 
 submitArray_form.addEventListener("submit", submitSerials)
+submitArray_form2.addEventListener("submit", submitSerials)
 
 
 btnCerrar_Success.addEventListener("click", () => { location.href = "/consultaFG" })
@@ -151,13 +153,11 @@ function verifyQuantity() {
 function submitSerials(e) {
     e.preventDefault()
 
-    $('#modalStorage').modal('hide')
     setTimeout(() => {
         soundOk()
     }, 150);
     soundOk()
 
-    $('#modalCantidad').modal('hide')
     $('#modalSpinner').modal({ backdrop: 'static', keyboard: false })
 
     let data = { "seriales": `${serialsArray}` };

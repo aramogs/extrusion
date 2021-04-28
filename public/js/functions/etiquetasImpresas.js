@@ -114,7 +114,7 @@ function fillTable() {
         result.data[y].cantidad,
         result.data[y].datetime,
         acreditado + " " + result.data[y].status,
-        result.data[y].descripcion,
+        result.data[y].motivo_cancel,
       ]).draw(false);
 
     }
@@ -136,15 +136,15 @@ function cancel(clicked_id) {
 
 }
 
-function edit(clicked_id) {
-  $('#modalEditar').modal({ backdrop: 'static', keyboard: false })
-  let id = clicked_id.split('-');
-  let idp = id[id.length - 1];
-  midplane.value = idp;
+// function edit(clicked_id) {
+//   $('#modalEditar').modal({ backdrop: 'static', keyboard: false })
+//   let id = clicked_id.split('-');
+//   let idp = id[id.length - 1];
+//   midplane.value = idp;
 
-  infoId(idp, "edit")
+//   infoId(idp, "edit")
 
-}
+// }
 
 
 
@@ -177,58 +177,58 @@ function reload(tipo) {
 }
 
 
-function infoId(idp, modal) {
+// function infoId(idp, modal) {
 
-  let data = { "id": `${idp}` }
-  axios({
-    method: 'post',
-    url: `/idplanInfo`,
-    data: JSON.stringify(data),
-    headers: { 'content-type': 'application/json' }
-  })
-    .then((result) => {
+//   let data = { "id": `${idp}` }
+//   axios({
+//     method: 'post',
+//     url: `/idplanInfo`,
+//     data: JSON.stringify(data),
+//     headers: { 'content-type': 'application/json' }
+//   })
+//     .then((result) => {
 
-      if (modal == "cancel") {
+//       if (modal == "cancel") {
 
-        msap.innerHTML = result.data[0].numero_sap
-        mcantidad.innerHTML = result.data[0].cantidad
-        mfecha.innerHTML = result.data[0].fecha
-      } else if (modal == "edit") {
-        mesap.innerHTML = result.data[0].numero_sap
-        mecantidad.innerHTML = result.data[0].cantidad
-        mefecha.innerHTML = result.data[0].fecha
-        edit_cantidad.value = result.data[0].cantidad
-        edit_linea.value = result.data[0].linea
+//         msap.innerHTML = result.data[0].numero_sap
+//         mcantidad.innerHTML = result.data[0].cantidad
+//         mfecha.innerHTML = result.data[0].fecha
+//       } else if (modal == "edit") {
+//         mesap.innerHTML = result.data[0].numero_sap
+//         mecantidad.innerHTML = result.data[0].cantidad
+//         mefecha.innerHTML = result.data[0].fecha
+//         edit_cantidad.value = result.data[0].cantidad
+//         edit_linea.value = result.data[0].linea
 
-      }
-
-
-
-    })
-    .catch((err) => { console.error(err) })
-
-}
+//       }
 
 
-formEditar.addEventListener("submit", (e) => {
-  e.preventDefault();
 
-  let data = { "id": `${midplane.value}`, "cantidad": `${edit_cantidad.value}`, "linea": `${edit_linea.value}` }
+//     })
+//     .catch((err) => { console.error(err) })
 
-  axios({
-    method: 'post',
-    url: `/editarIdPlan`,
-    data: JSON.stringify(data),
-    headers: { 'content-type': 'application/json' }
-  })
-    .then((result) => {
+// }
 
-      reload()
 
-    })
-    .catch((err) => { console.error(err) })
+// formEditar.addEventListener("submit", (e) => {
+//   e.preventDefault();
 
-})
+//   let data = { "id": `${midplane.value}`, "cantidad": `${edit_cantidad.value}`, "linea": `${edit_linea.value}` }
+
+//   axios({
+//     method: 'post',
+//     url: `/editarIdPlan`,
+//     data: JSON.stringify(data),
+//     headers: { 'content-type': 'application/json' }
+//   })
+//     .then((result) => {
+
+//       reload()
+
+//     })
+//     .catch((err) => { console.error(err) })
+
+// })
 
 function modalMotivo() {
 
@@ -280,38 +280,38 @@ formMotivo.addEventListener("submit", (e) => {
 
 })
 
-function checkSap() {
+// function checkSap() {
 
-  let data = { "sap": `${add_sap.value}` }
+//   let data = { "sap": `${add_sap.value}` }
 
-  axios({
-    method: 'post',
-    url: `/checkSap`,
-    data: JSON.stringify(data),
-    headers: { 'content-type': 'application/json' }
-  })
-    .then((result) => {
+//   axios({
+//     method: 'post',
+//     url: `/checkSap`,
+//     data: JSON.stringify(data),
+//     headers: { 'content-type': 'application/json' }
+//   })
+//     .then((result) => {
 
-      if (result.data.length == 0) {
+//       if (result.data.length == 0) {
 
-        msg_add_sap.innerHTML = ' Incorrecto';
-        msg_add_sap.classList.remove('text-success');
-        msg_add_sap.classList.add('text-danger');
-        btn_save_agregar.disabled = true;
+//         msg_add_sap.innerHTML = ' Incorrecto';
+//         msg_add_sap.classList.remove('text-success');
+//         msg_add_sap.classList.add('text-danger');
+//         btn_save_agregar.disabled = true;
 
-      } else {
-        msg_add_sap.innerHTML = ' Correcto';
-        msg_add_sap.classList.remove('text-danger');
-        msg_add_sap.classList.add('text-success');
-        btn_save_agregar.disabled = false;
+//       } else {
+//         msg_add_sap.innerHTML = ' Correcto';
+//         msg_add_sap.classList.remove('text-danger');
+//         msg_add_sap.classList.add('text-success');
+//         btn_save_agregar.disabled = false;
 
-      }
+//       }
 
 
-    })
-    .catch((err) => { console.error(err) })
+//     })
+//     .catch((err) => { console.error(err) })
 
-}
+// }
 
 
 function enableIdPlan() {

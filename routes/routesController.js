@@ -665,6 +665,7 @@ controller.procesarSeriales_POST = (req, res) => {
 
         }else{
 
+            let user_id=req.body.user
             let info = await infoSeriales(arraySeriales)  
             let jsonInfo=JSON.stringify(info)
               let send = `{"station":"${estacion}","serial_num":"","process":"${process}", "material":"",  "cantidad":"", "data":${jsonInfo}}`
@@ -673,7 +674,7 @@ controller.procesarSeriales_POST = (req, res) => {
                 async function updateAcred(){
                     let resultado= JSON.parse(result)
                     let resultadArray= resultado.result
-                    let acreditado = await updateAcreditado(resultadArray);
+                    let acreditado = await updateAcreditado(resultadArray, user_id);
                     console.log(result)
                   res.json(result)
                 }updateAcred()
@@ -740,9 +741,9 @@ function checkAllStatus(seriales) {
     })     
 }
 
-function updateAcreditado(seriales) {
+function updateAcreditado(seriales, user_id) {
     return new Promise((resolve, reject) => {
-        funcion.updateSerialesAcred(seriales) 
+        funcion.updateSerialesAcred(seriales, user_id) 
         .then((result)=>{
             resolve(result)
         })
