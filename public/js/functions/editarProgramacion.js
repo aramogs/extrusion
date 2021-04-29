@@ -104,7 +104,7 @@ function fillTable() {
                         result.data[y].cantidad,
                         result.data[y].linea,
                         result.data[y].sup_name,
-                        result.data[y].fecha,
+                        new Date(result.data[y].fecha).toLocaleDateString(),
                         result.data[y].turno,
                         result.data[y].status,
                         result.data[y].motivo_cancel,

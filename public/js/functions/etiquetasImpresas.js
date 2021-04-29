@@ -112,7 +112,7 @@ function fillTable() {
         result.data[y].numero_parte,
         result.data[y].emp_num,
         result.data[y].cantidad,
-        result.data[y].datetime,
+        new Date(result.data[y].datetime).toLocaleString(),
         acreditado + " " + result.data[y].status,
         result.data[y].motivo_cancel,
       ]).draw(false);

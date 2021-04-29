@@ -337,6 +337,26 @@ funcion.getSerialesFechasMultiples = (desde,hasta) => {
     })
 }
 
+
+funcion.getPlanFechasMultiples = (desde,hasta) => {
+    return new Promise((resolve, reject) => {
+        dbEX(`
+        SELECT 
+            *
+        FROM
+            production_plan
+        WHERE
+            fecha
+        BETWEEN 
+            '${desde}'
+        AND     
+            '${hasta}'
+            `)
+            .then((result) => { resolve(result) })
+            .catch((error) => { reject(error) })
+    })
+}
+
 funcion.getColumnsExtr = () => {
     return new Promise((resolve, reject) => {
         db(`

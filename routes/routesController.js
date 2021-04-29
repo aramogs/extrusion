@@ -588,6 +588,16 @@ controller.tablaSerialesFechasMultiples_POST = (req, res) => {
 
 }
 
+controller.tablaPlanFechasMultiples_POST = (req, res) => {
+
+    let desde = req.body.desde
+    let hasta = req.body.hasta
+    funcion.getPlanFechasMultiples(desde, hasta)
+        .then((result) => { res.json(result) })
+        .catch((err) => { console.log(err) })
+
+}
+
 
 controller.cancelarSeriales_POST = (req, res) => {
 

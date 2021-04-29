@@ -6,7 +6,7 @@
 
 
             <div class="container-fluid">
-                <h1 class="display-4 text-center csvTitulo">Reportes Extrusion</h1>
+                <h1 class="display-4 text-center csvTitulo"><span class="icoSidebar fas fa-xs fa-chart-bar"></span> Reportes Extrusion</h1>
             </div>
 
             <div class="container-fluid">
@@ -34,27 +34,62 @@
                     </div>
 
                 </div>
-
+                <br>
+                <div class="container-fluid">
+                    <h2 class="text-center csvTitulo">Etiquetas Impresas</h2>
+                </div>
                 <div class="table-responsive">
                     <div class="containerTable">
                         <div class="table table-responsive" >
-                            <table id="tableSerials" class="table table-bordered table-striped table-sm hover">
+                            <table id="tableSerials" class="table table-bordered table-striped table-sm hover text-center"">
                                 <thead class="thead-dark">
 
-                                    <th><span class="fas fa-history"></span> Serial </th>
-                                    <th><span class="fas fa-history"></span> Plan_ID </th>
-                                    <th><span class="fas fa-history"></span> SAP </th>
-                                    <th><span class="fas fa-history"></span> Operador </th>
-                                    <th><span class="fas fa-history"></span> Cantidad </th>
-                                    <th><span class="fas fa-history"></span> Fecha </th>
-                                    <th><span class="fas fa-history"></span> Motivo_Cancel </th>
-                                    <th><span class="fas fa-history"></span> Status </th>
-                                    <th><span class="fas fa-history"></span> Resultado_SAP </th>
+                                    <th width="8%"><span class="fas fa-fingerprint"></span> Serial </th>
+                                    <th width="10%"><span class="fas fa-clipboard"></span> Plan_ID </th>
+                                    <th width="10%"><span class="fas fa-key"></span> SAP </th>
+                                    <th width="5%"><span class="fas fa-user"></span> Operador </th>
+                                    <th width="5%"><span class="fas fa-hashtag"></span> Cantidad </th>
+                                    <th width="15%"><span class="fas fa-calendar-alt"></span> Fecha </th>
+                                    <th><span class="fas fa-pencil-alt"></span> Motivo_Cancel </th>
+                                    <th width="10%"><span class="fas fa-check"></span> Status </th>
+                                    <th width="10%"><span class="fas fa-check-double"></span> Resultado_SAP </th>
+                                    <th width="5%"><span class="fas fa-user-check"></span> Emp_Acreditado </th>
 
                                 </thead>
 
                                 <tbody>
                                     <!-- Agregado directamente desde Javascript -->
+                                </tbody>
+
+                            </table>
+                        </div>
+                    </div>
+                </div>
+
+
+                <div class="container-fluid">
+                    <h2 class="text-center csvTitulo">Programacion</h2>
+                </div>
+                <div class="table-responsive">
+                    <div class="containerTable">
+                        <div class="table table-responsive">
+                            <table id="tablePlan" class="table table-bordered table-striped table-sm hover text-center"">
+                                <thead class="thead-dark">
+
+                                    <th width="8%"><span class="icoSidebar fas fa-clipboard"></span> Plan_ID</th>
+                                    <th width="10%"><span class="icoSidebar fas fa-key"></span> SAP</th>
+                                    <th width="5%"><span class="icoSidebar fas fa-hashtag"></span> Cantidad</th>
+                                    <th width="5%"><span class="icoSidebar fas fa-grip-lines"></span> Linea</th>
+                                    <th width="10%"><span class="icoSidebar fas fa-user-cog"></span> Supervisor </th>
+                                    <th width="10%"><span class="icoSidebar fas fa-calendar-alt"></span> Fecha</th>
+                                    <th width="5%"><span class="icoSidebar fas fa-clock"></span> Turno</th>
+                                    <th width="10%"><span class="icoSidebar fas fa-check"></span> Status</th>
+                                    <th><span class="icoSidebar fas fa-pencil-alt"></span> Motivo</th>
+
+                                </thead>
+
+                                <tbody>
+
                                 </tbody>
 
                             </table>

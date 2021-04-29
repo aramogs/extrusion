@@ -1,7 +1,9 @@
 
 let tableSerials = $('#tableSerials').DataTable();
+let tablePlan = $('#tablePlan').DataTable();
 let fechaDesde
 let fechaHasta
+
 
 
 
@@ -21,7 +23,8 @@ const desde = datepicker('#selectDesde', {
         fechaDesde = yy + '-' + mm + '-' + dd;
         input.value = fechaDesde
         tableSerials.clear().draw();
-        fillTable()
+        fillTableSeriales()
+        fillTablePlan()
     }
 })
 
@@ -40,13 +43,15 @@ const hasta = datepicker('#selectHasta', {
         fechaHasta = yy + '-' + mm + '-' + dd;
         input.value = fechaHasta
         tableSerials.clear().draw();
-        fillTable()
+        tablePlan.clear().draw();
+        fillTableSeriales()
+        fillTablePlan()
 
     }
 })
 
 
-function fillTable() {
+function fillTableSeriales() {
 
     if (fechaHasta == undefined) fechaHasta = fechaDesde
     let data = { "desde": `${fechaDesde}`,"hasta": `${fechaHasta}` }
@@ -67,10 +72,44 @@ function fillTable() {
                 result.data[i].numero_parte,
                 result.data[i].emp_num,
                 result.data[i].cantidad,
-                result.data[i].datetime,
+                new Date(result.data[i].datetime).toLocaleString(),
                 result.data[i].motivo_cancel,
                 result.data[i].status,
                 result.data[i].resultado_sap,
+                result.data[i].emp_acred,
+            ]).draw(false);
+
+        }
+    })
+        .catch((err) => { console.error(err) })
+}
+
+
+function fillTablePlan() {
+
+    if (fechaHasta == undefined) fechaHasta = fechaDesde
+    let data = { "desde": `${fechaDesde}`,"hasta": `${fechaHasta}` }
+    axios({
+        method: 'post',
+        url: `/tablaPlanFechasMultiples`,
+        data: JSON.stringify(data),
+        headers: { 'content-type': 'application/json' }
+    }).then(result => {
+
+
+        for (let i = 0; i < result.data.length; i++) {
+            new Date().toLocaleString
+
+            tablePlan.row.add([
+                result.data[i].plan_id,
+                result.data[i].numero_sap,
+                result.data[i].cantidad,
+                result.data[i].linea,
+                result.data[i].sup_name,
+                new Date(result.data[i].fecha).toLocaleDateString(),
+                result.data[i].turno,
+                result.data[i].status,
+                result.data[i].motivo_cancel,
             ]).draw(false);
 
         }
