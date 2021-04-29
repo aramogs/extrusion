@@ -1,6 +1,6 @@
 <%- include ("./static/header") %>
-<%- include ("./static/sidebar") %>
-<%- include ("./static/navbar") %>
+    <%- include ("./static/sidebar") %>
+        <%- include ("./static/navbar") %>
 
             <nav aria-label="breadcrumb">
                 <ol class="breadcrumb">
@@ -143,7 +143,7 @@
                                             <h7>SAP:</h7>
                                         </div>
                                         <div class="col-7">
-                                            <h7 class="text-left"><span class="badge badge-info" id="msap"></span>
+                                            <h7 class="text-left"><span class="badge badge-info msap"></span>
                                             </h7>
                                         </div>
                                     </div>
@@ -153,7 +153,7 @@
                                             <h7 class="text-left">Cantidad programada: </h7>
                                         </div>
                                         <div class="col-lg-7 col-sm-12">
-                                            <h7 class="text-left"><span class="badge badge-info" id="mcantidad"></span>
+                                            <h7 class="text-left"><span class="badge badge-info mcantidad"></span>
                                             </h7>
                                         </div>
                                     </div>
@@ -163,7 +163,7 @@
                                             <h7 class="text-left">ID Plan: </h7>
                                         </div>
                                         <div class="col-lg-7 col-sm-12">
-                                            <h7 class="text-left"><span class="badge badge-info" id="midplan"></span>
+                                            <h7 class="text-left"><span class="badge badge-info midplan"></span>
                                             </h7>
                                         </div>
                                     </div>
@@ -174,7 +174,7 @@
                                                 <h7 class="text-left">Fecha: </h7>
                                             </div>
                                             <div class="col-7">
-                                                <h7 class="text-left"><span class="badge badge-info" id="mfecha"></span>
+                                                <h7 class="text-left"><span class="badge badge-info mfecha" ></span>
                                                 </h7>
                                             </div>
                                         </div>
@@ -188,7 +188,7 @@
                                         </div>
                                     </div>
 
-                                    <form action="/imprimir_idplan" method="POST" id="formMotivo">
+                                    <form  method="POST" id="formMotivo">
                                         <div class="container">
                                             <div class="row" id="cotenedorSection">
 
@@ -214,8 +214,105 @@
                 </div>
             </div>
 
+            <div class="modal fade bd-example-modal-xl" id="modalImpresionManual" tabindex="-1" role="dialog"
+                aria-labelledby="myExtraLargeModalLabel" aria-hidden="true">
+                <div class="modal-dialog modal-xl">
+                    <div class="modal-content">
+                        <div class="modal-body">
 
-            <div class="modal fade animate__animated animate__zoomInDown" id="modalSuccess" tabindex="-1" aria-hidden="true">
+                            <div class="card">
+                                <div class="card-header text-center d-none d-lg-block">
+                                    <!-- <img src="/img/sap.png" alt="SAP" srcset="" class="card-mov"> -->
+                                    <h4 class="card-mov"><span class="text-warning fa fa-exclamation-triangle"></span> 
+                                            Impresion Manual
+                                    </h4>
+                                </div>
+
+                                <div class="card-body">
+
+                                    <div class="row">
+                                        <div class="col-5">
+                                            <h7>SAP:</h7>
+                                        </div>
+                                        <div class="col-7">
+                                            <h7 class="text-left "><span class="badge badge-info msap"></span>
+                                            </h7>
+                                        </div>
+                                    </div>
+
+                                    <div class="row">
+                                        <div class="col-lg-5 col-sm-12">
+                                            <h7 class="text-left">Cantidad programada: </h7>
+                                        </div>
+                                        <div class="col-lg-7 col-sm-12">
+                                            <h7 class="text-left"><span class="badge badge-info mcantidad"></span>
+                                            </h7>
+                                        </div>
+                                    </div>
+
+                                    <div class="row">
+                                        <div class="col-lg-5 col-sm-12">
+                                            <h7 class="text-left">ID Plan: </h7>
+                                        </div>
+                                        <div class="col-lg-7 col-sm-12">
+                                            <h7 class="text-left"><span class="badge badge-info midplan"></span>
+                                            </h7>
+                                        </div>
+                                    </div>
+
+                                    <div class="d-none d-lg-block">
+                                        <div class="row ">
+                                            <div class="col-5">
+                                                <h7 class="text-left">Fecha: </h7>
+                                            </div>
+                                            <div class="col-7">
+                                                <h7 class="text-left"><span class="badge badge-info mfecha"></span>
+                                                </h7>
+                                            </div>
+                                        </div>
+                                    </div>
+
+                                    <hr>
+
+                                    <div class="row d-none d-lg-block">
+                                        <div class="col-lg-12">
+                                            <h5>Escriba la cantidad de piezas y presione Imprimir:</h5>
+                                        </div>
+                                    </div>
+
+                                    <form method="POST" id="formMotivoManual">
+                                        <div class="container">
+                                            <div class="row list-inline mx-auto justify-content-center" id="cotenedorSection">
+
+                                                <div class="card text-center" style="width: 12rem;">
+                                                    <div class="card-body">
+                                                        <div class="form-group">
+                                                          <input type="text" class="form-control" name="" id="cantidadManual" aria-describedby="helpId" placeholder="">
+                                                        </div>
+                                                        <button class="btn btn-info" type="submit" id="btnImprimirManual" disabled>Imprimir</button>
+                                                  
+                                                    </div>
+                                                  </div>
+
+                                            </div>
+                                        </div>
+
+                                </div>
+                            </div>
+
+                        </div>
+
+                        <div class="modal-footer">
+                            <button type="button" class="btn btn-secondary btnCerrar"
+                                data-dismiss="modal">Cerrar</button>
+                        </div>
+
+                    </div>
+                </div>
+            </div>
+
+            <div class="modal fade animate__animated animate__zoomInDown" id="modalSuccess" tabindex="-1"
+                aria-hidden="true">
                 <div class="modal-dialog">
                     <div class="modal-content">
                         <div class="modal-body text-center">
@@ -252,7 +349,8 @@
             </div>
 
 
-<%- include ("./static/footer") %>
-<script type="text/javascript" src="/js/functions/impresion.js"></script>
-</body>
-</html>
+            <%- include ("./static/footer") %>
+                <script type="text/javascript" src="/js/functions/impresion.js"></script>
+                </body>
+
+                </html>
