@@ -469,19 +469,25 @@ controller.idplanImpresion_POST = (req, res) => {
 }
 
 controller.impresion_POST = (req, res) => {
-
+    console.log(req.body);
     let plan_id = req.body.plan_id
     let no_sap = req.body.no_sap
     let operador_id = req.res.locals.authData.id.id
-    let cantidad = req.body.cantidad
+    let cantidad = parseInt(req.body.cantidad)
     let contenedor = req.body.contenedor
-    let capacidad = req.body.capacidad
+    let capacidad = parseInt(req.body.capacidad)
     let linea = req.body.linea
+    let serial_num
+
+    if (cantidad === capacidad) {
+        numero_etiquetas = 1
+    } else {
+        numero_etiquetas = Math.floor(cantidad / capacidad)
+    }
 
 
 
-    numero_etiquetas = Math.floor(cantidad / capacidad)
-
+    console.log("numero etiquetas:", numero_etiquetas);
 
     async function waitForPromise() {
 
@@ -489,24 +495,29 @@ controller.impresion_POST = (req, res) => {
         let values = await funcion.getBaseExtr(no_sap)
         let impre = await funcion.getPrinter(linea)
         let data = {}
-        let serial_num = insert.insertId + numero_etiquetas - 1
+        
+
         Promise.all([insert, values, impre])
             .then((result) => {
 
+                serial_num = insert.insertId + numero_etiquetas - 1
                 inserted = result[0]
                 values_ = result[1]
                 impresora = result[2][0].printer
-
+                console.log(numero_etiquetas);
                 for (let i = 0; i < numero_etiquetas; i++) {
                     let serial = inserted.insertId++
+                    
                     printLabel(i, serial)
                 }
 
                 function printLabel(i, serial) {
+
                     setTimeout(() => {
                         for (const [key, value] of Object.entries(values_[0])) {
 
                             if (`${key}` === `${contenedor}`) data['quant'] = value
+                            if (contenedor === "manual") data['quant'] = cantidad
                             data[`${key}`] = value
                             data[`printer`] = impresora
                             data['serial'] = serial
@@ -525,7 +536,8 @@ controller.impresion_POST = (req, res) => {
                 }
 
             })
-            .then(() => {
+            .then((result) => {
+
                 res.json({ "last_id": serial_num })
                 funcion.UpdatePlan(plan_id)
             })
@@ -683,21 +695,21 @@ controller.procesarSeriales_POST = (req, res) => {
             console.log(JSON.stringify(obj))
             res.json(JSON.stringify(obj))
 
-        }else{
+        } else {
 
-            let user_id=req.body.user
-            let info = await infoSeriales(arraySeriales)  
-            let jsonInfo=JSON.stringify(info)
-              let send = `{"station":"${estacion}","serial_num":"","process":"${process}", "material":"",  "cantidad":"", "data":${jsonInfo}}`
-              amqpRequest(send)
-              .then((result)=>{
-                async function updateAcred(){
-                    let resultado= JSON.parse(result)
-                    let resultadArray= resultado.result
-                    let acreditado = await updateAcreditado(resultadArray, user_id);
-                    console.log(result)
-                  res.json(result)
-                }updateAcred()
+            let user_id = req.body.user
+            let info = await infoSeriales(arraySeriales)
+            let jsonInfo = JSON.stringify(info)
+            let send = `{"station":"${estacion}","serial_num":"","process":"${process}", "material":"",  "cantidad":"", "data":${jsonInfo}}`
+            amqpRequest(send)
+                .then((result) => {
+                    async function updateAcred() {
+                        let resultado = JSON.parse(result)
+                        let resultadArray = resultado.result
+                        let acreditado = await updateAcreditado(resultadArray, user_id);
+                        console.log(result)
+                        res.json(result)
+                    } updateAcred()
                 })
                 .catch((err) => { console.error(err) })
 
@@ -763,12 +775,12 @@ function checkAllStatus(seriales) {
 
 function updateAcreditado(seriales, user_id) {
     return new Promise((resolve, reject) => {
-        funcion.updateSerialesAcred(seriales, user_id) 
-        .then((result)=>{
-            resolve(result)
-        })
-        .catch((err)=>{reject(err)})
-    })     
+        funcion.updateSerialesAcred(seriales, user_id)
+            .then((result) => {
+                resolve(result)
+            })
+            .catch((err) => { reject(err) })
+    })
 }
 
 
