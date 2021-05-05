@@ -109,7 +109,7 @@ funcion.insertProgramaExcel = (base, tabla, titulos, valores, sup_num, fecha, tu
             arreglo_arreglos.push(valores_finales)
         }
 
-
+        console.log(arreglo_arreglos);
         let sql  = `INSERT INTO ${tabla} (${titulos.join()},sup_name,fecha,turno) VALUES ?`;
         
         dbEX(sql, [arreglo_arreglos])

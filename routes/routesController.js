@@ -223,7 +223,7 @@ controller.verificarSAP_POST = (req, res) => {
     let fecha = body.fecha
     let turno = body.turno
 
-    let user = (req.res.socket.user).substring(3)
+    let user = (req.res.socket.user).substring(4)
     let bufferExcel = req.file.buffer
     let base = process.env.DB_CONN_EXTR
     let tabla = "extr"
@@ -234,7 +234,7 @@ controller.verificarSAP_POST = (req, res) => {
             valores = result[1]
             //TODO cambiar base y tabla a .env
             //TODO Crear funcion extra que verifique que los numeros de SAP coiniciden con la base da datos, en caso contrario regresar error
-            funcion.insertProgramaExcel("extrusion", "production_plan", titulos, valores, user, fecha, turno)
+            funcion.insertProgramaExcel("extrusion", "production_plan", titulos, valores, user.toLowerCase(), fecha, turno)
                 .then((result) => { res.json(result) })
                 .catch((err) => { res.json(err) })
         })
