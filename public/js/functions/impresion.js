@@ -82,7 +82,7 @@ function getSelectedTurno() {
         } else if (result.data[y].status == "Cancelado") {
           imprimir =
             `
-            <button type="button" class="btn btn-secondary  rounded-pill " disabled><span class="fas fa-print" disabled><span hidden>${result.data[y].plan_id}</span></span>
+            <button type="button" class="btn btn-secondary  rounded-pill btn-block" disabled><span class="fas fa-print" disabled><span hidden>${result.data[y].plan_id}</span></span>
             `
         } else {
           imprimir =
@@ -101,6 +101,8 @@ function getSelectedTurno() {
           result.data[y].family,
           result.data[y].length,
           result.data[y].cantidad,
+          result.data[y].impreso === null ? '0': result.data[y].impreso,
+          Math.sign(result.data[y].cantidad - result.data[y].impreso) == -1 ? `+${Math.abs(result.data[y].cantidad - result.data[y].impreso)}` : result.data[y].cantidad - result.data[y].impreso,
           result.data[y].sup_name,
           result.data[y].status
 
@@ -233,6 +235,7 @@ function clear() {
 
 function impresion(e) {
 
+  e.preventDefault()
   $('#modalImpresion').modal('hide')
   $('#modalImpresionManual').modal('hide')
   $('#modalSpinner').modal({ backdrop: 'static', keyboard: false })
@@ -246,20 +249,18 @@ function impresion(e) {
 
   if (parseInt(cantidadManual.value) > 0) { cantidad = parseInt(cantidadManual.value), capacidad = parseInt(cantidadManual.value), contenedor="manual"}
 
-  console.log({no_sap, cantidad, contenedor, capacidad});
   let data = { "plan_id": `${plan_id}`, "no_sap": `${no_sap}`, "cantidad": cantidad, "contenedor": `${contenedor}`, "capacidad": capacidad, "linea": `${linea}` }
+  console.log(data);
   axios({
     method: 'post',
-    url: `/impresion`,
+    url: `/impresionEtiqueta`,
     data: JSON.stringify(data),
     headers: { 'content-type': 'application/json' }
   })
     .then((result) => {
-      console.log(result);
+
       let last_id = result.data.last_id
       let first_id = last_id - Math.floor(cantidad / capacidad) + 1
-
-
 
       setTimeout(() => {
         $('#modalSpinner').modal('hide')
@@ -272,7 +273,7 @@ function impresion(e) {
 
 
     })
-    .catch((err) => { console.log(err) })
+    .catch((err) => { console.error(err) })
 }
 
 function refreshTable() {

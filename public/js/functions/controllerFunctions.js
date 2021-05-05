@@ -4,7 +4,7 @@ const db = require('../../db/conn_b10_bartender');
 const dbE = require('../../db/conn_empleados');
 const dbEX = require('../../db/conn_extr');
 const dbA = require('../../db/conn_areas');
-const { resolveInclude } = require('ejs');
+
 
 
 funcion.getUsers = (user) => {
@@ -62,7 +62,7 @@ funcion.getProgramacion = (fecha) => {
         `)
             .then((result) => { resolve(result) })
             .catch((error) => {
-                console.log(error);
+                console.error(error);
                 reject(error)
             })
     })
@@ -84,44 +84,42 @@ funcion.verifySAP = (base, tabla, callback) => {
 
 funcion.insertProgramaExcel = (base, tabla, titulos, valores, sup_num, fecha, turno) => {
     return new Promise((resolve, reject) => {
-
+  
         let valor
         let valores_finales = []
-        let affectedRows = 0
+        let arreglo_arreglos = []
+  
 
         for (let i = 0; i < valores.length; i++) {
             valores_finales = []
             for (let y = 0; y < titulos.length; y++) {
 
                 if (typeof (valores[i][y]) === "string") {
-                    valor = `"${valores[i][y]}"`
+                    valor = `${valores[i][y]}`
                 } else if (typeof (valores[i][y])) {
                     valor = valores[i][y]
                 }
                 valores_finales.push(valor)
 
             }
-            valores_finales.push(`"${sup_num}"`)
-            valores_finales.push(`"${fecha}"`)
-            valores_finales.push(`"${turno}"`)
+            valores_finales.push(`${sup_num}`)
+            valores_finales.push(`${fecha}`)
+            valores_finales.push(`${turno}`)
 
-
-            dbEX(`INSERT INTO ${tabla} (${titulos.join()},sup_name,fecha,turno) VALUES (${valores_finales})`)
-                .then((result) => {
-                    if (result.affectedRows == 1) {
-                        affectedRows++
-                    }
-                    if (affectedRows == valores.length) {
-                        resolve(affectedRows)
-                    }
-                })
-                .catch((error) => { reject(error) })
+            arreglo_arreglos.push(valores_finales)
         }
 
 
+        let sql  = `INSERT INTO ${tabla} (${titulos.join()},sup_name,fecha,turno) VALUES ?`;
+        
+        dbEX(sql, [arreglo_arreglos])
+        .then((result) => {
+            resolve(result.affectedRows)
+
+        })
+        .catch((error) => { console.error(error); reject(error) })
+
     })
-
-
 
 }
 
@@ -145,17 +143,12 @@ funcion.getCurrentProgramacion = (fecha, turno, linea) => {
     return new Promise((resolve, reject) => {
         dbEX(`
         SELECT 
-            *
+            s1.*, s2.impreso
         FROM
-            production_plan, b10_bartender.extr
-        WHERE
-            fecha = '${fecha}'
-        AND
-            turno = '${turno}'
-        AND 
-            linea = '${linea}' 
-        AND
-            numero_sap = no_sap
+            (SELECT * FROM production_plan, b10_bartender.extr WHERE DATE(production_plan.fecha) = '${fecha}' AND turno = '${turno}' AND linea = '${linea}' AND numero_sap = no_sap) AS s1
+        LEFT JOIN
+            (SELECT numero_parte, SUM(cantidad) AS 'impreso', plan_id FROM extrusion_labels WHERE DATE(extrusion_labels.datetime) = '${fecha}' GROUP BY plan_id) AS s2 
+        ON s1.plan_id = s2.plan_id
             `)
             .then((result) => { resolve(result) })
             .catch((error) => { reject(error) })
@@ -318,7 +311,7 @@ funcion.getSerialesFecha = (fecha) => {
     })
 }
 
-funcion.getSerialesFechasMultiples = (desde,hasta) => {
+funcion.getSerialesFechasMultiples = (desde, hasta) => {
     return new Promise((resolve, reject) => {
         dbEX(`
         SELECT 
@@ -338,7 +331,7 @@ funcion.getSerialesFechasMultiples = (desde,hasta) => {
 }
 
 
-funcion.getPlanFechasMultiples = (desde,hasta) => {
+funcion.getPlanFechasMultiples = (desde, hasta) => {
     return new Promise((resolve, reject) => {
         dbEX(`
         SELECT 
@@ -617,6 +610,38 @@ funcion.updateSerialesAcred = (seriales) => {
 
 
     })
+}
+
+funcion.graficaReporte = (desde, hasta) => {
+    return new Promise((resolve, reject) => {
+        dbEX(`
+        SELECT 
+            s1.numero_sap, s1.programado, s2.producido
+        FROM
+            (SELECT 
+                production_plan.numero_sap AS 'numero_sap',
+                SUM(production_plan.cantidad) AS 'programado'
+            FROM
+                production_plan
+            WHERE
+                DATE(production_plan.fecha) BETWEEN '${desde}' AND '${hasta}'
+            GROUP BY production_plan.numero_sap) AS s1
+        LEFT JOIN
+            (SELECT 
+                extrusion_labels.numero_parte AS 'numero_parte',
+                SUM(extrusion_labels.cantidad) AS 'producido'
+            FROM
+                extrusion_labels
+            WHERE
+                DATE(extrusion_labels.datetime) BETWEEN '${desde}' AND '${hasta}' AND extrusion_labels.status = "Acreditado"
+            GROUP BY 
+                extrusion_labels.numero_parte) AS s2 
+        ON s1.numero_sap = s2.numero_parte
+        `)
+            .then((result) => { resolve(result) })
+            .catch((error) => { reject(error) })
+    })
+
 }
 
 module.exports = funcion;

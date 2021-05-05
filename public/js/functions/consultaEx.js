@@ -172,8 +172,6 @@ function submitSerials(e) {
     })
         .then((result) => {
 
-            console.log(result.data)
-
             let resultado = result.data
 
                 soundOk()

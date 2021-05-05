@@ -26,7 +26,7 @@ btnCancelar.forEach(element => {
 
 
 
-document.getElementById("excelFile").addEventListener("change", () => {
+excelFile.addEventListener("change", () => {
     if (document.getElementById("excelFile").files.length == 0) {
         btn_excel.disabled = true;
         btn_excel.classList.remove("animate__flipInX")
@@ -73,6 +73,8 @@ const picker = datepicker('#selectedFecha', {
         let mm = date.getMonth() + 1;
         let dd = date.getDate();
         let yy = date.getFullYear();
+        if (mm <= 9) mm = '0' + mm;
+        if (dd <= 9) dd = '0' + dd;
         myDateString = yy + '-' + mm + '-' + dd;
         input.value = myDateString
         enableTurno()
@@ -135,7 +137,6 @@ function sendData() {
         headers: { 'Content-Type': 'multipart/form-data', 'Accept': 'application/json', }
     })
         .then((response) => {
-            console.log(response.data)
 
             setTimeout(function(){ $('#modalSpinner').modal('hide') }, 1000);
             

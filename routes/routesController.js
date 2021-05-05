@@ -11,7 +11,7 @@ const funcion = require('../public/js/functions/controllerFunctions');
 
 //Require ExcelJs
 const Excel = require('exceljs');
-const { resolveInclude } = require('ejs');
+
 
 
 
@@ -31,7 +31,6 @@ controller.login = (req, res) => {
 }
 
 controller.accesoDenegado_GET = (req, res) => {
-    console.log(req.connection);
     user = req.connection.user
     res.render('acceso_denegado.ejs', {
         user
@@ -44,7 +43,7 @@ function acceso(req) {
 
     return new Promise((resolve, reject) => {
         userGroups.forEach(element => {
-            if (element.toString() === 'TFT\\TFT.DEL.PAGES_BTS_CargaProduccion' || element.toString() === 'TFT\\TFT.DEL.PAGES_BTS_CapturaProduccion' || element.toString() === 'TFT\\TFT.DEL.PAGES_BTS_CambioProduccion') {
+            if (element.toString() === 'TFT\\TFT.DEL.PAGES_Extrusion' || element.toString() === 'TFT\\TFT.DEL.PAGES_BTS_CapturaProduccion' || element.toString() === 'TFT\\TFT.DEL.PAGES_BTS_CambioProduccion') {
                 acceso.push(element.toString())
             }
         });
@@ -65,10 +64,8 @@ controller.mainMenu_GET = (req, res) => {
 
 controller.userAccess_POST = (req, res) => {
     let user_id = req.body.user
-    console.log(req.body);
     funcion.getUsers(user_id)
         .then((result) => {
-            console.log(result);
             if (result.length == 1) {
                 emp_nombre = result[0].emp_name
 
@@ -149,7 +146,6 @@ controller.getTurnos_GET = (req, res) => {
 
 controller.getProgramacion_POST = (req, res) => {
     let fecha = req.body.fecha
-    console.log(req.body);
     funcion.getProgramacion(fecha)
         .then((result) => {
 
@@ -222,7 +218,6 @@ const arreglosExcel = (base, tabla, bufferExcel) => {
 }
 
 controller.verificarSAP_POST = (req, res) => {
-    console.log(req.body);
     let body = JSON.parse(req.body.data)
 
     let fecha = body.fecha
@@ -257,7 +252,7 @@ controller.cargaProgramacion_GET = (req, res) => {
     acceso(req)
         .then((result) => {
             result.forEach(element => {
-                if (element === "TFT\\TFT.DEL.PAGES_BTS_CargaProduccion") access = "ok"
+                if (element === "TFT\\TFT.DEL.PAGES_Extrusion") access = "ok"
             });
             if (access == "ok") {
                 res.render("cargaProgramacion.ejs", { user })
@@ -301,11 +296,11 @@ function amqpRequest(data) {
                         reject(error2)
                     }
                     let correlationId = estacion;
-                    console.log(' [x] Requesting: ', send);
+                    console.info(' [x] Requesting: ', send);
 
                     channel.consume(q.queue, function (msg) {
                         if (msg.properties.correlationId == correlationId) {
-                            console.log(' [x] Response:   ', msg.content.toString());
+                            console.info(' [x] Response:   ', msg.content.toString());
                             resolve(msg.content.toString())
                             setTimeout(function () {
                                 connection.close();
@@ -337,7 +332,7 @@ controller.editarProgramacion_GET = (req, res) => {
     acceso(req)
         .then((result) => {
             result.forEach(element => {
-                if (element === "TFT\\TFT.DEL.PAGES_BTS_CargaProduccion") access = "ok"
+                if (element === "TFT\\TFT.DEL.PAGES_Extrusion") access = "ok"
             });
             if (access == "ok") {
                 res.render("editarProgramacion.ejs", { user, fecha })
@@ -355,7 +350,7 @@ controller.tablaProgramacion_POST = (req, res) => {
     let fecha = req.body.fecha
     funcion.getProgramacionFecha(fecha)
         .then((result) => { res.json(result) })
-        .catch((err) => { console.log(err) })
+        .catch((err) => { console.error(err) })
 
 }
 
@@ -366,7 +361,7 @@ controller.cancelarIdPlan_POST = (req, res) => {
     let motivo = req.body.motivo
     funcion.cancelarIdPlan(midplan, motivo)
         .then((result) => { res.json(result) })
-        .catch((err) => { console.log(err) })
+        .catch((err) => { console.error(err) })
 
 
 }
@@ -424,7 +419,7 @@ controller.idplanInfo_POST = (req, res) => {
 
     funcion.getInfoIdPlan(idplan)
         .then((result) => { res.json(result) })
-        .catch((err) => { console.log(err) })
+        .catch((err) => { console.error(err) })
 
 
 }
@@ -436,7 +431,7 @@ controller.editarIdPlan_POST = (req, res) => {
     let linea = req.body.linea
     funcion.editarIdPlan(midplan, cantidad, linea)
         .then((result) => { res.json(result) })
-        .catch((err) => { console.log(err) })
+        .catch((err) => { console.error(err) })
 
 
 }
@@ -451,7 +446,7 @@ controller.agregarIdPlan_POST = (req, res) => {
     let turno = req.body.turno
     funcion.agregarIdPlan(numero_sap, cantidad, linea, sup_name, fecha, turno)
         .then((result) => { res.json(result) })
-        .catch((err) => { console.log(err) })
+        .catch((err) => { console.error(err) })
 
 
 }
@@ -463,13 +458,12 @@ controller.idplanImpresion_POST = (req, res) => {
 
     funcion.getPlanImpresion(idplan)
         .then((result) => { res.json(result) })
-        .catch((err) => { console.log(err) })
+        .catch((err) => { console.error(err) })
 
 
 }
 
 controller.impresion_POST = (req, res) => {
-    console.log(req.body);
     let plan_id = req.body.plan_id
     let no_sap = req.body.no_sap
     let operador_id = req.res.locals.authData.id.id
@@ -486,16 +480,13 @@ controller.impresion_POST = (req, res) => {
     }
 
 
-
-    console.log("numero etiquetas:", numero_etiquetas);
-
     async function waitForPromise() {
 
         let insert = await funcion.insertImpresion(plan_id, no_sap, operador_id, capacidad, numero_etiquetas);
         let values = await funcion.getBaseExtr(no_sap)
         let impre = await funcion.getPrinter(linea)
         let data = {}
-        
+
 
         Promise.all([insert, values, impre])
             .then((result) => {
@@ -504,10 +495,10 @@ controller.impresion_POST = (req, res) => {
                 inserted = result[0]
                 values_ = result[1]
                 impresora = result[2][0].printer
-                console.log(numero_etiquetas);
+
                 for (let i = 0; i < numero_etiquetas; i++) {
                     let serial = inserted.insertId++
-                    
+
                     printLabel(i, serial)
                 }
 
@@ -523,9 +514,8 @@ controller.impresion_POST = (req, res) => {
                             data['serial'] = serial
                             data['line'] = linea
                             data['emp_num'] = operador_id
-
+                           
                         }
-
                         axios({
                             method: 'post',
                             url: `http://${process.env.BARTENDER_SERVER}:${process.env.BARTENDER_PORT}/Integration/EXT/Execute/`,
@@ -536,7 +526,7 @@ controller.impresion_POST = (req, res) => {
                 }
 
             })
-            .then((result) => {
+            .then(() => {
 
                 res.json({ "last_id": serial_num })
                 funcion.UpdatePlan(plan_id)
@@ -568,7 +558,7 @@ controller.etiquetasImpresas_GET = (req, res) => {
     acceso(req)
         .then((result) => {
             result.forEach(element => {
-                if (element === "TFT\\TFT.DEL.PAGES_BTS_CargaProduccion") access = "ok"
+                if (element === "TFT\\TFT.DEL.PAGES_Extrusion") access = "ok"
             });
             if (access == "ok") {
                 res.render("etiquetasImpresas.ejs", { user })
@@ -586,7 +576,7 @@ controller.tablaSeriales_POST = (req, res) => {
     let fecha = req.body.fecha
     funcion.getSerialesFecha(fecha)
         .then((result) => { res.json(result) })
-        .catch((err) => { console.log(err) })
+        .catch((err) => { console.error(err) })
 
 }
 
@@ -596,7 +586,7 @@ controller.tablaSerialesFechasMultiples_POST = (req, res) => {
     let hasta = req.body.hasta
     funcion.getSerialesFechasMultiples(desde, hasta)
         .then((result) => { res.json(result) })
-        .catch((err) => { console.log(err) })
+        .catch((err) => { console.error(err) })
 
 }
 
@@ -606,7 +596,7 @@ controller.tablaPlanFechasMultiples_POST = (req, res) => {
     let hasta = req.body.hasta
     funcion.getPlanFechasMultiples(desde, hasta)
         .then((result) => { res.json(result) })
-        .catch((err) => { console.log(err) })
+        .catch((err) => { console.error(err) })
 
 }
 
@@ -618,7 +608,7 @@ controller.cancelarSeriales_POST = (req, res) => {
     let arraySeriales = seriales.split(',')
     funcion.cancelarSeriales(arraySeriales, motivo)
         .then((result) => { res.json(result) })
-        .catch((err) => { console.log(err) })
+        .catch((err) => { console.error(err) })
 
 
 }
@@ -669,7 +659,7 @@ controller.cancelarSerialesPlan_POST = (req, res) => {
 
     funcion.cancelSerialesPlan(plan_id, motivo)
         .then((result) => { res.json(result) })
-        .catch((err) => { console.log(err) })
+        .catch((err) => { console.error(err) })
 
 
 }
@@ -692,7 +682,6 @@ controller.procesarSeriales_POST = (req, res) => {
             let obj = {}
             obj['result'] = checkStatus
             obj['error'] = "N/A"
-            console.log(JSON.stringify(obj))
             res.json(JSON.stringify(obj))
 
         } else {
@@ -707,7 +696,6 @@ controller.procesarSeriales_POST = (req, res) => {
                         let resultado = JSON.parse(result)
                         let resultadArray = resultado.result
                         let acreditado = await updateAcreditado(resultadArray, user_id);
-                        console.log(result)
                         res.json(result)
                     } updateAcred()
                 })
@@ -789,6 +777,14 @@ controller.reportes_GET = (req, res) => {
     res.render('reportes.ejs', {
 
     });
+}
+
+controller.reporteGrafico_POST = (req, res) => {
+    desde = req.body.desde
+    hasta = req.body.hasta
+    funcion.graficaReporte(desde, hasta)
+        .then(result => { res.json(result) })
+        .catch(err => { console.error(err) })
 }
 
 module.exports = controller;

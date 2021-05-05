@@ -23,7 +23,6 @@ submitPassword.addEventListener("submit", (e) => {
             if (response != "unathorized") {
                 soundOk()
                 setTimeout(() => {
-                    console.log(section);
                     if (section.innerText === "Acreditacion") {
                         window.location.replace(window.location.origin + "/mainMenu")
                     }else if (section.innerText === "Impresion") {

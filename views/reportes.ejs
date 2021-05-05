@@ -6,14 +6,16 @@
 
 
             <div class="container-fluid">
-                <h1 class="display-4 text-center csvTitulo"><span class="icoSidebar fas fa-xs fa-chart-bar"></span> Reportes Extrusion</h1>
+                <h1 class="display-4 text-center csvTitulo"><span class="icoSidebar fas fa-xs fa-chart-bar"></span>
+                    Reportes Extrusion</h1>
             </div>
 
             <div class="container-fluid">
 
                 <div class=" card-header text-white bg-dark ">
                     <div class="row">
-                        <div class="col-lg-6  text-center">
+
+                        <div class="col-lg-5  text-center">
                             <div class="col-lg-8 offset-lg-2">
                                 <div class="form-group">
                                     <label>Desde</label>
@@ -22,7 +24,7 @@
                                 </div>
                             </div>
                         </div>
-                        <div class="col-lg-6  text-center">
+                        <div class="col-lg-5  text-center">
                             <div class="col-lg-8 offset-lg-2">
                                 <div class="form-group">
                                     <label>Hasta</label>
@@ -31,77 +33,126 @@
                                 </div>
                             </div>
                         </div>
+                        <!-- <div class="col-lg-2 text-center justify-content-center align-self-center">
+                            <a name="" id="btnExcelMultiple" class="btn btn-success align-middle" href="#"
+                                role="button">
+                                <h4><span class="fas fa-file-excel display-5"></span></h4>
+                            </a>
+                        </div> -->
+
                     </div>
 
                 </div>
-                <br>
-                <div class="container-fluid">
-                    <h2 class="text-center csvTitulo">Etiquetas Impresas</h2>
-                </div>
-                <div class="table-responsive">
-                    <div class="containerTable">
-                        <div class="table table-responsive" >
-                            <table id="tableSerials" class="table table-bordered table-striped table-sm hover text-center"">
-                                <thead class="thead-dark">
 
-                                    <th width="8%"><span class="fas fa-fingerprint"></span> Serial </th>
-                                    <th width="10%"><span class="fas fa-clipboard"></span> Plan_ID </th>
-                                    <th width="10%"><span class="fas fa-key"></span> SAP </th>
-                                    <th width="5%"><span class="fas fa-user"></span> Operador </th>
-                                    <th width="5%"><span class="fas fa-hashtag"></span> Cantidad </th>
-                                    <th width="15%"><span class="fas fa-calendar-alt"></span> Fecha </th>
-                                    <th><span class="fas fa-pencil-alt"></span> Motivo_Cancel </th>
-                                    <th width="10%"><span class="fas fa-check"></span> Status </th>
-                                    <th width="10%"><span class="fas fa-check-double"></span> Resultado_SAP </th>
-                                    <th width="5%"><span class="fas fa-user-check"></span> Emp_Acreditado </th>
+            </div>
 
-                                </thead>
-
-                                <tbody>
-                                    <!-- Agregado directamente desde Javascript -->
-                                </tbody>
-
-                            </table>
+            <div class="container-fluid ">
+                <div class="row justify-content-end">
+                    <div class="card mr-3 mt-2">
+                        <div class="card-header bg-info text-white ">
+                            <div class="row">
+                                <div class="col text-left">
+                                    <h4>Descarga:</h4>
+                                </div>
+                                <div class="col text-right">
+                                    <a name="" id="btnExcelMultiple" class="btn btn-warning text-right" href="#"
+                                        role="button">
+                                        <h7><span class="fas fa-file-excel display-5"></span></h7>
+                                    </a>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="card-body">
+                            <input type="text" class="form-control" name="" id="Search_All" aria-describedby="helpId"
+                                placeholder="Ejemplo: 5000010103A0">
                         </div>
                     </div>
                 </div>
+            </div>
 
-
-                <div class="container-fluid">
-                    <h2 class="text-center csvTitulo">Programacion</h2>
+            <div class="container-fluid mt-2">
+                <div class="container-fluid bg-white">
+                    <canvas id="bar-chart-grouped" width="100%" height="15%"></canvas>
                 </div>
-                <div class="table-responsive">
-                    <div class="containerTable">
-                        <div class="table table-responsive">
-                            <table id="tablePlan" class="table table-bordered table-striped table-sm hover text-center"">
-                                <thead class="thead-dark">
+            </div>
 
-                                    <th width="8%"><span class="icoSidebar fas fa-clipboard"></span> Plan_ID</th>
-                                    <th width="10%"><span class="icoSidebar fas fa-key"></span> SAP</th>
-                                    <th width="5%"><span class="icoSidebar fas fa-hashtag"></span> Cantidad</th>
-                                    <th width="5%"><span class="icoSidebar fas fa-grip-lines"></span> Linea</th>
-                                    <th width="10%"><span class="icoSidebar fas fa-user-cog"></span> Supervisor </th>
-                                    <th width="10%"><span class="icoSidebar fas fa-calendar-alt"></span> Fecha</th>
-                                    <th width="5%"><span class="icoSidebar fas fa-clock"></span> Turno</th>
-                                    <th width="10%"><span class="icoSidebar fas fa-check"></span> Status</th>
-                                    <th><span class="icoSidebar fas fa-pencil-alt"></span> Motivo</th>
+            <div class="container-fluid mt-2">
+                <div class="row">
 
-                                </thead>
+                    <div class="col-lg-6">
+                        <div class="container-fluid">
+                            <h2 class="text-center csvTitulo"><span class="fas fa-clipboard-list"></span> Programacion </h2>
+                        </div>
+                        <div class="table-responsive">
+                            <div class="containerTable">
+                                <div class="table table-responsive">
+                                    <table id="tablePlan"
+                                        class="table table-bordered table-striped table-sm hover text-center"">
+                                        <thead class=" thead-dark">
 
-                                <tbody>
+                                        <th width="8%"><span class="icoSidebar fas fa-clipboard"></span> Plan_ID</th>
+                                        <th width="10%"><span class="icoSidebar fas fa-key"></span> SAP</th>
+                                        <th width="5%"><span class="icoSidebar fas fa-hashtag"></span> Cantidad</th>
+                                        <th width="5%"><span class="icoSidebar fas fa-grip-lines"></span> Linea</th>
+                                        <th width="10%"><span class="icoSidebar fas fa-user-cog"></span> Supervisor
+                                        </th>
+                                        <th width="10%"><span class="icoSidebar fas fa-calendar-alt"></span> Fecha</th>
+                                        <th width="5%"><span class="icoSidebar fas fa-clock"></span> Turno</th>
+                                        <th width="10%"><span class="icoSidebar fas fa-check"></span> Status</th>
+                                        <th><span class="icoSidebar fas fa-pencil-alt"></span> Motivo</th>
 
-                                </tbody>
+                                        </thead>
 
-                            </table>
+                                        <tbody>
+
+                                        </tbody>
+
+                                    </table>
+                                </div>
+                            </div>
                         </div>
                     </div>
+                    <div class="col-lg-6">
+                        <div class="container-fluid">
+                            <h2 class="text-center csvTitulo"><span class="fas fa-barcode"></span> Etiquetas Impresas
+                            </h2>
+                        </div>
+                        <div class="table-responsive">
+                            <div class="containerTable">
+                                <div class="table table-responsive">
+                                    <table id="tableSerials"
+                                        class="table table-bordered table-striped table-sm hover text-center"">
+                                        <thead class=" thead-dark">
+
+                                        <th width="8%"><span class="fas fa-fingerprint"></span> Serial </th>
+                                        <th width="10%"><span class="fas fa-clipboard"></span> Plan_ID </th>
+                                        <th width="10%"><span class="fas fa-key"></span> SAP </th>
+                                        <th width="5%"><span class="fas fa-user"></span> Operador </th>
+                                        <th width="5%"><span class="fas fa-hashtag"></span> Cantidad </th>
+                                        <th width="15%"><span class="fas fa-calendar-alt"></span> Fecha </th>
+                                        <th><span class="fas fa-pencil-alt"></span> Motivo_Cancel </th>
+                                        <th width="10%"><span class="fas fa-check"></span> Status </th>
+                                        <th width="10%"><span class="fas fa-check-double"></span> Resultado_SAP </th>
+                                        <th width="5%"><span class="fas fa-user-check"></span> Emp_Acreditado </th>
+
+                                        </thead>
+
+                                        <tbody>
+                                            <!-- Agregado directamente desde Javascript -->
+                                        </tbody>
+
+                                    </table>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
                 </div>
-
-
-
             </div>
 
 
 
-<%- include ("./static/footer") %>
-<script src="/js/functions/reportes.js"></script>
+
+
+            <%- include ("./static/footer") %>
+                <script src="/js/functions/reportes.js"></script>

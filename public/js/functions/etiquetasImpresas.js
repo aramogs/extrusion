@@ -60,6 +60,7 @@ const picker = datepicker('#selectFecha', {
     let dd = date.getDate();
     let yy = date.getFullYear();
     if (mm <= 9) mm = '0' + mm;
+    if (dd <= 9) dd = '0' + dd;
     myDateString = yy + '-' + mm + '-' + dd;
     input.value = myDateString
 
@@ -83,7 +84,6 @@ function fillTable() {
     data: JSON.stringify(data),
     headers: { 'content-type': 'application/json' }
   }).then((result) => {
-
     for (let y = 0; y < result.data.length; y++) {
       let cancelar
       if (result.data[y].status == "Impreso") {
@@ -233,9 +233,7 @@ function reload(tipo) {
 function modalMotivo() {
 
   let checkInputs = document.querySelectorAll(".form-check-input:checked")
-  // checkInputs.forEach(input =>{console.log(input.value)})
   let myArray = Array.from(checkInputs)
-  console.log(myArray);
 
   $('#modalMotivo').modal({ backdrop: 'static', keyboard: false })
 
@@ -244,10 +242,6 @@ function modalMotivo() {
 
 
 function motivoIdPlan() {
-
-  // checkInputs.forEach(input =>{console.log(input.value)})
-  // let myArray = Array.from(checkInputs)
-  // console.log(myArray);
 
   $('#modalCancelFullId').modal({ backdrop: 'static', keyboard: false })
   enableIdPlan()
@@ -345,7 +339,6 @@ formMotivoPlan.addEventListener("submit", (e) => {
 
 
   let data = { "id": `${select_idPlan.value}`, "motivo": `${motivoPlan.value}` }
-  console.log(data)
   axios({
     method: 'post',
     url: `/cancelarSerialesPlan`,

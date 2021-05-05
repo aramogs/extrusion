@@ -63,6 +63,8 @@ const picker = datepicker('#selectFecha', {
         let mm = date.getMonth() + 1;
         let dd = date.getDate();
         let yy = date.getFullYear();
+        if (mm <= 9) mm = '0' + mm;
+        if (dd <= 9) dd = '0' + dd;
         myDateString = yy + '-' + mm + '-' + dd;
         input.value = myDateString
 
@@ -94,7 +96,12 @@ function fillTable() {
                         <button type="submit" formaction="/actualizar" class="btn btn-info  rounded-pill"
                                         nname="btnCancel" id="btnCancel-${result.data[y].plan_id}" onClick="edit(this.id)"><span class="fas fa-pencil-alt">` 
 
-                    }else{cancelar=""}
+                    }else{
+                      cancelar=
+                      `
+                        <button type="button" class="btn btn-secondary  rounded-pill btn-block" disabled><span class="fas fa-ban" ></span>
+                      `
+                    }
                    
 
                     table.row.add( [
