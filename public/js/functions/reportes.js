@@ -129,7 +129,7 @@ function fillTableSeriales() {
                 result.data[i].motivo_cancel,
                 result.data[i].status,
                 result.data[i].resultado_sap,
-                result.data[i].emp_acred,
+                result.data[i].emp_mod,
             ]).draw(false);
 
         }

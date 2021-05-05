@@ -359,7 +359,8 @@ controller.cancelarIdPlan_POST = (req, res) => {
 
     let midplan = req.body.id
     let motivo = req.body.motivo
-    funcion.cancelarIdPlan(midplan, motivo)
+    let user_id = req.body.user
+    funcion.cancelarIdPlan(midplan, motivo,user_id)
         .then((result) => { res.json(result) })
         .catch((err) => { console.error(err) })
 
@@ -607,7 +608,9 @@ controller.cancelarSeriales_POST = (req, res) => {
     let seriales = req.body.seriales
     let motivo = req.body.motivo
     let arraySeriales = seriales.split(',')
-    funcion.cancelarSeriales(arraySeriales, motivo)
+    let user_id = req.body.user
+    
+    funcion.cancelarSeriales(arraySeriales, motivo, user_id)
         .then((result) => { res.json(result) })
         .catch((err) => { console.error(err) })
 

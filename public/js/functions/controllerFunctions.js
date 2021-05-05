@@ -155,14 +155,15 @@ funcion.getCurrentProgramacion = (fecha, turno, linea) => {
     })
 }
 
-funcion.cancelarIdPlan = (idplan, motivo) => {
+funcion.cancelarIdPlan = (idplan, motivo,user) => {
     return new Promise((resolve, reject) => {
         dbEX(`
         UPDATE 
             production_plan
         SET
             status = 'Cancelado', 
-            motivo_cancel ='${motivo}'
+            motivo_cancel ='${motivo}',
+            emp_mod= ${user}
         WHERE
             plan_id= ${idplan}
         
@@ -369,7 +370,7 @@ funcion.getColumnsExtr = () => {
 
 
 //TODO optimizar funcion
-funcion.cancelarSeriales = (arraySeriales, motivo) => {
+funcion.cancelarSeriales = (arraySeriales, motivo,user) => {
 
     return new Promise((resolve, reject) => {
         for (let i = 0; i < arraySeriales.length; i++) {
@@ -378,7 +379,8 @@ funcion.cancelarSeriales = (arraySeriales, motivo) => {
                 extrusion_labels
             SET
                 status = 'Cancelado', 
-                motivo_cancel ='${motivo}'
+                motivo_cancel ='${motivo}',
+                emp_mod=${user}
             WHERE
                 serial= ${arraySeriales[i]}
             
@@ -564,7 +566,7 @@ funcion.updateSerialesAcred = (seriales) => {
                 SET 
                     status='Acreditado',
                     resultado_sap='${serial.result}',
-                    emp_acred=${user_id}
+                    emp_mod=${user_id}
                 WHERE 
                     serial = ${serial.serial_num}
                     `)
@@ -586,7 +588,7 @@ funcion.updateSerialesAcred = (seriales) => {
                     extrusion_labels 
                 SET 
                     resultado_sap='${serial.result}',
-                    emp_acred=${user_id}
+                    emp_mod=${user_id}
                 WHERE 
                     serial = ${serial.serial_num}
                     `)
