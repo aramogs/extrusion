@@ -155,15 +155,16 @@ funcion.getCurrentProgramacion = (fecha, turno, linea) => {
     })
 }
 
-funcion.cancelarIdPlan = (idplan, motivo,user) => {
+funcion.cancelarIdPlan = (idplan, motivo) => {
+
     return new Promise((resolve, reject) => {
         dbEX(`
         UPDATE 
             production_plan
         SET
             status = 'Cancelado', 
-            motivo_cancel ='${motivo}',
-            emp_mod= ${user}
+            motivo_cancel ='${motivo}'
+
         WHERE
             plan_id= ${idplan}
         
@@ -380,7 +381,7 @@ funcion.cancelarSeriales = (arraySeriales, motivo,user) => {
             SET
                 status = 'Cancelado', 
                 motivo_cancel ='${motivo}',
-                emp_mod=${user}
+                emp_mod='${user}'
             WHERE
                 serial= ${arraySeriales[i]}
             
@@ -448,14 +449,15 @@ funcion.getIdPlans = (fecha) => {
     })
 }
 
-funcion.cancelSerialesPlan = (plan_id, motivo) => {
+funcion.cancelSerialesPlan = (plan_id, motivo,user) => {
     return new Promise((resolve, reject) => {
         dbEX(`
         UPDATE 
             extrusion_labels 
         SET 
             status = 'Cancelado',
-            motivo_cancel = '${motivo}'
+            motivo_cancel = '${motivo}',
+            emp_mod= '${user}'
         WHERE
             plan_id = ${plan_id};
         `)
@@ -566,7 +568,7 @@ funcion.updateSerialesAcred = (seriales) => {
                 SET 
                     status='Acreditado',
                     resultado_sap='${serial.result}',
-                    emp_mod=${user_id}
+                    emp_mod='${user_id}'
                 WHERE 
                     serial = ${serial.serial_num}
                     `)
@@ -588,7 +590,7 @@ funcion.updateSerialesAcred = (seriales) => {
                     extrusion_labels 
                 SET 
                     resultado_sap='${serial.result}',
-                    emp_mod=${user_id}
+                    emp_mod='${user_id}'
                 WHERE 
                     serial = ${serial.serial_num}
                     `)
