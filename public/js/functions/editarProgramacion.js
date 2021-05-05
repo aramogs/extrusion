@@ -1,16 +1,10 @@
-// $('#myModal').on('shown.bs.modal', function () {
-//     $('#myInput').trigger('focus')
-// })
-
-
-
 let btnCerrar = document.querySelectorAll(".btnCerrar")
 let tituloSuccess = document.getElementById("tituloSuccess")
 let cantidadSuccess = document.getElementById("cantidadSuccess")
 let cargasAnteriores = document.getElementById("cargasAnteriores")
 let btnGuardar = document.getElementById("btnGuardar")
 let cardExcel = document.getElementById("cardExcel")
-let table = $('#myTable').DataTable();
+let table = $('#myTable').DataTable({"order":[[1,"asc"]]})
 let midplan = document.getElementById("midplan")
 let formMotivo = document.getElementById("formMotivo")
 let formEditar = document.getElementById("formEditar")

@@ -147,7 +147,7 @@ funcion.getCurrentProgramacion = (fecha, turno, linea) => {
         FROM
             (SELECT * FROM production_plan, b10_bartender.extr WHERE DATE(production_plan.fecha) = '${fecha}' AND turno = '${turno}' AND linea = '${linea}' AND numero_sap = no_sap) AS s1
         LEFT JOIN
-            (SELECT numero_parte, SUM(cantidad) AS 'impreso', plan_id FROM extrusion_labels WHERE DATE(extrusion_labels.datetime) = '${fecha}' GROUP BY plan_id) AS s2 
+            (SELECT numero_parte, SUM(cantidad) AS 'impreso', plan_id FROM extrusion_labels WHERE DATE(extrusion_labels.datetime) = '${fecha}' AND extrusion_labels.status != 'Cancelado' GROUP BY plan_id) AS s2 
         ON s1.plan_id = s2.plan_id
             `)
             .then((result) => { resolve(result) })

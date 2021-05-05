@@ -467,6 +467,7 @@ controller.impresion_POST = (req, res) => {
     let plan_id = req.body.plan_id
     let no_sap = req.body.no_sap
     let operador_id = req.res.locals.authData.id.id
+    let operador_name = req.res.locals.authData.id.username
     let cantidad = parseInt(req.body.cantidad)
     let contenedor = req.body.contenedor
     let capacidad = parseInt(req.body.capacidad)
@@ -513,7 +514,7 @@ controller.impresion_POST = (req, res) => {
                             data[`printer`] = impresora
                             data['serial'] = serial
                             data['line'] = linea
-                            data['emp_num'] = operador_id
+                            data['emp_num'] = operador_name
                            
                         }
                         axios({
