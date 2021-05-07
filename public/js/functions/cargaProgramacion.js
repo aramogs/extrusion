@@ -137,10 +137,19 @@ function sendData() {
         headers: { 'Content-Type': 'multipart/form-data', 'Accept': 'application/json', }
     })
         .then((response) => {
-
-            setTimeout(function(){ $('#modalSpinner').modal('hide') }, 1000);
             
-            window.location = `/editarProgramacion/?fecha=${myDateString}`
+            if (!response.data.message) {
+                setTimeout(function(){ $('#modalSpinner').modal('hide') }, 1000);
+            
+                window.location = `/editarProgramacion/?fecha=${myDateString}`
+            }else{
+                setTimeout(function(){ $('#modalSpinner').modal('hide') }, 500);
+                $('#modalError').modal({ backdrop: 'static', keyboard: false })
+                modal_errorText.innerHTML = response.data.message
+
+            }
+
+
 
         })
         .catch((err) => { console.error(err) });

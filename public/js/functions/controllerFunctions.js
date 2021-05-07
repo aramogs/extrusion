@@ -68,23 +68,20 @@ funcion.getProgramacion = (fecha) => {
     })
 }
 
-funcion.verifySAP = (base, tabla, callback) => {
-    if (base === "b10_bartender") {
-        db(`SELECT no_sap FROM ${tabla} `, function (err, result, fields) {
-            if (err) {
-                callback(err, null);
-            } else {
-                callback(null, result);
-            }
-        })
-    }
+funcion.getNumerosSAP = () => {
+    return new Promise((resolve, reject) => {
+        db(`
+        SELECT no_sap FROM extr;
+        `)
+            .then((result) => { resolve(result) })
+            .catch((error) => { reject(error)   })
+    })
 
 
 }
 
-funcion.insertProgramaExcel = (base, tabla, titulos, valores, sup_num, fecha, turno) => {
+funcion.insertProgramaExcel = (tabla, titulos, valores, sup_num, fecha, turno) => {
     return new Promise((resolve, reject) => {
-  
         let valor
         let valores_finales = []
         let arreglo_arreglos = []
@@ -109,7 +106,6 @@ funcion.insertProgramaExcel = (base, tabla, titulos, valores, sup_num, fecha, tu
             arreglo_arreglos.push(valores_finales)
         }
 
-        console.log(arreglo_arreglos);
         let sql  = `INSERT INTO ${tabla} (${titulos.join()},sup_name,fecha,turno) VALUES ?`;
         
         dbEX(sql, [arreglo_arreglos])

@@ -155,8 +155,10 @@ controller.getProgramacion_POST = (req, res) => {
 
 }
 
-const arreglosExcel = (base, tabla, bufferExcel) => {
+const arreglosExcel = (numeros_sap,bufferExcel) => {
     return new Promise((resolve, reject) => {
+
+       let numeros_actuales = numeros_sap.map(({no_sap}) => no_sap)
 
         let arreglo = [];
         let titulos = [];
@@ -167,53 +169,48 @@ const arreglosExcel = (base, tabla, bufferExcel) => {
 
         const wb = new Excel.Workbook();
 
-        funcion.verifySAP(base, tabla, (err, numeros_sap) => {
 
-
-            wb.xlsx.load(bufferExcel)
-                .then(() => {
-                    worksheet = wb.worksheets[0]
-                    worksheet.eachRow(function (row, rowNumber) {
-                        val = row.values
-                        for (let i = 0; i < val.length; i++) {
-                            if (val[i] === undefined) {
-                                val[i] = " "
-                            }
-                        }
-                        arreglo.push(val)
-                    });
-                })
-                .then(() => {
-                    for (let i = 0; i < arreglo.length; i++) {
-                        arreglo[i].shift()
-                    }
-                    for (let i = 0; i < arreglo[0].length; i++) {
-                        titulos.push(`\`${arreglo[0][i]}\``)
-                        titulos2.push((arreglo[0][i]).toLowerCase())
-                    }
-                    for (let i = 1; i < arreglo.length; i++) {
-
-
-                        valores.push(arreglo[i])
-
-                    }
-
-                })
-                .then(() => {
-                    for (let i = 0; i < titulos2.length; i++) {
-                        if (titulos2[i].includes("numero_sap") || titulos2[i].includes("cantidad")) {
-                            count++
+        wb.xlsx.load(bufferExcel)
+            .then(() => {
+                worksheet = wb.worksheets[0]
+                worksheet.eachRow(function (row, rowNumber) {
+                    val = row.values
+                    for (let i = 0; i < val.length; i++) {
+                        if (val[i] === undefined) {
+                            val[i] = " "
                         }
                     }
-                    if (2 == count) {
+                    arreglo.push(val)
+                });
+            })
+            .then(() => {
+                for (let i = 0; i < arreglo.length; i++) {
+                    arreglo[i].shift()
+                }
+                for (let i = 0; i < arreglo[0].length; i++) {
+                    titulos.push(`\`${arreglo[0][i]}\``)
+                    titulos2.push((arreglo[0][i]).toLowerCase())
+                }
+                for (let i = 1; i < arreglo.length; i++) {
+                    valores.push(arreglo[i])
+                    if (!numeros_actuales.includes(arreglo[i][0])) reject("Verificar numeros SAP") 
+                    
+                }
 
-                        resolve([titulos, valores])
-                    } else {
-                        reject("Verificar archivo de Excel")
+            })
+            .then(() => {
+                for (let i = 0; i < titulos2.length; i++) {
+                    if ((titulos2[i]).toLowerCase().includes("numero_sap") || (titulos2[i]).toLowerCase().includes("cantidad") || (titulos2[i]).toLowerCase().includes("linea")) {
+                        count++
                     }
-                })
+                }
+                if (3 == count) {
 
-        })
+                    resolve([titulos, valores])
+                } else {
+                    reject("Verificar archivo de Excel")
+                }
+            })
     })
 }
 
@@ -225,21 +222,42 @@ controller.verificarSAP_POST = (req, res) => {
 
     let user = (req.res.socket.user).substring(4)
     let bufferExcel = req.file.buffer
-    let base = process.env.DB_CONN_EXTR
-    let tabla = "extr"
 
-    arreglosExcel(base, tabla, bufferExcel)
-        .then((result) => {
-            titulos = result[0]
-            valores = result[1]
-            //TODO cambiar base y tabla a .env
-            //TODO Crear funcion extra que verifique que los numeros de SAP coiniciden con la base da datos, en caso contrario regresar error
-            funcion.insertProgramaExcel("extrusion", "production_plan", titulos, valores, user.toLowerCase(), fecha, turno)
-                .then((result) => { res.json(result) })
-                .catch((err) => { res.json(err) })
-        })
-        .catch((err) => { console.error(err) })
+    // arreglosExcel(bufferExcel)
+    //     .then((result) => {
+    //         titulos = result[0]
+    //         valores = result[1]
+    //         //TODO cambiar base y tabla a .env
+    //         //TODO Crear funcion extra que verifique que los numeros de SAP coiniciden con la base da datos, en caso contrario regresar error
+    //         funcion.insertProgramaExcel("extrusion", "production_plan", titulos, valores, user.toLowerCase(), fecha, turno)
+    //             .then((result) => { res.json(result) })
+    //             .catch((err) => { res.json(err) })
+    //     })
+    //     .catch((err) => { res.json(err) })
 
+    async function waitForPromise() {
+        let numeros_sap = await funcion.getNumerosSAP()
+        let excel = await arreglosExcel(numeros_sap,bufferExcel)
+
+
+        Promise.all([numeros_sap, excel])
+            .catch(err => { res.json(err) })
+            .then(result => {
+                numeros_sap_ = result[0]
+
+                titulos = result[1][0]
+                valores = result[1][1]
+                funcion.insertProgramaExcel( "production_plan", titulos, valores, user.toLowerCase(), fecha, turno)
+                    .then((result) => {console.log(result); res.json(result) })
+                    .catch((err) => {console.error(err); res.json(err) })
+
+            })
+
+
+    }
+    waitForPromise()
+
+        .catch((err) => { res.status(200).send({message:err}) })
 }
 
 
@@ -359,7 +377,7 @@ controller.cancelarIdPlan_POST = (req, res) => {
 
     let midplan = req.body.id
     let motivo = req.body.motivo
-    
+
     funcion.cancelarIdPlan(midplan, motivo)
         .then((result) => { res.json(result) })
         .catch((err) => { console.error(err) })
@@ -516,7 +534,7 @@ controller.impresion_POST = (req, res) => {
                             data['serial'] = serial
                             data['line'] = linea
                             data['emp_num'] = operador_name
-                           
+
                         }
                         axios({
                             method: 'post',
@@ -609,7 +627,7 @@ controller.cancelarSeriales_POST = (req, res) => {
     let motivo = req.body.motivo
     let arraySeriales = seriales.split(',')
     let user = (req.connection.user).substring(3)
-    
+
     funcion.cancelarSeriales(arraySeriales, motivo, user)
         .then((result) => { res.json(result) })
         .catch((err) => { console.error(err) })
@@ -662,7 +680,7 @@ controller.cancelarSerialesPlan_POST = (req, res) => {
     let motivo = req.body.motivo
     let user = (req.connection.user).substring(3)
 
-    funcion.cancelSerialesPlan(plan_id, motivo,user)
+    funcion.cancelSerialesPlan(plan_id, motivo, user)
         .then((result) => { res.json(result) })
         .catch((err) => { console.error(err) })
 
