@@ -4,7 +4,7 @@ let btnCerrar = document.querySelectorAll(".btnCerrar")
 let submitSerial = document.getElementById("submitSerial")
 let currentST = document.getElementById("currentST")
 let submitArray = document.getElementById("submitArray")
-let btn_transferFG = document.getElementById("btn_transferFG")
+let btn_transferSF = document.getElementById("btn_transferSF")
 let contadorSeriales = document.getElementById("contadorSeriales")
 let contadorWarning = document.getElementById("contadorWarning")
 let tabla_consulta = document.getElementById('tabla_consulta').getElementsByTagName('tbody')[0];
@@ -30,7 +30,7 @@ btnCerrar.forEach(element => {
 
 submitSerial.addEventListener("submit", listAdd)
 
-btn_transferFG.addEventListener("click", () => { $('#modalCantidad').modal({ backdrop: 'static', keyboard: false }) })
+btn_transferSF.addEventListener("click", () => { $('#modalCantidad').modal({ backdrop: 'static', keyboard: false }) })
 
 submitArray_form.addEventListener("submit", submitSerials)
 
@@ -51,9 +51,9 @@ function cleanInput() {
     contadorSeriales.value = 0
     div_btn_procesar_seriales.classList.remove("animate__flipInX", "animate__animated")
     div_btn_procesar_seriales.classList.add("animate__flipOutX", "animate__animated")
-    btn_transferFG.disabled = true
-    btn_transferFG.classList.remove("btn-warning")
-    btn_transferFG.classList.add("btn-secondary")
+    btn_transferSF.disabled = true
+    btn_transferSF.classList.remove("btn-warning")
+    btn_transferSF.classList.add("btn-secondary")
 
 }
 
@@ -92,9 +92,9 @@ function listAdd(e) {
         currentST.appendChild(append)
         serial_num.value = ""
 
-        btn_transferFG.disabled = false
-        btn_transferFG.classList.remove("btn-secondary")
-        btn_transferFG.classList.add("btn-warning")
+        btn_transferSF.disabled = false
+        btn_transferSF.classList.remove("btn-secondary")
+        btn_transferSF.classList.add("btn-warning")
 
 
     } else {
@@ -166,7 +166,7 @@ function submitSerials(e) {
     let data = { "seriales": `${serialsArray}` };
     axios({
         method: 'post',
-        url: "/procesarSeriales",
+        url: "/transferenciaRP",
         data: JSON.stringify(data),
         headers: {
             'Content-Type': 'application/json'
@@ -197,7 +197,7 @@ function submitSerials(e) {
                     if (element.error != "N/A") {
                         let row = `
                                 <tr class="bg-danger">
-                                    <td>${element.serial_num}</td>
+                                    <td>${element.serial}</td>
                                     <td>${element.error}</td>
                                 </tr>
                                 `
