@@ -34,6 +34,7 @@ btn_transferFG.addEventListener("click", () => { $('#modalCantidad').modal({ bac
 
 submitArray_form.addEventListener("submit", submitSerials)
 
+
 btnCerrar_Success.addEventListener("click", cleanInput())
 
 btnCerrar_Error.addEventListener("click", cleanInput())
@@ -51,10 +52,6 @@ function cleanInput() {
     contadorSeriales.value = 0
     div_btn_procesar_seriales.classList.remove("animate__flipInX", "animate__animated")
     div_btn_procesar_seriales.classList.add("animate__flipOutX", "animate__animated")
-    btn_transferFG.disabled = true
-    btn_transferFG.classList.remove("btn-warning")
-    btn_transferFG.classList.add("btn-secondary")
-
 }
 
 
@@ -208,12 +205,12 @@ function submitSerials(e) {
 
                 })
                 cantidadErrores.innerHTML = errors
-
-                setTimeout(function () {
+              
+                setTimeout(function () { 
                     $('#modalSpinner').modal('hide')
                     $('#modalError').modal({ backdrop: 'static', keyboard: false })
-                }, 500);
-
+                 }, 500);
+              
             } else {
                 $('#modalSpinner').modal('hide')
                 $('#modalSuccess').modal({ backdrop: 'static', keyboard: false })

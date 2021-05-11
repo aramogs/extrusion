@@ -51,7 +51,7 @@
 
 
 
-          <label for="serial_num">Seriales EXT <i class="fas fa-barcode" style="font-size: 1rem;"></i></label>
+          <label for="serial_num">Serial EXT <i class="fas fa-barcode" style="font-size: 1rem;"></i></label>
           <input type="text" class="form-control" name="serial_num" id="serial_num" aria-describedby="helpId"
             placeholder="" autocomplete="off">
           <small id="helpId" class="form-text text-muted"></small>
@@ -66,7 +66,118 @@
   </div>
 
 
-  <div class="row">
+
+  <div class="modal fade" id="modalEditar" tabindex="-1" role="dialog"
+  aria-labelledby="exampleModalCenterTitle" aria-hidden="true">
+  <div class="modal-dialog " role="document">
+      <div class="modal-content">
+
+          <div class="modal-body">
+
+              <div class="card">
+                  <div class="card-header text-center d-none d-lg-block">
+                      <!-- <img src="/img/sap.png" alt="SAP" srcset="" class="card-mov"> -->
+                      <h4 class="card-mov"><span class="text-secondary fas fa-label"></span>
+                          Informacion
+                      </h4>
+                  </div>
+
+                  <div class="card-body">
+
+                      <div class="row">
+                          <div class="col-5">
+                              <h7>SAP:</h7>
+                          </div>
+                          <div class="col-7">
+                              <h7 class="text-left"><span class="badge badge-info" id="mesap"></span>
+                              </h7>
+                          </div>
+                      </div>
+
+                      <div class="row">
+                          <div class="col-lg-5 col-sm-12">
+                              <h7 class="text-left">Cantidad: </h7>
+                          </div>
+                          <div class="col-lg-7 col-sm-12">
+                              <h7 class="text-left"><span class="badge badge-info"
+                                      id="mecantidad"></span></h7>
+                          </div>
+                      </div>
+
+                      <div class="d-none d-lg-block">
+                          <div class="row ">
+                              <div class="col-5">
+                                  <h7 class="text-left">Fecha: </h7>
+                              </div>
+                              <div class="col-7">
+                                  <h7 class="text-left"><span class="badge badge-info"
+                                          id="mefecha"></span></h7>
+                              </div>
+                          </div>
+                      </div>
+                      <hr>
+
+
+
+                      <form action="/editar_idplan" method="POST" id="formEditar">
+                          <div class="container">
+                              <div class="row">
+
+                                  <div class="row d-none d-lg-block">
+                                      <div class="col-lg-12">
+                                          <h5>Cantidad:</h5>
+                                      </div>
+                                  </div>
+                                  <div class="input-group mb-3">
+                                      <div class="input-group-prepend">
+                                          <span class="input-group-text fas fa-edit"
+                                              id="basic-addon1"></span>
+                                      </div>
+                                      <input type="number" class="form-control" name="edit_cantidad"
+                                          id="edit_cantidad" placeholder="" min="1" required>
+                                  </div>
+
+                                  <div class="row d-none d-lg-block">
+                                      <div class="col-lg-12">
+                                          <h5>Linea:</h5>
+                                      </div>
+                                  </div>
+
+                                  <div class="input-group mb-3">
+                                      <div class="input-group-prepend">
+                                          <span class="input-group-text fas fa-edit"
+                                              id="basic-addon1"></span>
+                                      </div>
+                                      <input type="number" class="form-control" name="edit_linea"
+                                          id="edit_linea" placeholder="" min="1" max="500" required>
+                                  </div>
+
+
+
+                              </div>
+                          </div>
+
+                  </div>
+              </div>
+
+          </div>
+
+          <div class="modal-footer">
+              <button type="button" class="btn btn-secondary btnCerrar"
+                  data-dismiss="modal">Cerrar</button>
+              <button formAction="/editar_idplan" type="submit" id="btnCancel_e"
+                  class="btn btn-info">Guardar</button>
+          </div>
+          <input type="text" class="form-control" name="midplane" id="midplane"
+              aria-describedby="helpId" value="" hidden>
+          </form>
+
+      </div>
+  </div>
+</div>
+
+
+  <!-- <div class="row">
     <div class="col-lg-4"></div>
 
     <div class="col-lg-4">
@@ -75,7 +186,7 @@
         <div class="card-header ">
           <div class="row">
             <div class="col-9">
-              <strong>Seriales :</strong>
+              <strong>Informacion :</strong>
               <small id="user_id"><%= user_id %></small>
             </div>
             <div class="col-2">
@@ -85,14 +196,17 @@
           </div>
         </div>
         <div class="card-body bg-secondary text-center">
+          
+
           <div id="currentST">
+
 
           </div>
         </div>
       </div>
     </div>
     <div class="col-lg-4"></div>
-  </div>
+  </div> -->
 </div>
 
 
@@ -254,7 +368,7 @@
 </div>
 
 <%- include ("./static/footer") %>
-<script type="text/javascript" src="/js/functions/backflushEx.js"></script>
+<script type="text/javascript" src="/js/functions/transferPR.js"></script>
 
 </body>
 

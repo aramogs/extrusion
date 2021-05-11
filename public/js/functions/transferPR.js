@@ -1,10 +1,12 @@
+//const { infoSerial } = require("./controllerFunctions")
+
 let serial_num = document.getElementById("serial_num")
 let alerta_prefijo = document.getElementById("alerta_prefijo")
 let btnCerrar = document.querySelectorAll(".btnCerrar")
 let submitSerial = document.getElementById("submitSerial")
 let currentST = document.getElementById("currentST")
 let submitArray = document.getElementById("submitArray")
-let btn_transferFG = document.getElementById("btn_transferFG")
+//let btn_transferFG = document.getElementById("btn_transferFG")
 let contadorSeriales = document.getElementById("contadorSeriales")
 let contadorWarning = document.getElementById("contadorWarning")
 let tabla_consulta = document.getElementById('tabla_consulta').getElementsByTagName('tbody')[0];
@@ -30,7 +32,7 @@ btnCerrar.forEach(element => {
 
 submitSerial.addEventListener("submit", listAdd)
 
-btn_transferFG.addEventListener("click", () => { $('#modalCantidad').modal({ backdrop: 'static', keyboard: false }) })
+//btn_transferFG.addEventListener("click", () => { $('#modalCantidad').modal({ backdrop: 'static', keyboard: false }) })
 
 submitArray_form.addEventListener("submit", submitSerials)
 
@@ -46,14 +48,14 @@ function cleanInput() {
     serial_num.disabled = false
     serial_num.value = ""
     submitArray.value = ""
-    currentST.innerHTML = ""
+    //currentST.innerHTML = ""
     serialsArray = []
     contadorSeriales.value = 0
     div_btn_procesar_seriales.classList.remove("animate__flipInX", "animate__animated")
     div_btn_procesar_seriales.classList.add("animate__flipOutX", "animate__animated")
-    btn_transferFG.disabled = true
-    btn_transferFG.classList.remove("btn-warning")
-    btn_transferFG.classList.add("btn-secondary")
+    //btn_transferFG.disabled = true
+    //btn_transferFG.classList.remove("btn-warning")
+    //btn_transferFG.classList.add("btn-secondary")
 
 }
 
@@ -76,25 +78,33 @@ function listAdd(e) {
 
 
     } else if (serialsArray.indexOf((serial_num.value).substring(1)) === -1 && serialsArray.indexOf(`0${(serial_num.value).substring(1)}`) === -1) {
+
+
+
         soundOk()
+
+
         if ((serial_num.value).substring(1).length < 10) {
             serialsArray.push(`0${(serial_num.value).substring(1)}`)
         } else {
             serialsArray.push((serial_num.value).substring(1))
         }
 
-        alerta_prefijo.classList.remove("animate__flipInX", "animate__animated")
-        alerta_prefijo.classList.add("animate__flipOutX", "animate__animated")
+        consultarSerial();
+      
 
-        let serial = `<small style="display:inline; "><span class="badge badge-light text-dark"> ${(serial_num.value).substring(1)} </span></small> `
-        let append = document.createElement("span")
-        append.innerHTML = serial
-        currentST.appendChild(append)
-        serial_num.value = ""
+        // alerta_prefijo.classList.remove("animate__flipInX", "animate__animated")
+        // alerta_prefijo.classList.add("animate__flipOutX", "animate__animated")
 
-        btn_transferFG.disabled = false
-        btn_transferFG.classList.remove("btn-secondary")
-        btn_transferFG.classList.add("btn-warning")
+        // let serial = `<small style="display:inline; "><span class="badge badge-light text-dark"> ${(serial_num.value).substring(1)} </span></small> `
+        // let append = document.createElement("span")
+        // append.innerHTML = serial
+        // currentST.appendChild(append)
+        // serial_num.value = ""
+
+        // //btn_transferFG.disabled = false
+        // //btn_transferFG.classList.remove("btn-secondary")
+        // //btn_transferFG.classList.add("btn-warning")
 
 
     } else {
@@ -218,6 +228,36 @@ function submitSerials(e) {
                 $('#modalSpinner').modal('hide')
                 $('#modalSuccess').modal({ backdrop: 'static', keyboard: false })
             }
+
+        })
+        .catch((err) => {
+            console.error(err);
+        })
+}
+
+
+
+function consultarSerial(){
+
+
+    console.log(serialsArray);
+    let data = { "seriales": `${serialsArray}` };
+    axios({
+        method: 'post',
+        url: "/consultarSeriales",
+        data: JSON.stringify(data),
+        headers: {
+            'Content-Type': 'application/json'
+        }
+
+    })
+        .then((result) => {
+            console.log(result);
+
+            //response = JSON.parse(result.data)
+            $('#modalEditar').modal({ backdrop: 'static', keyboard: false })
+
+           
 
         })
         .catch((err) => {
