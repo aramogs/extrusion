@@ -765,28 +765,33 @@ function infoSeriales(seriales) {
 function checkAllStatus(seriales, status) {
     return new Promise((resolve, reject) => {
         let noAcreditar = []
-        seriales.forEach(serial => {
-
+        seriales.forEach(element => {
+            
             if (status === "Impreso") {
-                if (serial.status != status) {
+                if (element.status != status) {
                     let obj = {}
                     let error
-                    if (serial.status == "Cancelado") error = "Serial Cancelado"
-                    if (serial.status == "Acreditado") error = "Serial Ya Acreditado"
-                    if (serial.status == "No Encontrado") error = "Serial No Encontrado"
-                    obj['serial_num'] = serial.serial
+                    if (element.status === "Cancelado") error = "Serial Cancelado"
+                    if (element.status === "Acreditado") error = "Serial Previamente Acreditado"
+                    if (element.status === "No Encontrado") error = "Serial No Encontrado"
+                    if (element.status === "Transferido") error = "Serial Acreditado y Transferido"
+                    obj['serial_num'] = element.serial
                     obj['error'] = error
                     obj['result'] = "N/A"
                     noAcreditar.push(obj)
                 }
-            } else if (status === "Acreditado") {
-                if (serial.status != status) {
+            }  
+            if (status === "Acreditado") {
+
+                if (element.status != status && element.status != "Transferido") {
+                    console.log(element.status);
                     let obj = {}
                     let error
-                    if (serial.status == "Cancelado") error = "Serial Cancelado"
-                    if (serial.status == "Impreso") error = "Serial Sin Acreditar"
-                    if (serial.status == "No Encontrado") error = "Serial No Encontrado"
-                    obj['serial_num'] = serial.serial
+                    if (element.status === "Cancelado") error = "Serial Cancelado"
+                    if (element.status === "Impreso") error = "Serial Sin Acreditar"
+                    if (element.status === "No Encontrado") error = "Serial No Encontrado"
+                    // if (element.status == "Transferido") error = "Serial Acreditado y Transferido"
+                    obj['serial_num'] = element.serial
                     obj['error'] = error
                     obj['result'] = "N/A"
                     noAcreditar.push(obj)
@@ -796,13 +801,23 @@ function checkAllStatus(seriales, status) {
 
 
         });
-        resolve(noAcreditar)
+        resolve(noAcreditar, console.log(noAcreditar))
     })
 }
 
 function updateAcreditado(seriales, user_id) {
     return new Promise((resolve, reject) => {
         funcion.updateSerialesAcred(seriales, user_id)
+            .then((result) => {
+                resolve(result)
+            })
+            .catch((err) => { reject(err) })
+    })
+}
+
+function updateTransferido(seriales, user_id) {
+    return new Promise((resolve, reject) => {
+        funcion.updateSerialesTransferidos(seriales, user_id)
             .then((result) => {
                 resolve(result)
             })
@@ -874,17 +889,17 @@ controller.transferenciaRP_POST = (req, res) => {
             amqpRequest(send)
                 .then((result) => {
                     console.log(result);
-                    // async function updateAcred() {
-                    //     let resultado = JSON.parse(result)
-                    //     let resultadArray = resultado.result
-                    //     let acreditado = await updateAcreditado(resultadArray, user_id);
-                    //     res.json(result)
-                    // }
-                    // updateAcred()
-                    res.json(result)
+                    async function updateAcred() {
+                        let resultado = JSON.parse(result)
+                        let resultadArray = resultado.result
+                        console.log(resultadArray);
+                        let acreditado = await updateTransferido(resultadArray, user_id);
+                        res.json(result)
+                    }
+                    updateAcred()
+
                 })
                 .catch((err) => { console.error(err) })
-
         }
     }
     getStatus()

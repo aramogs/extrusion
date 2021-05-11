@@ -197,7 +197,7 @@ function submitSerials(e) {
                     if (element.error != "N/A") {
                         let row = `
                                 <tr class="bg-danger">
-                                    <td>${element.serial}</td>
+                                    <td>${element.serial_num}</td>
                                     <td>${element.error}</td>
                                 </tr>
                                 `
