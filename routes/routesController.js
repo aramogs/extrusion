@@ -810,4 +810,22 @@ controller.reporteGrafico_POST = (req, res) => {
         .catch(err => { console.error(err) })
 }
 
+controller.transferRP_GET = (req, res) => {
+    user_id = req.res.locals.authData.id.id
+    user_name = req.res.locals.authData.id.username
+    res.render('transferRP.ejs', {
+        user_id,
+        user_name
+    })
+}
+
+controller.transferPR_GET = (req, res) => {
+    user_id = req.res.locals.authData.id.id
+    user_name = req.res.locals.authData.id.username
+    res.render('transferPR.ejs', {
+        user_id,
+        user_name
+    })
+}
+
 module.exports = controller;

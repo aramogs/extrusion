@@ -42,8 +42,8 @@ router.post('/procesarSeriales/', routesController.procesarSeriales_POST);
 router.post('/consultarSeriales/', routesController.consultarSeriales_POST);
 router.get('/reportes/', routesController.reportes_GET);
 router.post('/reporteGrafico/', routesController.reporteGrafico_POST);
-
-
+router.get('/transferRP',middleware.verifyToken, routesController.transferRP_GET);
+router.get('/transferPR',middleware.verifyToken, routesController.transferPR_GET);
 
 
 module.exports = router;
