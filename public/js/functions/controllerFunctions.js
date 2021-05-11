@@ -612,6 +612,40 @@ funcion.updateSerialesAcred = (seriales) => {
     })
 }
 
+funcion.updateSerialesTransferidos = (seriales) => {
+
+    return new Promise((resolve, reject) => {
+        let affectedRows = 0
+
+        seriales.forEach(element => {
+
+            dbEX(`
+                UPDATE 
+                    extrusion_labels 
+                SET 
+                    status='Transferido',
+                    resultado_sap='${element.transfer_order}',
+                    emp_mod='${user_id}'
+                WHERE 
+                    serial = ${element.serial}
+                    `)
+                .then((result) => {
+
+                    if (result.affectedRows == 1) {
+                        affectedRows++
+                        if (affectedRows == seriales.length) {
+
+                            resolve(affectedRows)
+                        }
+                    }
+                })
+                .catch((error) => { reject(error) })
+        });
+
+
+    })
+}
+
 funcion.graficaReporte = (desde, hasta) => {
     return new Promise((resolve, reject) => {
         dbEX(`

@@ -103,6 +103,11 @@ function fillTable() {
         cancelar = `<span class="icoSidebar fas fa-ban text-secondary"></span>`
         acreditado = `<span class="icoSidebar fas fa-check text-success"></span>`
 
+      }else if (result.data[y].status == "Transferido") {
+
+        cancelar = `<span class="icoSidebar fas fa-ban text-secondary"></span>`
+        acreditado = `<span class="icoSidebar fas fa-dolly text-success"></span>`
+
       }
 
       table.row.add([
@@ -151,27 +156,27 @@ function cancel(clicked_id) {
 
 function reload(tipo) {
 
-  if(tipo=="selected"){
+  if (tipo == "selected") {
     motivo.value = "";
     $('#modalMotivo').modal('hide');
     table.clear().draw();
-  
+
     setTimeout(function () { fillTable(); }, 100);
 
-  }else{
+  } else {
     motivoPlan.value = "";
 
-    for (i = select_idPlan.options.length-1; i >= 0; i--) {
+    for (i = select_idPlan.options.length - 1; i >= 0; i--) {
       select_idPlan.options[i] = null;
     }
 
     $('#modalCancelFullId').modal('hide');
     table.clear().draw();
     setTimeout(function () { fillTable(); }, 100);
-    
+
 
   }
- 
+
 
 
 }
@@ -357,14 +362,14 @@ formMotivoPlan.addEventListener("submit", (e) => {
 
 function clearAll() {
 
-  motivo.value=""
-  motivoPlan.value=""
+  motivo.value = ""
+  motivoPlan.value = ""
 
-  for (i = select_idPlan.options.length-1; i >= 0; i--) {
+  for (i = select_idPlan.options.length - 1; i >= 0; i--) {
     select_idPlan.options[i] = null;
   }
 
 
 
-    
+
 }

@@ -5,7 +5,7 @@
 
 <nav aria-label="breadcrumb">
   <ol class="breadcrumb">
-    <li class="breadcrumb-item"><a href="/mainMenu" class="text-warning"><span class="fas fa-arrow-circle-left text-warning"></span> Menu</a></li>
+    <li class="breadcrumb-item"><a href="/mainMenu" class="text-info"><span class="fas fa-arrow-circle-left text-info"></span> Menu</a></li>
     <li class="breadcrumb-item active" aria-current="page">Transferencia Rack a Piso</li>
   </ol>
 </nav>
@@ -45,7 +45,7 @@
 
         <h4 class="text-center animate__animated animate__bounceIn d-none d-lg-block" display: inline-block>
           Transferencia Rack <i class="fas fa-caret-right"></i> Piso:</h4>
-        <span class="fas fa-boxes text-warning mt-2" style="font-size: 2rem;"></span>
+        <span class="fas fa-dolly-flatbed text-info mt-2" style="font-size: 2rem;"></span>
 
         <div class="form-group">
 
@@ -79,7 +79,7 @@
               <small id="user_id"><%= user_id %></small>
             </div>
             <div class="col-2">
-              <button id="btn_transferFG" type="button" class="btn btn-secondary btn-sm" disabled><small><span
+              <button id="btn_transferSF" type="button" class="btn btn-secondary btn-sm" disabled><small><span
                     class="fa fa-external-link-alt"></span></small></button>
             </div>
           </div>
@@ -140,7 +140,7 @@
 
             <form id="submitArray_form">
               <div id="div_btn_procesar_seriales" class="col-lg-12 animate__flipOutX animate__animated">
-                <button type="submit" class="btn btn-outline-primary rounded-pill" id="submitArray">Procesar Seriales</button>
+                <button type="submit" class="btn btn-outline-info rounded-pill" id="submitArray">Transferir a: 102/GREEN</button>
               </div>
             </form>
           </div>
@@ -254,7 +254,7 @@
 </div>
 
 <%- include ("./static/footer") %>
-<script type="text/javascript" src="/js/functions/backflushEx.js"></script>
+<script type="text/javascript" src="/js/functions/transferRP.js"></script>
 
 </body>
 

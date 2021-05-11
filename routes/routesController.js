@@ -155,10 +155,10 @@ controller.getProgramacion_POST = (req, res) => {
 
 }
 
-const arreglosExcel = (numeros_sap,bufferExcel) => {
+const arreglosExcel = (numeros_sap, bufferExcel) => {
     return new Promise((resolve, reject) => {
 
-       let numeros_actuales = numeros_sap.map(({no_sap}) => no_sap)
+        let numeros_actuales = numeros_sap.map(({ no_sap }) => no_sap)
 
         let arreglo = [];
         let titulos = [];
@@ -193,8 +193,8 @@ const arreglosExcel = (numeros_sap,bufferExcel) => {
                 }
                 for (let i = 1; i < arreglo.length; i++) {
                     valores.push(arreglo[i])
-                    if (!numeros_actuales.includes(arreglo[i][0])) reject("Verificar numeros SAP") 
-                    
+                    if (!numeros_actuales.includes(arreglo[i][0])) reject("Verificar numeros SAP")
+
                 }
 
             })
@@ -237,7 +237,7 @@ controller.verificarSAP_POST = (req, res) => {
 
     async function waitForPromise() {
         let numeros_sap = await funcion.getNumerosSAP()
-        let excel = await arreglosExcel(numeros_sap,bufferExcel)
+        let excel = await arreglosExcel(numeros_sap, bufferExcel)
 
 
         Promise.all([numeros_sap, excel])
@@ -247,9 +247,9 @@ controller.verificarSAP_POST = (req, res) => {
 
                 titulos = result[1][0]
                 valores = result[1][1]
-                funcion.insertProgramaExcel( "production_plan", titulos, valores, user.toLowerCase(), fecha, turno)
-                    .then((result) => {console.log(result); res.json(result) })
-                    .catch((err) => {console.error(err); res.json(err) })
+                funcion.insertProgramaExcel("production_plan", titulos, valores, user.toLowerCase(), fecha, turno)
+                    .then((result) => { console.log(result); res.json(result) })
+                    .catch((err) => { console.error(err); res.json(err) })
 
             })
 
@@ -257,7 +257,7 @@ controller.verificarSAP_POST = (req, res) => {
     }
     waitForPromise()
 
-        .catch((err) => { res.status(200).send({message:err}) })
+        .catch((err) => { res.status(200).send({ message: err }) })
 }
 
 
@@ -698,7 +698,7 @@ controller.procesarSeriales_POST = (req, res) => {
     async function getStatus() {
 
         let allStatus = await statusSeriales(arraySeriales)
-        let checkStatus = await checkAllStatus(allStatus)
+        let checkStatus = await checkAllStatus(allStatus, "Impreso")
 
         if (checkStatus.length > 0) {
 
@@ -762,31 +762,62 @@ function infoSeriales(seriales) {
     })
 }
 
-function checkAllStatus(seriales) {
+function checkAllStatus(seriales, status) {
     return new Promise((resolve, reject) => {
         let noAcreditar = []
-        seriales.forEach(serial => {
+        seriales.forEach(element => {
+            
+            if (status === "Impreso") {
+                if (element.status != status) {
+                    let obj = {}
+                    let error
+                    if (element.status === "Cancelado") error = "Serial Cancelado"
+                    if (element.status === "Acreditado") error = "Serial Previamente Acreditado"
+                    if (element.status === "No Encontrado") error = "Serial No Encontrado"
+                    if (element.status === "Transferido") error = "Serial Acreditado y Transferido"
+                    obj['serial_num'] = element.serial
+                    obj['error'] = error
+                    obj['result'] = "N/A"
+                    noAcreditar.push(obj)
+                }
+            }  
+            if (status === "Acreditado") {
 
-            if (serial.status != "Impreso") {
-                let obj = {}
-                let error
-                if (serial.status == "Cancelado") error = "Serial Cancelado"
-                if (serial.status == "Acreditado") error = "Serial Ya Acreditado"
-                if (serial.status == "No Encontrado") error = "Serial No Encontrado"
-                obj['serial_num'] = serial.serial
-                obj['error'] = error
-                obj['result'] = "N/A"
-                noAcreditar.push(obj)
+                if (element.status != status && element.status != "Transferido") {
+                    console.log(element.status);
+                    let obj = {}
+                    let error
+                    if (element.status === "Cancelado") error = "Serial Cancelado"
+                    if (element.status === "Impreso") error = "Serial Sin Acreditar"
+                    if (element.status === "No Encontrado") error = "Serial No Encontrado"
+                    // if (element.status == "Transferido") error = "Serial Acreditado y Transferido"
+                    obj['serial_num'] = element.serial
+                    obj['error'] = error
+                    obj['result'] = "N/A"
+                    noAcreditar.push(obj)
+                }
             }
 
+
+
         });
-        resolve(noAcreditar)
+        resolve(noAcreditar, console.log(noAcreditar))
     })
 }
 
 function updateAcreditado(seriales, user_id) {
     return new Promise((resolve, reject) => {
         funcion.updateSerialesAcred(seriales, user_id)
+            .then((result) => {
+                resolve(result)
+            })
+            .catch((err) => { reject(err) })
+    })
+}
+
+function updateTransferido(seriales, user_id) {
+    return new Promise((resolve, reject) => {
+        funcion.updateSerialesTransferidos(seriales, user_id)
             .then((result) => {
                 resolve(result)
             })
@@ -826,6 +857,53 @@ controller.transferPR_GET = (req, res) => {
         user_id,
         user_name
     })
+}
+
+controller.transferenciaRP_POST = (req, res) => {
+
+    let seriales = req.body.seriales
+    let arraySeriales = seriales.split(',')
+    let estacion = uuidv4();
+    let process = "transfer_ext_rp"
+
+    async function getStatus() {
+
+        let allStatus = await statusSeriales(arraySeriales)
+        let checkStatus = await checkAllStatus(allStatus, "Acreditado")
+
+        if (checkStatus.length > 0) {
+
+            let obj = {}
+            obj['result'] = checkStatus
+            obj['error'] = "N/A"
+            res.json(JSON.stringify(obj))
+
+        } else {
+
+            let user_id = req.body.user
+            let info = await infoSeriales(arraySeriales)
+            let jsonInfo = JSON.stringify(info)
+            console.log(jsonInfo);
+            let send = `{"station":"${estacion}","serial_num":"","process":"${process}", "material":"",  "cantidad":"", "data":${jsonInfo}}`
+            console.log(send);
+            amqpRequest(send)
+                .then((result) => {
+                    console.log(result);
+                    async function updateAcred() {
+                        let resultado = JSON.parse(result)
+                        let resultadArray = resultado.result
+                        console.log(resultadArray);
+                        let acreditado = await updateTransferido(resultadArray, user_id);
+                        res.json(result)
+                    }
+                    updateAcred()
+
+                })
+                .catch((err) => { console.error(err) })
+        }
+    }
+    getStatus()
+
 }
 
 module.exports = controller;
