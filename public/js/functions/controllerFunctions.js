@@ -612,19 +612,25 @@ funcion.updateSerialesAcred = (seriales) => {
     })
 }
 
-funcion.updateSerialesTransferidos = (seriales) => {
+funcion.updateSerialesTransferidos = (seriales,user_id, status) => {
 
     return new Promise((resolve, reject) => {
         let affectedRows = 0
-
+        
         seriales.forEach(element => {
+            let resultSap
+            if(element.transfer_order=="N/A"){
+                resultSap=element.error
+            }else{
+                resultSap=element.transfer_order
+            }
 
             dbEX(`
                 UPDATE 
                     extrusion_labels 
                 SET 
-                    status='Transferido',
-                    resultado_sap='${element.transfer_order}',
+                    status='${status}',
+                    resultado_sap='${resultSap}',
                     emp_mod='${user_id}'
                 WHERE 
                     serial = ${element.serial}
@@ -678,4 +684,36 @@ funcion.graficaReporte = (desde, hasta) => {
 
 }
 
+
+funcion.getAllInfoSerial = (serial) => {
+    return new Promise((resolve, reject) => {
+
+        dbEX(`SELECT *
+        FROM 
+            extrusion_labels 
+        WHERE 
+            serial= ${serial}
+            
+
+            `)
+            .then((result) => { resolve(result) })
+            .catch((error) => { reject(error) })
+    })
+}
+
+
+funcion.updateObsoleto = (serial_obsoleto) => {
+    return new Promise((resolve, reject) => {
+        dbEX(`
+        UPDATE 
+            extrusion_labels 
+        SET 
+            status = 'Obsoleto'
+        WHERE
+            serial = ${serial_obsoleto};
+        `)
+            .then((result) => { resolve(result) })
+            .catch((error) => { reject(error) })
+    })
+}
 module.exports = funcion;

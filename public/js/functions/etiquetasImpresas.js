@@ -95,7 +95,7 @@ function fillTable() {
                       `
         acreditado = `<span class="icoSidebar fas fa-print text-info"></span>`
 
-      } else if (result.data[y].status == "Cancelado") {
+      } else if (result.data[y].status == "Cancelado" || result.data[y].status == "Obsoleto" || result.data[y].status == "Error" ||result.data[y].status == "Retornado") {
         cancelar = `<span class="icoSidebar fas fa-ban text-secondary"></span>`
         acreditado = `<span class="icoSidebar fas fa-ban text-secondary"></span>`
       } else if (result.data[y].status == "Acreditado") {

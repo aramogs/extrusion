@@ -67,11 +67,15 @@
 
 
 
-  <div class="modal fade" id="modalEditar" tabindex="-1" role="dialog"
+
+
+</div>
+
+<div class="modal fade" id="modalEditar" tabindex="-1" role="dialog"
   aria-labelledby="exampleModalCenterTitle" aria-hidden="true">
   <div class="modal-dialog " role="document">
       <div class="modal-content">
-
+        <form id="submitArray_form">
           <div class="modal-body">
 
               <div class="card">
@@ -83,6 +87,15 @@
                   </div>
 
                   <div class="card-body">
+                    <div class="row">
+                      <div class="col-5">
+                          <h7>Plan Id:</h7>
+                      </div>
+                      <div class="col-7">
+                          <h7 class="text-left"><span class="badge badge-info" id="meplan"></span>
+                          </h7>
+                      </div>
+                  </div>
 
                       <div class="row">
                           <div class="col-5">
@@ -133,23 +146,8 @@
                                           <span class="input-group-text fas fa-edit"
                                               id="basic-addon1"></span>
                                       </div>
-                                      <input type="number" class="form-control" name="edit_cantidad"
-                                          id="edit_cantidad" placeholder="" min="1" required>
-                                  </div>
-
-                                  <div class="row d-none d-lg-block">
-                                      <div class="col-lg-12">
-                                          <h5>Linea:</h5>
-                                      </div>
-                                  </div>
-
-                                  <div class="input-group mb-3">
-                                      <div class="input-group-prepend">
-                                          <span class="input-group-text fas fa-edit"
-                                              id="basic-addon1"></span>
-                                      </div>
-                                      <input type="number" class="form-control" name="edit_linea"
-                                          id="edit_linea" placeholder="" min="1" max="500" required>
+                                      <input type="number" class="form-control" name="return_cantidad"
+                                          id="return_cantidad" placeholder="" min="1"  autocomplete="off" required>
                                   </div>
 
 
@@ -166,7 +164,7 @@
               <button type="button" class="btn btn-secondary btnCerrar"
                   data-dismiss="modal">Cerrar</button>
               <button formAction="/editar_idplan" type="submit" id="btnCancel_e"
-                  class="btn btn-info">Guardar</button>
+                  class="btn btn-info">Imprimir</button>
           </div>
           <input type="text" class="form-control" name="midplane" id="midplane"
               aria-describedby="helpId" value="" hidden>
@@ -175,40 +173,6 @@
       </div>
   </div>
 </div>
-
-
-  <!-- <div class="row">
-    <div class="col-lg-4"></div>
-
-    <div class="col-lg-4">
-
-      <div class="card">
-        <div class="card-header ">
-          <div class="row">
-            <div class="col-9">
-              <strong>Informacion :</strong>
-              <small id="user_id"><%= user_id %></small>
-            </div>
-            <div class="col-2">
-              <button id="btn_transferFG" type="button" class="btn btn-secondary btn-sm" disabled><small><span
-                    class="fa fa-external-link-alt"></span></small></button>
-            </div>
-          </div>
-        </div>
-        <div class="card-body bg-secondary text-center">
-          
-
-          <div id="currentST">
-
-
-          </div>
-        </div>
-      </div>
-    </div>
-    <div class="col-lg-4"></div>
-  </div> -->
-</div>
-
 
 <!-- Modal Cantidad-->
 <div class="modal fade" id="modalCantidad" tabindex="-1" role="dialog" aria-labelledby="exampleModalCenterTitle"
@@ -252,7 +216,7 @@
         <div class="row text-center">
           <div class="col-lg-12">
 
-            <form id="submitArray_form">
+            <form id="submitArray_form_old">
               <div id="div_btn_procesar_seriales" class="col-lg-12 animate__flipOutX animate__animated">
                 <button type="submit" class="btn btn-outline-primary rounded-pill" id="submitArray">Procesar Seriales</button>
               </div>
@@ -288,7 +252,7 @@
             <i class="fas fa-check-circle text-success" style="font-size: 2rem;"> </i>
           </div>
           <div class="col">
-            <h5>Seriales Procesados con Exito</h5>
+            <h5>Serial Procesado con Exito</h5>
           </div>
         </div>
       </div>
@@ -344,6 +308,38 @@
   </div>
 </div>
 
+
+<div class="modal fade animate__animated animate__zoomInDown" id="modalSerialSuccess" tabindex="-1"
+                aria-hidden="true">
+                <div class="modal-dialog">
+                    <div class="modal-content">
+                        <div class="modal-body text-center">
+                            <h5 id="tituloSuccess"></h5>
+                            <p id="cantidadSuccess" style="font-size: x-large"></p>
+                        </div>
+
+                        <form id="confirmSerial_form">
+                          <div class="col-12 col-lg-12 text-center mb-2">
+                            <input type="text" class="form-control" name="confirmSerial" id="confirmSerial" autocomplete="off">
+                          </div>
+                        </form>
+                        <div class="col-12 col-lg-12 text-center">
+                          <div class="alert alert-danger animate__flipOutX animate__animated role=" alert" id="alerta_prefijo_confirm">Error:
+                            Serial Incorrecto
+                          </div>
+
+                        </div>
+
+                        <div class="modal-footer">
+                            <button type="submit" class="btn btn-primary btn-block mr-auto" id="btnModalTerminar"
+                            onClick="cancelSerial()" data-dismiss="modal"><span class="text-white fas fa-times-circle"></span>
+                                Cancelar</button>
+
+                                
+                        </div>
+                    </div>
+                </div>
+</div>
 
 
 <!-- Modal Spinners -->

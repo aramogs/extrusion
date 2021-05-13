@@ -45,5 +45,7 @@ router.post('/reporteGrafico/', routesController.reporteGrafico_POST);
 router.get('/transferRP',middleware.verifyToken, routesController.transferRP_GET);
 router.get('/transferPR',middleware.verifyToken, routesController.transferPR_GET);
 router.post('/transferenciaRP/', routesController.transferenciaRP_POST);
+router.post('/getAllInfoSerial', routesController.getAllInfoSerial_POST);
+router.post('/transferenciaPR/', routesController.transferenciaPR_POST);
 
 module.exports = router;

@@ -491,6 +491,7 @@ controller.impresion_POST = (req, res) => {
     let contenedor = req.body.contenedor
     let capacidad = parseInt(req.body.capacidad)
     let linea = req.body.linea
+    let tipo= req.body.tipo
     let serial_num
 
     if (cantidad === capacidad) {
@@ -538,10 +539,16 @@ controller.impresion_POST = (req, res) => {
                         }
                         axios({
                             method: 'post',
-                            url: `http://${process.env.BARTENDER_SERVER}:${process.env.BARTENDER_PORT}/Integration/EXT/Execute/`,
+                            url: `http://${process.env.BARTENDER_SERVER}:${process.env.BARTENDER_PORT}/Integration/${tipo}/Execute/`,
                             data: JSON.stringify(data),
                             headers: { 'content-type': 'application/json' }
                         })
+                        // .then((result) => {
+                            
+                        //     console.log(result)
+                        //     console.log(result.status);
+
+                        // }).catch(err =>{console.error(err);})
                     }, 1000 * i);
                 }
 
@@ -626,7 +633,14 @@ controller.cancelarSeriales_POST = (req, res) => {
     let seriales = req.body.seriales
     let motivo = req.body.motivo
     let arraySeriales = seriales.split(',')
-    let user = (req.connection.user).substring(3)
+    let tipo= req.body.tipo
+    let user
+    if(tipo=="retorno"){
+       user = req.body.user
+    } else{
+       user = (req.connection.user).substring(3)
+    }
+
 
     funcion.cancelarSeriales(arraySeriales, motivo, user)
         .then((result) => { res.json(result) })
@@ -775,6 +789,8 @@ function checkAllStatus(seriales, status) {
                     if (element.status === "Acreditado") error = "Serial Previamente Acreditado"
                     if (element.status === "No Encontrado") error = "Serial No Encontrado"
                     if (element.status === "Transferido") error = "Serial Acreditado y Transferido"
+                    if (element.status === "Obsoleto") error = "Serial Obsoleto"
+                    if (element.status === "Error") error = "Serial con Error"
                     obj['serial_num'] = element.serial
                     obj['error'] = error
                     obj['result'] = "N/A"
@@ -790,10 +806,30 @@ function checkAllStatus(seriales, status) {
                     if (element.status === "Cancelado") error = "Serial Cancelado"
                     if (element.status === "Impreso") error = "Serial Sin Acreditar"
                     if (element.status === "No Encontrado") error = "Serial No Encontrado"
+                    if (element.status === "Obsoleto") error = "Serial Obsoleto"
+                    if (element.status === "Error") error = "Serial con Error"
                     // if (element.status == "Transferido") error = "Serial Acreditado y Transferido"
                     obj['serial_num'] = element.serial
                     obj['error'] = error
                     obj['result'] = "N/A"
+                    noAcreditar.push(obj)
+                }
+            }
+
+
+            if (status === "Transferido") {
+
+                if (element.status != status) {
+                    let obj = {}
+                    let error
+                    if (element.status === "Cancelado") error = "Serial Cancelado"
+                    if (element.status === "Impreso") error = "Serial Sin Acreditar"
+                    if (element.status === "No Encontrado") error = "Serial No Encontrado"
+                    if (element.status === "Acreditado") error = "Serial Acreditado"
+                    if (element.status === "Obsoleto") error = "Serial Obsoleto"
+                    if (element.status === "Error") error = "Serial con Error"
+                    obj['serial_num'] = element.serial
+                    obj['error'] = error
                     noAcreditar.push(obj)
                 }
             }
@@ -815,9 +851,9 @@ function updateAcreditado(seriales, user_id) {
     })
 }
 
-function updateTransferido(seriales, user_id) {
+function updateTransferido(seriales, user_id, status) {
     return new Promise((resolve, reject) => {
-        funcion.updateSerialesTransferidos(seriales, user_id)
+        funcion.updateSerialesTransferidos(seriales, user_id, status)
             .then((result) => {
                 resolve(result)
             })
@@ -893,7 +929,7 @@ controller.transferenciaRP_POST = (req, res) => {
                         let resultado = JSON.parse(result)
                         let resultadArray = resultado.result
                         console.log(resultadArray);
-                        let acreditado = await updateTransferido(resultadArray, user_id);
+                        let acreditado = await updateTransferido(resultadArray, user_id,"Transferido");
                         res.json(result)
                     }
                     updateAcred()
@@ -901,6 +937,81 @@ controller.transferenciaRP_POST = (req, res) => {
                 })
                 .catch((err) => { console.error(err) })
         }
+    }
+    getStatus()
+
+}
+
+
+controller.getAllInfoSerial_POST = (req, res) => {
+
+    let serial = req.body.serial
+    let arraySeriales = serial.split(',')
+
+    async function getStatus() {
+
+        let allStatus = await statusSeriales(arraySeriales)
+        let checkStatus = await checkAllStatus(allStatus, "Transferido")
+
+        if (checkStatus.length==0) {
+
+            funcion.getAllInfoSerial(serial)
+            .then(result => { res.json(result) })
+            .catch(err => { console.error(err) })
+            
+        }else{
+            res.json(checkStatus)
+        }
+    }
+    getStatus()
+}
+
+
+
+controller.transferenciaPR_POST = (req, res) => {
+
+    let seriales = req.body.serial
+    let serial_obsoleto= req.body.serial_obsoleto
+    let arraySeriales = seriales.split(',')
+    let estacion = uuidv4();
+    let process = "transfer_ext_pr"
+
+    console.log(arraySeriales);
+    async function getStatus() {
+
+            let user_id = req.body.user
+            let info = await infoSeriales(arraySeriales)
+            let jsonInfo = JSON.stringify(info)
+            console.log(jsonInfo);
+            let send = `{"station":"${estacion}","serial_num":"","process":"${process}", "material":"",  "cantidad":"", "data":${jsonInfo}}`
+            console.log(send);
+            amqpRequest(send)
+                .then((result) => {
+
+                    async function updateAcred() {
+                        let resultado = JSON.parse(result)
+                        let resultadArray = resultado.result
+                        console.log(resultadArray[0].error);
+                        if(resultadArray[0].error=="N/A"){
+                            let acreditado = await updateTransferido(resultadArray, user_id, "Retornado");
+
+                            console.log(serial_obsoleto);
+                            funcion.updateObsoleto(serial_obsoleto)
+                            .then((result) => { })
+                            .catch((err) => { console.error(err) })  
+
+                            res.json(result)
+                        }else{
+                            let acreditado = await updateTransferido(resultadArray, user_id, "Error");                      
+                            res.json(result)
+                        }
+
+                    }
+                    updateAcred()
+
+                })
+                .catch((err) => { console.error(err) })
+        
     }
     getStatus()
 
