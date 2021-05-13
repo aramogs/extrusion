@@ -784,14 +784,13 @@ function checkAllStatus(seriales, status) {
             if (status === "Acreditado") {
 
                 if (element.status != status && element.status != "Transferido") {
-                    console.log(element.status);
                     let obj = {}
                     let error
                     if (element.status === "Cancelado") error = "Serial Cancelado"
                     if (element.status === "Impreso") error = "Serial Sin Acreditar"
                     if (element.status === "No Encontrado") error = "Serial No Encontrado"
                     // if (element.status == "Transferido") error = "Serial Acreditado y Transferido"
-                    obj['serial_num'] = element.serial
+                    obj['serial'] = element.serial
                     obj['error'] = error
                     obj['result'] = "N/A"
                     noAcreditar.push(obj)
@@ -883,16 +882,13 @@ controller.transferenciaRP_POST = (req, res) => {
             let user_id = req.body.user
             let info = await infoSeriales(arraySeriales)
             let jsonInfo = JSON.stringify(info)
-            console.log(jsonInfo);
+
             let send = `{"station":"${estacion}","serial_num":"","process":"${process}", "material":"",  "cantidad":"", "data":${jsonInfo}}`
-            console.log(send);
             amqpRequest(send)
                 .then((result) => {
-                    console.log(result);
                     async function updateAcred() {
                         let resultado = JSON.parse(result)
                         let resultadArray = resultado.result
-                        console.log(resultadArray);
                         let acreditado = await updateTransferido(resultadArray, user_id);
                         res.json(result)
                     }

@@ -618,8 +618,9 @@ funcion.updateSerialesTransferidos = (seriales) => {
         let affectedRows = 0
 
         seriales.forEach(element => {
-
-            dbEX(`
+            
+            if (element.error === "N/A") {
+                dbEX(`
                 UPDATE 
                     extrusion_labels 
                 SET 
@@ -640,6 +641,13 @@ funcion.updateSerialesTransferidos = (seriales) => {
                     }
                 })
                 .catch((error) => { reject(error) })
+            }else{
+
+                resolve("N/A")
+                reject("Error")
+            }
+
+            
         });
 
 

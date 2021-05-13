@@ -22,10 +22,15 @@ img {
 .btnNavbar {
     &:hover {
         background-color: $blue;
-        border-block: $blue;
+        border-color: $blue;
     }
 }
 
+.mainNavBar{
+    position: sticky;
+    top: 0;
+    z-index: 1;
+}
 
 .carousel-inner img {
     margin: auto;
@@ -126,8 +131,8 @@ table{
 }
 
 .card-img-top{
-    width: 10rem;
-    height: 10rem;;
+    width: 12rem;
+    height: 12rem;;
 }
 
 .form-check-input{

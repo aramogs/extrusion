@@ -177,7 +177,7 @@ function submitSerials(e) {
 
 
             response = JSON.parse(result.data)
-
+            console.log(response);
             soundOk()
             errorText.hidden = true
             tabla_consulta_container.hidden = false
@@ -197,7 +197,7 @@ function submitSerials(e) {
                     if (element.error != "N/A") {
                         let row = `
                                 <tr class="bg-danger">
-                                    <td>${element.serial_num}</td>
+                                    <td>${element.serial}</td>
                                     <td>${element.error}</td>
                                 </tr>
                                 `
