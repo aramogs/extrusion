@@ -618,6 +618,51 @@ funcion.updateSerialesTransferidos = (seriales,user_id, status) => {
         let affectedRows = 0
         
         seriales.forEach(element => {
+            
+            if (element.error === "N/A") {
+                dbEX(`
+                UPDATE 
+                    extrusion_labels 
+                SET 
+                    status='${status}',
+                    resultado_sap='${element.transfer_order}',
+                    emp_mod='${user_id}'
+                WHERE 
+                    serial = ${element.serial}
+                    `)
+                .then((result) => {
+
+                    if (result.affectedRows == 1) {
+                        affectedRows++
+                        if (affectedRows == seriales.length) {
+
+                            resolve(affectedRows)
+                        }
+                    }
+                })
+                .catch((error) => { reject(error) })
+            }else{
+
+                resolve("N/A")
+                reject("Error")
+            }
+
+            
+        });
+
+
+    })
+}
+
+
+
+
+funcion.updateSerialesTransferidosPR = (seriales,user_id, status) => {
+
+    return new Promise((resolve, reject) => {
+        let affectedRows = 0
+        
+        seriales.forEach(element => {
             let resultSap
             if(element.transfer_order=="N/A"){
                 resultSap=element.error
@@ -646,11 +691,16 @@ funcion.updateSerialesTransferidos = (seriales,user_id, status) => {
                     }
                 })
                 .catch((error) => { reject(error) })
+
+
+            
         });
 
 
     })
 }
+
+
 
 funcion.graficaReporte = (desde, hasta) => {
     return new Promise((resolve, reject) => {

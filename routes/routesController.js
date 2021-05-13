@@ -800,7 +800,6 @@ function checkAllStatus(seriales, status) {
             if (status === "Acreditado") {
 
                 if (element.status != status && element.status != "Transferido") {
-                    console.log(element.status);
                     let obj = {}
                     let error
                     if (element.status === "Cancelado") error = "Serial Cancelado"
@@ -809,7 +808,7 @@ function checkAllStatus(seriales, status) {
                     if (element.status === "Obsoleto") error = "Serial Obsoleto"
                     if (element.status === "Error") error = "Serial con Error"
                     // if (element.status == "Transferido") error = "Serial Acreditado y Transferido"
-                    obj['serial_num'] = element.serial
+                    obj['serial'] = element.serial
                     obj['error'] = error
                     obj['result'] = "N/A"
                     noAcreditar.push(obj)
@@ -854,6 +853,16 @@ function updateAcreditado(seriales, user_id) {
 function updateTransferido(seriales, user_id, status) {
     return new Promise((resolve, reject) => {
         funcion.updateSerialesTransferidos(seriales, user_id, status)
+            .then((result) => {
+                resolve(result)
+            })
+            .catch((err) => { reject(err) })
+    })
+}
+
+function updateTransferidoPR(seriales, user_id, status) {
+    return new Promise((resolve, reject) => {
+        funcion.updateSerialesTransferidosPR(seriales, user_id, status)
             .then((result) => {
                 resolve(result)
             })
@@ -919,16 +928,13 @@ controller.transferenciaRP_POST = (req, res) => {
             let user_id = req.body.user
             let info = await infoSeriales(arraySeriales)
             let jsonInfo = JSON.stringify(info)
-            console.log(jsonInfo);
+
             let send = `{"station":"${estacion}","serial_num":"","process":"${process}", "material":"",  "cantidad":"", "data":${jsonInfo}}`
-            console.log(send);
             amqpRequest(send)
                 .then((result) => {
-                    console.log(result);
                     async function updateAcred() {
                         let resultado = JSON.parse(result)
                         let resultadArray = resultado.result
-                        console.log(resultadArray);
                         let acreditado = await updateTransferido(resultadArray, user_id,"Transferido");
                         res.json(result)
                     }
@@ -993,7 +999,7 @@ controller.transferenciaPR_POST = (req, res) => {
                         let resultadArray = resultado.result
                         console.log(resultadArray[0].error);
                         if(resultadArray[0].error=="N/A"){
-                            let acreditado = await updateTransferido(resultadArray, user_id, "Retornado");
+                            let acreditado = await updateTransferidoPR(resultadArray, user_id, "Retornado");
 
                             console.log(serial_obsoleto);
                             funcion.updateObsoleto(serial_obsoleto)
@@ -1002,7 +1008,7 @@ controller.transferenciaPR_POST = (req, res) => {
 
                             res.json(result)
                         }else{
-                            let acreditado = await updateTransferido(resultadArray, user_id, "Error");                      
+                            let acreditado = await updateTransferidoPR(resultadArray, user_id, "Error");                      
                             res.json(result)
                         }
 
