@@ -778,6 +778,7 @@ function checkAllStatus(seriales, status) {
                     if (element.status === "Obsoleto") error = "Serial Obsoleto"
                     if (element.status === "Error") error = "Serial con Error"
                     if (element.status === "Impreso_re") error = "Serial sin retornar, destruir etiqueta"
+                    if (element.status === "Retornado") error = "Serial retornado no es posible su acreditacion"
                     obj['serial_num'] = element.serial
                     obj['error'] = error
                     obj['result'] = "N/A"
