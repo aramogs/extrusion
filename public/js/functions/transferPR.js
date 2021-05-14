@@ -60,14 +60,8 @@ function cleanInput() {
     serial_num.value = ""
     confirmSerial.value = ""
     return_cantidad.value = ""
-
-
-    //currentST.innerHTML = ""
     serialsArray = []
-
-    //btn_transferFG.disabled = true
-    //btn_transferFG.classList.remove("btn-warning")
-    //btn_transferFG.classList.add("btn-secondary")
+    serial_num.focus()
 
 }
 
@@ -103,21 +97,6 @@ function listAdd(e) {
         }
 
         consultarSerial();
-
-
-        // alerta_prefijo.classList.remove("animate__flipInX", "animate__animated")
-        // alerta_prefijo.classList.add("animate__flipOutX", "animate__animated")
-
-        // let serial = `<small style="display:inline; "><span class="badge badge-light text-dark"> ${(serial_num.value).substring(1)} </span></small> `
-        // let append = document.createElement("span")
-        // append.innerHTML = serial
-        // currentST.appendChild(append)
-        // serial_num.value = ""
-
-        // //btn_transferFG.disabled = false
-        // //btn_transferFG.classList.remove("btn-secondary")
-        // //btn_transferFG.classList.add("btn-warning")
-
 
     } else {
         soundWrong()
@@ -155,7 +134,7 @@ function submitSerials(e) {
 
     let data = {
         "plan_id": `${meplan.innerHTML}`, "cantidad": `${return_cantidad.value}`,
-        "no_sap": `${mesap.innerHTML}`, "contenedor": `manual`, "capacidad": `${return_cantidad.value}`, "linea": `200`, "tipo": `EXT_RE`
+        "no_sap": `${mesap.innerHTML}`, "contenedor": `manual`, "capacidad": `${return_cantidad.value}`, "linea": `200`, "tipo": `EXT_RE`,"impresoType": `Impreso_re`
     };
     axios({
         method: 'post',
@@ -216,7 +195,29 @@ function consultarSerial() {
 
 
             } else {
-                errorMessage(response.error)
+                //errorMessage(response.error)
+                tabla_consulta.innerHTML = ""
+
+
+                console.log(response);
+                    let newRow = tabla_consulta.insertRow(tabla_consulta.rows.length);
+
+                        let row = `
+                                <tr class="bg-danger">
+                                    <td>${response.serial_num}</td>
+                                    <td>${response.error}</td>
+                                </tr>
+                                `
+                                newRow.innerHTML = row
+                        newRow.classList.add("bg-danger", "text-white")
+ 
+                cantidadErrores.innerHTML = "1"
+
+                $('#modalSpinner').modal('hide')
+                setTimeout(function () {
+                    $('#modalError').modal({ backdrop: 'static', keyboard: false })
+                }, 500);
+                
             }
             serialsArray = []
             //serial_num.value=""

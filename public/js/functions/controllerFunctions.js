@@ -365,8 +365,6 @@ funcion.getColumnsExtr = () => {
     })
 }
 
-
-//TODO optimizar funcion
 funcion.cancelarSeriales = (arraySeriales, motivo,user) => {
 
     return new Promise((resolve, reject) => {
@@ -388,12 +386,12 @@ funcion.cancelarSeriales = (arraySeriales, motivo,user) => {
 
     })
 }
-funcion.insertImpresion = (plan_id, numero_parte, emp_num, cantidad, numero_etiquetas) => {
+funcion.insertImpresion = (plan_id, numero_parte, emp_num, cantidad, numero_etiquetas, impresoType) => {
     return new Promise((resolve, reject) => {
-        // TODO Revisar impreso_re
+
         for (let i = 0; i < numero_etiquetas; i++) {
-            dbEX(`INSERT INTO extrusion_labels (plan_id, numero_parte, emp_num, cantidad) 
-                VALUES ('${plan_id}','${numero_parte}',${emp_num},${cantidad})`)
+            dbEX(`INSERT INTO extrusion_labels (plan_id, numero_parte, emp_num, cantidad, status) 
+                VALUES ('${plan_id}','${numero_parte}',${emp_num},${cantidad},'${impresoType}')`)
                 .then((result) => { resolve(result) })
                 .catch((error) => { reject(error) })
         }

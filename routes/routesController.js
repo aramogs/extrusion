@@ -481,6 +481,7 @@ controller.impresion_POST = (req, res) => {
     let linea = req.body.linea
     let tipo= req.body.tipo
     let serial_num
+    let impresoType= req.body.impresoType
 
     if (cantidad === capacidad) {
         numero_etiquetas = 1
@@ -491,7 +492,7 @@ controller.impresion_POST = (req, res) => {
 
     async function waitForPromise() {
 
-        let insert = await funcion.insertImpresion(plan_id, no_sap, operador_id, capacidad, numero_etiquetas);
+        let insert = await funcion.insertImpresion(plan_id, no_sap, operador_id, capacidad, numero_etiquetas,impresoType);
         let values = await funcion.getBaseExtr(no_sap)
         let impre = await funcion.getPrinter(linea)
         let data = {}

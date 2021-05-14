@@ -249,7 +249,8 @@ function impresion(e) {
 
   if (parseInt(cantidadManual.value) > 0) { cantidad = parseInt(cantidadManual.value), capacidad = parseInt(cantidadManual.value), contenedor="manual"}
 
-  let data = { "plan_id": `${plan_id}`, "no_sap": `${no_sap}`, "cantidad": cantidad, "contenedor": `${contenedor}`, "capacidad": capacidad, "linea": `${linea}`,"tipo": `EXT` }
+  let data = { "plan_id": `${plan_id}`, "no_sap": `${no_sap}`, "cantidad": cantidad,
+   "contenedor": `${contenedor}`, "capacidad": capacidad, "linea": `${linea}`,"tipo": `EXT`,"impresoType": `Impreso`  }
   console.log(data);
   axios({
     method: 'post',
