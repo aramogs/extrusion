@@ -128,8 +128,8 @@ function fillTableSeriales() {
                 new Date(result.data[i].datetime).toLocaleString(),
                 result.data[i].motivo_cancel,
                 result.data[i].status,
-                result.data[i].resultado_sap,
-                result.data[i].emp_mod,
+                result.data[i].result_acred,
+                result.data[i].emp_acred,
             ]).draw(false);
 
         }

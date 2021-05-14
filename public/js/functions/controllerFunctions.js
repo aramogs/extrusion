@@ -375,7 +375,7 @@ funcion.cancelarSeriales = (arraySeriales, motivo,user) => {
             SET
                 status = 'Cancelado', 
                 motivo_cancel ='${motivo}',
-                emp_mod='${user}'
+                emp_cancel='${user}'
             WHERE
                 serial= ${arraySeriales[i]}
             
@@ -561,8 +561,8 @@ funcion.updateSerialesAcred = (seriales, user_id) => {
                     extrusion_labels 
                 SET 
                     status='Acreditado',
-                    resultado_sap='${serial.result}',
-                    emp_mod='${user_id}'
+                    result_acred='${serial.result}',
+                    emp_acred='${user_id}'
                 WHERE 
                     serial = ${serial.serial_num}
                     `)
@@ -623,8 +623,8 @@ funcion.updateSerialesTransferidos = (seriales,user_id, status) => {
                     extrusion_labels 
                 SET 
                     status='${status}',
-                    resultado_sap='${element.transfer_order}',
-                    emp_mod='${user_id}'
+                    result_transfer='${element.transfer_order}',
+                    emp_transfer='${user_id}'
                 WHERE 
                     serial = ${element.serial}
                     `)
@@ -673,8 +673,8 @@ funcion.updateSerialesTransferidosPR = (seriales,user_id, status) => {
                     extrusion_labels 
                 SET 
                     status='${status}',
-                    resultado_sap='${resultSap}',
-                    emp_mod='${user_id}'
+                    result_return='${resultSap}',
+                    emp_return='${user_id}'
                 WHERE 
                     serial = ${element.serial}
                     `)
