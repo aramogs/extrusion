@@ -390,7 +390,7 @@ funcion.cancelarSeriales = (arraySeriales, motivo,user) => {
 }
 funcion.insertImpresion = (plan_id, numero_parte, emp_num, cantidad, numero_etiquetas) => {
     return new Promise((resolve, reject) => {
-
+        // TODO Revisar impreso_re
         for (let i = 0; i < numero_etiquetas; i++) {
             dbEX(`INSERT INTO extrusion_labels (plan_id, numero_parte, emp_num, cantidad) 
                 VALUES ('${plan_id}','${numero_parte}',${emp_num},${cantidad})`)
@@ -550,7 +550,7 @@ funcion.infoSerial = (seriales) => {
 }
 
 
-funcion.updateSerialesAcred = (seriales) => {
+funcion.updateSerialesAcred = (seriales, user_id) => {
 
     return new Promise((resolve, reject) => {
         let affectedRows = 0

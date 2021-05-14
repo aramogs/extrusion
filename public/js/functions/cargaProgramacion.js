@@ -38,20 +38,20 @@ excelFile.addEventListener("change", () => {
     }
 });
 
-selectedTurno.addEventListener("change", ()=>{
+selectedTurno.addEventListener("change", () => {
     cardExcel.hidden = false
-    cardExcel.classList.add("animate__animated","animate__backInUp")
-    turno = (selectedTurno.options[selectedTurno.selectedIndex].value).substring(0,2);
-    
+    cardExcel.classList.add("animate__animated", "animate__backInUp")
+    turno = (selectedTurno.options[selectedTurno.selectedIndex].value).substring(0, 2);
+
     turnos_programados.forEach(element => {
         if (turno === element.turno) {
             $('#modalError').modal({ backdrop: 'static', keyboard: false })
             modal_errorText.innerHTML = "Turno previamente programado"
-        }    
+        }
     });
 })
 
-modal_btnCerrar_Error.addEventListener("click",()=>{cleanPage()})
+modal_btnCerrar_Error.addEventListener("click", () => { cleanPage() })
 
 function cleanPage() {
     turnos_programados = []
@@ -60,7 +60,8 @@ function cleanPage() {
     selectedTurno.disabled = true
     cardExcel.hidden = true
     formData = new FormData()
-    
+    modal_errorText.innerHTML = ""
+
 }
 
 const picker = datepicker('#selectedFecha', {
@@ -81,7 +82,7 @@ const picker = datepicker('#selectedFecha', {
     }
 })
 
-function enableTurno(){
+function enableTurno() {
     getProgramacion()
     selectedTurno.disabled = false
     axios({
@@ -89,8 +90,8 @@ function enableTurno(){
         url: `/getTurnos`,
         data: "",
         headers: { 'content-type': 'application/x-www-form-urlencoded' }
-    }).then((response)=>{
-        
+    }).then((response) => {
+
         turnos = response.data
         selectedTurno.innerHTML = ""
         option = document.createElement('option')
@@ -106,14 +107,14 @@ function enableTurno(){
 }
 
 function getProgramacion() {
-    let data = {"fecha":`${myDateString}`}
+    let data = { "fecha": `${myDateString}` }
     axios({
         method: 'post',
         url: `/getProgramacion`,
         data: JSON.stringify(data),
         headers: { 'content-type': 'application/json' }
-    }).then((response)=>{ 
-       
+    }).then((response) => {
+
         let result = response.data
         result.forEach(tur => {
             turnos_programados.push(tur)
@@ -123,12 +124,12 @@ function getProgramacion() {
 
 function sendData() {
 
-    
+
     $('#modalSpinner').modal({ backdrop: 'static', keyboard: false })
 
     formData.delete('excelFile')
     formData.append('excelFile', excelFile.files[0])
-    formData.append("data", JSON.stringify({"fecha":myDateString,"turno":turno}));
+    formData.append("data", JSON.stringify({ "fecha": myDateString, "turno": turno }));
 
     axios({
         method: 'post',
@@ -137,13 +138,13 @@ function sendData() {
         headers: { 'Content-Type': 'multipart/form-data', 'Accept': 'application/json', }
     })
         .then((response) => {
-            
+
             if (!response.data.message) {
-                setTimeout(function(){ $('#modalSpinner').modal('hide') }, 1000);
-            
+                setTimeout(function () { $('#modalSpinner').modal('hide') }, 1000);
+
                 window.location = `/editarProgramacion/?fecha=${myDateString}`
-            }else{
-                setTimeout(function(){ $('#modalSpinner').modal('hide') }, 500);
+            } else {
+                setTimeout(function () { $('#modalSpinner').modal('hide') }, 500);
                 $('#modalError').modal({ backdrop: 'static', keyboard: false })
                 modal_errorText.innerHTML = response.data.message
 
@@ -152,7 +153,11 @@ function sendData() {
 
 
         })
-        .catch((err) => { console.error(err) });
+        .catch((err) => {
+            setTimeout(function () { $('#modalSpinner').modal('hide') }, 500);
+            $('#modalError').modal({ backdrop: 'static', keyboard: false })
+            modal_errorText.innerHTML = err.data.message
+        })
 }
 
 
@@ -160,5 +165,5 @@ function sendData() {
 function clearAll() {
 
 
-    
+
 }

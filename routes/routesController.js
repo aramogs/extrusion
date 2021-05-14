@@ -54,8 +54,8 @@ function acceso(req) {
 
 controller.mainMenu_GET = (req, res) => {
 
-    user_id = req.res.locals.authData.id.id
-    user_name = req.res.locals.authData.id.username
+    let user_id = req.res.locals.authData.id.id
+    let user_name = req.res.locals.authData.id.username
     res.render('main_menu.ejs', {
         user_id,
         user_name
@@ -117,8 +117,8 @@ function cookieSet(req, res, result) {
 
 
 controller.backflushEx_GET = (req, res) => {
-    user_id = req.res.locals.authData.id.id
-    user_name = req.res.locals.authData.id.username
+    let user_id = req.res.locals.authData.id.id
+    let user_name = req.res.locals.authData.id.username
     res.render('backflushEx.ejs', {
         user_id,
         user_name
@@ -126,8 +126,8 @@ controller.backflushEx_GET = (req, res) => {
 }
 
 controller.consultaEx_GET = (req, res) => {
-    user_id = req.res.locals.authData.id.id
-    user_name = req.res.locals.authData.id.username
+    let user_id = req.res.locals.authData.id.id
+    let user_name = req.res.locals.authData.id.username
     res.render('consultaEx.ejs', {
         user_id,
         user_name
@@ -223,18 +223,6 @@ controller.verificarSAP_POST = (req, res) => {
     let user = (req.res.socket.user).substring(4)
     let bufferExcel = req.file.buffer
 
-    // arreglosExcel(bufferExcel)
-    //     .then((result) => {
-    //         titulos = result[0]
-    //         valores = result[1]
-    //         //TODO cambiar base y tabla a .env
-    //         //TODO Crear funcion extra que verifique que los numeros de SAP coiniciden con la base da datos, en caso contrario regresar error
-    //         funcion.insertProgramaExcel("extrusion", "production_plan", titulos, valores, user.toLowerCase(), fecha, turno)
-    //             .then((result) => { res.json(result) })
-    //             .catch((err) => { res.json(err) })
-    //     })
-    //     .catch((err) => { res.json(err) })
-
     async function waitForPromise() {
         let numeros_sap = await funcion.getNumerosSAP()
         let excel = await arreglosExcel(numeros_sap, bufferExcel)
@@ -248,8 +236,8 @@ controller.verificarSAP_POST = (req, res) => {
                 titulos = result[1][0]
                 valores = result[1][1]
                 funcion.insertProgramaExcel("production_plan", titulos, valores, user.toLowerCase(), fecha, turno)
-                    .then((result) => { console.log(result); res.json(result) })
-                    .catch((err) => { console.error(err); res.json(err) })
+                    .then((result) => {  res.json(result) })
+                    .catch((err) => {  res.json(err) })
 
             })
 
@@ -292,7 +280,7 @@ function amqpRequest(data) {
         let args = process.argv.slice(2);
         let estacion = data.station
         if (args.length == 0) {
-            // console.log("Usage: rpc_client.js num");
+            // console.info("Usage: rpc_client.js num");
             // process.exit(1);
         }
 
@@ -386,8 +374,8 @@ controller.cancelarIdPlan_POST = (req, res) => {
 }
 
 controller.impresion_GET = (req, res) => {
-    user_id = req.res.locals.authData.id.id
-    user_name = req.res.locals.authData.id.username
+    let user_id = req.res.locals.authData.id.id
+    let user_name = req.res.locals.authData.id.username
     let todayDate = moment().format("YYYY-MM-DD")
 
     async function waitForPromise() {
@@ -543,12 +531,7 @@ controller.impresion_POST = (req, res) => {
                             data: JSON.stringify(data),
                             headers: { 'content-type': 'application/json' }
                         })
-                        // .then((result) => {
-                            
-                        //     console.log(result)
-                        //     console.log(result.status);
 
-                        // }).catch(err =>{console.error(err);})
                     }, 1000 * i);
                 }
 
@@ -708,6 +691,8 @@ controller.procesarSeriales_POST = (req, res) => {
     let arraySeriales = seriales.split(',')
     let estacion = uuidv4();
     let process = "confirm_ext_hu"
+    let user_id = req.res.locals.authData.id.id
+    let user_name = req.res.locals.authData.id.username
 
     async function getStatus() {
 
@@ -723,7 +708,7 @@ controller.procesarSeriales_POST = (req, res) => {
 
         } else {
 
-            let user_id = req.body.user
+
             let info = await infoSeriales(arraySeriales)
             let jsonInfo = JSON.stringify(info)
             let send = `{"station":"${estacion}","serial_num":"","process":"${process}", "material":"",  "cantidad":"", "data":${jsonInfo}}`
@@ -791,6 +776,7 @@ function checkAllStatus(seriales, status) {
                     if (element.status === "Transferido") error = "Serial Acreditado y Transferido"
                     if (element.status === "Obsoleto") error = "Serial Obsoleto"
                     if (element.status === "Error") error = "Serial con Error"
+                    if (element.status === "Impreso_re") error = "Serial sin retornar, destruir etiqueta"
                     obj['serial_num'] = element.serial
                     obj['error'] = error
                     obj['result'] = "N/A"
@@ -799,15 +785,16 @@ function checkAllStatus(seriales, status) {
             }  
             if (status === "Acreditado") {
 
-                if (element.status != status && element.status != "Transferido") {
+                if (element.status != status  && element.status != "Retornado") {
                     let obj = {}
                     let error
                     if (element.status === "Cancelado") error = "Serial Cancelado"
                     if (element.status === "Impreso") error = "Serial Sin Acreditar"
                     if (element.status === "No Encontrado") error = "Serial No Encontrado"
                     if (element.status === "Obsoleto") error = "Serial Obsoleto"
+                    if (element.status === "Transferido") error = "Serial previamente transferido"
                     if (element.status === "Error") error = "Serial con Error"
-                    // if (element.status == "Transferido") error = "Serial Acreditado y Transferido"
+                    if (element.status === "Impreso_re") error = "Serial sin retornar, destruir etiqueta"
                     obj['serial'] = element.serial
                     obj['error'] = error
                     obj['result'] = "N/A"
@@ -818,7 +805,7 @@ function checkAllStatus(seriales, status) {
 
             if (status === "Transferido") {
 
-                if (element.status != status) {
+                if (element.status != status ) {
                     let obj = {}
                     let error
                     if (element.status === "Cancelado") error = "Serial Cancelado"
@@ -827,6 +814,8 @@ function checkAllStatus(seriales, status) {
                     if (element.status === "Acreditado") error = "Serial Acreditado"
                     if (element.status === "Obsoleto") error = "Serial Obsoleto"
                     if (element.status === "Error") error = "Serial con Error"
+                    if (element.status === "Retornado") error = "Serial previamente retornado"
+                    if (element.status === "Impreso_re") error = "Serial sin retornar, destruir etiqueta"
                     obj['serial_num'] = element.serial
                     obj['error'] = error
                     noAcreditar.push(obj)
@@ -836,7 +825,7 @@ function checkAllStatus(seriales, status) {
 
 
         });
-        resolve(noAcreditar, console.log(noAcreditar))
+        resolve(noAcreditar)
     })
 }
 
@@ -887,8 +876,8 @@ controller.reporteGrafico_POST = (req, res) => {
 }
 
 controller.transferRP_GET = (req, res) => {
-    user_id = req.res.locals.authData.id.id
-    user_name = req.res.locals.authData.id.username
+    let user_id = req.res.locals.authData.id.id
+    let user_name = req.res.locals.authData.id.username
     res.render('transferRP.ejs', {
         user_id,
         user_name
@@ -896,8 +885,8 @@ controller.transferRP_GET = (req, res) => {
 }
 
 controller.transferPR_GET = (req, res) => {
-    user_id = req.res.locals.authData.id.id
-    user_name = req.res.locals.authData.id.username
+    let user_id = req.res.locals.authData.id.id
+    let user_name = req.res.locals.authData.id.username
     res.render('transferPR.ejs', {
         user_id,
         user_name
@@ -910,6 +899,8 @@ controller.transferenciaRP_POST = (req, res) => {
     let arraySeriales = seriales.split(',')
     let estacion = uuidv4();
     let process = "transfer_ext_rp"
+    let user_id = req.res.locals.authData.id.id
+    let user_name = req.res.locals.authData.id.username
 
     async function getStatus() {
 
@@ -925,7 +916,7 @@ controller.transferenciaRP_POST = (req, res) => {
 
         } else {
 
-            let user_id = req.body.user
+
             let info = await infoSeriales(arraySeriales)
             let jsonInfo = JSON.stringify(info)
 
@@ -982,26 +973,26 @@ controller.transferenciaPR_POST = (req, res) => {
     let estacion = uuidv4();
     let process = "transfer_ext_pr"
 
-    console.log(arraySeriales);
+
     async function getStatus() {
 
             let user_id = req.body.user
             let info = await infoSeriales(arraySeriales)
             let jsonInfo = JSON.stringify(info)
-            console.log(jsonInfo);
+
             let send = `{"station":"${estacion}","serial_num":"","process":"${process}", "material":"",  "cantidad":"", "data":${jsonInfo}}`
-            console.log(send);
+
             amqpRequest(send)
                 .then((result) => {
 
                     async function updateAcred() {
                         let resultado = JSON.parse(result)
                         let resultadArray = resultado.result
-                        console.log(resultadArray[0].error);
+
                         if(resultadArray[0].error=="N/A"){
                             let acreditado = await updateTransferidoPR(resultadArray, user_id, "Retornado");
 
-                            console.log(serial_obsoleto);
+
                             funcion.updateObsoleto(serial_obsoleto)
                             .then((result) => { })
                             .catch((err) => { console.error(err) })  

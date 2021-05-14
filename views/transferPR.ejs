@@ -71,6 +71,7 @@
 
 </div>
 
+
 <div class="modal fade" id="modalEditar" tabindex="-1" role="dialog"
   aria-labelledby="exampleModalCenterTitle" aria-hidden="true">
   <div class="modal-dialog " role="document">
@@ -174,69 +175,6 @@
   </div>
 </div>
 
-<!-- Modal Cantidad-->
-<div class="modal fade" id="modalCantidad" tabindex="-1" role="dialog" aria-labelledby="exampleModalCenterTitle"
-  aria-hidden="true">
-  <div class="modal-dialog modal-dialog-scrollable" role="document">
-    <div class="modal-content">
-      <div class="modal-body">
-        <div class="row text-center">
-          <div class="col-lg-12">
-            <button id="btn_verificar_cantidad" type="button" class="btn btn-primary btn-block"><span
-                class="fas fa-hand-point-right text-light">
-              </span> Verificar Cantidad</button>
-          </div>
-        </div>
-
-        <hr>
-        <br><br>
-
-        <div class="row text-center">
-          <span class="col-4 col-lg-4 fas fa-chevron-circle-down text-warning" id="decrease" onclick="decreaseValue()"
-            value="Decrease Value" style="font-size: 65px;"></span>
-          <div class="col-4 col-lg-4 text-center">
-            <input type="number" class="form-control" name="contadorSeriales" id="contadorSeriales" value="0">
-          </div>
-          <span class="col-4 col-lg-4 fas fa-chevron-circle-up text-success" id="increase" onclick="increaseValue()"
-            value="Increase Value" style="font-size: 65px;"></span>
-        </div>
-
-        <div class="row text-center">
-          <div class="col-lg-4"></div>
-          <div class="col-lg-4">
-            <label class="badge badge-warning animate__flipOutX animate__animated" id="contadorWarning">
-              <span class="badge badge-danger">
-                <span class="fas fa-exclamation-triangle"></span></span>
-              Cantidad Incorrecta
-            </label>
-          </div>
-          <div class="col-lg-4"></div>
-        </div>
-
-        <div class="row text-center">
-          <div class="col-lg-12">
-
-            <form id="submitArray_form_old">
-              <div id="div_btn_procesar_seriales" class="col-lg-12 animate__flipOutX animate__animated">
-                <button type="submit" class="btn btn-outline-primary rounded-pill" id="submitArray">Procesar Seriales</button>
-              </div>
-            </form>
-          </div>
-        </div>
-        <br>
-
-        <div class="modal-footer">
-          <button type="button" class="btn btn-outline-danger btn-sm btnCerrar" data-dismiss="modal">Cerrar <span
-              class="fas fa-times-circle"></span></button>
-          <!-- <button id="submitArray" type="button" class="btn btn-outline-primary btn-sm">Terminar <span
-                  class="fas fa-check-circle"></span></button> -->
-        </div>
-
-      </div>
-    </div>
-  </div>
-</div>
-
 <!-- Modal Success-->
 <div class="modal fade" id="modalSuccess" tabindex="-1" role="dialog" aria-labelledby="modelTitleId" aria-hidden="true">
   <div class="modal-dialog modal-dialog-scrollable" role="document">
@@ -252,7 +190,7 @@
             <i class="fas fa-check-circle text-success" style="font-size: 2rem;"> </i>
           </div>
           <div class="col">
-            <h5>Serial Procesado con Exito</h5>
+            <h5>Seriales Procesados con Exito</h5>
           </div>
         </div>
       </div>
@@ -309,8 +247,7 @@
 </div>
 
 
-<div class="modal fade animate__animated animate__zoomInDown" id="modalSerialSuccess" tabindex="-1"
-                aria-hidden="true">
+<div class="modal fade animate__animated animate__zoomInDown" id="modalSerialSuccess"  tabindex="-1" role="dialog" aria-labelledby="modelTitleId" aria-hidden="true">
                 <div class="modal-dialog">
                     <div class="modal-content">
                         <div class="modal-body text-center">

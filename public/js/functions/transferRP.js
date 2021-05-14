@@ -177,7 +177,6 @@ function submitSerials(e) {
 
 
             response = JSON.parse(result.data)
-            console.log(response);
             soundOk()
             errorText.hidden = true
             tabla_consulta_container.hidden = false

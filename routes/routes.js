@@ -38,13 +38,13 @@ router.post('/getIdPlans',routesController.getIdPlans_POST);
 router.post('/cancelarSerialesPlan',routesController.cancelarSerialesPlan_POST);
 router.get('/impresion/', middleware.verifyToken, routesController.impresion_GET);
 router.post('/getProgramacion',routesController.getProgramacion_POST);
-router.post('/procesarSeriales/', routesController.procesarSeriales_POST);
+router.post('/procesarSeriales/',  middleware.verifyToken,routesController.procesarSeriales_POST);
 router.post('/consultarSeriales/', routesController.consultarSeriales_POST);
 router.get('/reportes/', routesController.reportes_GET);
 router.post('/reporteGrafico/', routesController.reporteGrafico_POST);
 router.get('/transferRP',middleware.verifyToken, routesController.transferRP_GET);
 router.get('/transferPR',middleware.verifyToken, routesController.transferPR_GET);
-router.post('/transferenciaRP/', routesController.transferenciaRP_POST);
+router.post('/transferenciaRP/', middleware.verifyToken, routesController.transferenciaRP_POST);
 router.post('/getAllInfoSerial', routesController.getAllInfoSerial_POST);
 router.post('/transferenciaPR/', routesController.transferenciaPR_POST);
 
