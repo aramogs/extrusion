@@ -24,9 +24,7 @@ controller.index_GET = (req, res) => {
 }
 
 controller.login = (req, res) => {
-    section = req.params.id
     res.render('login.ejs', {
-        section
     });
 }
 
@@ -236,8 +234,8 @@ controller.verificarSAP_POST = (req, res) => {
                 titulos = result[1][0]
                 valores = result[1][1]
                 funcion.insertProgramaExcel("production_plan", titulos, valores, user.toLowerCase(), fecha, turno)
-                    .then((result) => {  res.json(result) })
-                    .catch((err) => {  res.json(err) })
+                    .then((result) => { res.json(result) })
+                    .catch((err) => { res.json(err) })
 
             })
 
@@ -458,14 +456,19 @@ controller.agregarIdPlan_POST = (req, res) => {
 
 }
 
-
 controller.idplanImpresion_POST = (req, res) => {
 
     let idplan = req.body.id
 
-    funcion.getPlanImpresion(idplan)
-        .then((result) => { res.json(result) })
-        .catch((err) => { console.error(err) })
+    async function waitForPromise() {
+        let planImpresion = await funcion.getPlanImpresion(idplan);
+        let etiquetasImpresas = await funcion.etiquetasPlan(idplan);
+        Promise.all([planImpresion, etiquetasImpresas])
+            .then(result => { res.json(result) })
+            .catch(err => { console.error(err) })
+    }
+    waitForPromise()
+
 
 
 }
@@ -478,10 +481,11 @@ controller.impresion_POST = (req, res) => {
     let cantidad = parseInt(req.body.cantidad)
     let contenedor = req.body.contenedor
     let capacidad = parseInt(req.body.capacidad)
+    let etiquetas = parseInt(req.body.etiquetas)
     let linea = req.body.linea
-    let tipo= req.body.tipo
+    let tipo = req.body.tipo
     let serial_num
-    let impresoType= req.body.impresoType
+    let impresoType = req.body.impresoType
 
     if (cantidad === capacidad) {
         numero_etiquetas = 1
@@ -492,7 +496,7 @@ controller.impresion_POST = (req, res) => {
 
     async function waitForPromise() {
 
-        let insert = await funcion.insertImpresion(plan_id, no_sap, operador_id, capacidad, numero_etiquetas,impresoType);
+        let insert = await funcion.insertImpresion(plan_id, no_sap, operador_id, capacidad, etiquetas, impresoType);
         let values = await funcion.getBaseExtr(no_sap)
         let impre = await funcion.getPrinter(linea)
         let data = {}
@@ -501,12 +505,12 @@ controller.impresion_POST = (req, res) => {
         Promise.all([insert, values, impre])
             .then((result) => {
 
-                serial_num = insert.insertId + numero_etiquetas - 1
+                serial_num = insert.insertId + etiquetas - 1
                 inserted = result[0]
                 values_ = result[1]
                 impresora = result[2][0].printer
 
-                for (let i = 0; i < numero_etiquetas; i++) {
+                for (let i = 0; i < etiquetas; i++) {
                     let serial = inserted.insertId++
 
                     printLabel(i, serial)
@@ -617,12 +621,12 @@ controller.cancelarSeriales_POST = (req, res) => {
     let seriales = req.body.seriales
     let motivo = req.body.motivo
     let arraySeriales = seriales.split(',')
-    let tipo= req.body.tipo
+    let tipo = req.body.tipo
     let user
-    if(tipo=="retorno"){
-       user = req.body.user
-    } else{
-       user = (req.connection.user).substring(3)
+    if (tipo == "retorno") {
+        user = req.body.user
+    } else {
+        user = (req.connection.user).substring(3)
     }
 
 
@@ -766,7 +770,7 @@ function checkAllStatus(seriales, status) {
     return new Promise((resolve, reject) => {
         let noAcreditar = []
         seriales.forEach(element => {
-            
+
             if (status === "Impreso") {
                 if (element.status != status) {
                     let obj = {}
@@ -784,10 +788,10 @@ function checkAllStatus(seriales, status) {
                     obj['result'] = "N/A"
                     noAcreditar.push(obj)
                 }
-            }  
+            }
             if (status === "Acreditado") {
 
-                if (element.status != status  && element.status != "Retornado") {
+                if (element.status != status && element.status != "Retornado") {
                     let obj = {}
                     let error
                     if (element.status === "Cancelado") error = "Serial Cancelado"
@@ -807,7 +811,7 @@ function checkAllStatus(seriales, status) {
 
             if (status === "Transferido") {
 
-                if (element.status != status ) {
+                if (element.status != status) {
                     let obj = {}
                     let error
                     if (element.status === "Cancelado") error = "Serial Cancelado"
@@ -928,7 +932,7 @@ controller.transferenciaRP_POST = (req, res) => {
                     async function updateAcred() {
                         let resultado = JSON.parse(result)
                         let resultadArray = resultado.result
-                        let acreditado = await updateTransferido(resultadArray, user_id,"Transferido");
+                        let acreditado = await updateTransferido(resultadArray, user_id, "Transferido");
                         res.json(result)
                     }
                     updateAcred()
@@ -952,13 +956,13 @@ controller.getAllInfoSerial_POST = (req, res) => {
         let allStatus = await statusSeriales(arraySeriales)
         let checkStatus = await checkAllStatus(allStatus, "Transferido")
 
-        if (checkStatus.length==0) {
+        if (checkStatus.length == 0) {
 
             funcion.getAllInfoSerial(serial)
-            .then(result => { res.json(result) })
-            .catch(err => { console.error(err) })
-            
-        }else{
+                .then(result => { res.json(result) })
+                .catch(err => { console.error(err) })
+
+        } else {
             res.json(checkStatus)
         }
     }
@@ -970,7 +974,7 @@ controller.getAllInfoSerial_POST = (req, res) => {
 controller.transferenciaPR_POST = (req, res) => {
 
     let seriales = req.body.serial
-    let serial_obsoleto= req.body.serial_obsoleto
+    let serial_obsoleto = req.body.serial_obsoleto
     let arraySeriales = seriales.split(',')
     let estacion = uuidv4();
     let process = "transfer_ext_pr"
@@ -978,39 +982,39 @@ controller.transferenciaPR_POST = (req, res) => {
 
     async function getStatus() {
 
-            let user_id = req.body.user
-            let info = await infoSeriales(arraySeriales)
-            let jsonInfo = JSON.stringify(info)
+        let user_id = req.body.user
+        let info = await infoSeriales(arraySeriales)
+        let jsonInfo = JSON.stringify(info)
 
-            let send = `{"station":"${estacion}","serial_num":"","process":"${process}", "material":"",  "cantidad":"", "data":${jsonInfo}}`
+        let send = `{"station":"${estacion}","serial_num":"","process":"${process}", "material":"",  "cantidad":"", "data":${jsonInfo}}`
 
-            amqpRequest(send)
-                .then((result) => {
+        amqpRequest(send)
+            .then((result) => {
 
-                    async function updateAcred() {
-                        let resultado = JSON.parse(result)
-                        let resultadArray = resultado.result
+                async function updateAcred() {
+                    let resultado = JSON.parse(result)
+                    let resultadArray = resultado.result
 
-                        if(resultadArray[0].error=="N/A"){
-                            let acreditado = await updateTransferidoPR(resultadArray, user_id, "Retornado");
+                    if (resultadArray[0].error == "N/A") {
+                        let acreditado = await updateTransferidoPR(resultadArray, user_id, "Retornado");
 
 
-                            funcion.updateObsoleto(serial_obsoleto)
+                        funcion.updateObsoleto(serial_obsoleto)
                             .then((result) => { })
-                            .catch((err) => { console.error(err) })  
+                            .catch((err) => { console.error(err) })
 
-                            res.json(result)
-                        }else{
-                            let acreditado = await updateTransferidoPR(resultadArray, user_id, "Error");                      
-                            res.json(result)
-                        }
-
+                        res.json(result)
+                    } else {
+                        let acreditado = await updateTransferidoPR(resultadArray, user_id, "Error");
+                        res.json(result)
                     }
-                    updateAcred()
 
-                })
-                .catch((err) => { console.error(err) })
-        
+                }
+                updateAcred()
+
+            })
+            .catch((err) => { console.error(err) })
+
     }
     getStatus()
 

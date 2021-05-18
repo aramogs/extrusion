@@ -1,6 +1,8 @@
 let inputPassword = document.getElementById("inputPassword")
 let submitPassword = document.getElementById("submitPassword")
-let section = document.getElementById("section")
+let sectionSpan = document.getElementById("sectionSpan")
+let section = (window.location.pathname).replace("/login/","")
+sectionSpan.innerHTML = section
 inputPassword.focus()
 
 submitPassword.addEventListener("submit", (e) => {
@@ -23,9 +25,9 @@ submitPassword.addEventListener("submit", (e) => {
             if (response != "unathorized") {
                 soundOk()
                 setTimeout(() => {
-                    if (section.innerText === "Acreditacion") {
+                    if (section === "Acreditacion") {
                         window.location.replace(window.location.origin + "/mainMenu")
-                    }else if (section.innerText === "Impresion") {
+                    }else if (section === "Impresion") {
                         window.location.replace(window.location.origin + "/impresion")
                     }
                     

@@ -10,6 +10,7 @@ let msap = document.querySelectorAll(".msap")
 let mcantidad = document.querySelectorAll(".mcantidad")
 let mfecha = document.querySelectorAll(".mfecha")
 let midplan = document.querySelectorAll(".midplan")
+let mimpreso = document.querySelectorAll(".mimpreso")
 let cotenedorSection = document.getElementById("cotenedorSection")
 let btnCerrar = document.getElementsByClassName("btnCerrar")
 let regex1 = /\-(.*)/
@@ -18,14 +19,17 @@ let tituloSuccess = document.getElementById("tituloSuccess")
 let cantidadSuccess = document.getElementById("cantidadSuccess")
 let btnModalTerminar = document.getElementById("btnModalTerminar")
 let cantidadManual = document.getElementById("cantidadManual")
-let btnImprimirManual= document.getElementById("btnImprimirManual")
+let btnImprimirManual = document.getElementById("btnImprimirManual")
+let etiquetas_impresas = 0
+let piezas_totales = 0
+let etiquetas_requeridas = 0
 
-btn_logoff.addEventListener("click", () => { document.cookie = "accessToken" + '=; Max-Age=0', location.reload() })
+btn_logoff.addEventListener("click", () => { document.cookie = "accessToken" + '=; Max-Age=0', window.location.replace(window.location.origin + "/login/Impresion") })
 selectedLinea.addEventListener("change", () => { getSelectedTurno() })
 btnCerrar[0].addEventListener("click", () => { clear() })
 btnModalTerminar.addEventListener("click", () => { refreshTable() })
 cantidadManual.addEventListener("keyup", () => { verifyCant() })
-btnImprimirManual.addEventListener("click",(e)=>{impresion(e)})
+btnImprimirManual.addEventListener("click", (e) => { impresion(e), e.preventDefault() })
 
 
 function currentTime() {
@@ -70,14 +74,29 @@ function getSelectedTurno() {
     headers: { 'content-type': 'application/json' }
   })
     .then((result) => {
-      for (let y = 0; y < result.data.length; y++) {
-        let imprimir
-        if (result.data[y].status == "Pendiente") {
 
-          imprimir =
-            `
-            <button type="submit"  class="btn btn-info btn-block  rounded-pill" name="btnPrint" id="${result.data[y].plan_id}" onClick="ImprimirModal(this.id)" ><span class="fas fa-print"><span hidden>${result.data[y].plan_id}</span></span>
-            `
+      for (let y = 0; y < result.data.length; y++) {
+        let iteracion = result.data[y]
+        let condicion = iteracion.cantidad - iteracion.impreso
+
+
+        let imprimir
+        if (result.data[y].status !== "Cancelado") {
+
+          if (condicion >= iteracion.std_pack && iteracion.std_pack > 0 || condicion >= iteracion.std_pack_b && iteracion.std_pack_b > 0 || condicion >= iteracion.std_pack_c && iteracion.std_pack_c > 0 || condicion >= iteracion.std_pack_d && iteracion.std_pack_d > 0 || condicion >= iteracion.std_pack_e && iteracion.std_pack_e > 0) {
+            imprimir =
+              `
+                <button type="submit"  class="btn btn-info btn-block  rounded-pill" name="btnPrint" id="${result.data[y].plan_id}" onClick="ImprimirModal(this.id)" ><span class="fas fa-print"><span hidden>${result.data[y].plan_id}</span></span>
+                `
+
+          } else {
+            imprimir =
+              `
+            <button type="button" class="btn btn-info  rounded-pill " disabled><span class="fas fa-check-square" disabled><span hidden>${result.data[y].plan_id}</span></span>
+            <button type="button" class="btn btn-warning  rounded-pill "  id="${result.data[y].plan_id}" onClick="ImprimirManual(this.id)" ><span class="fas fa-print" disabled><span hidden>${result.data[y].plan_id}</span></span>
+            ` }
+
+
 
         } else if (result.data[y].status == "Cancelado") {
           imprimir =
@@ -101,7 +120,7 @@ function getSelectedTurno() {
           result.data[y].family,
           result.data[y].length,
           result.data[y].cantidad,
-          result.data[y].impreso === null ? '0': result.data[y].impreso,
+          result.data[y].impreso === null ? '0' : result.data[y].impreso,
           Math.sign(result.data[y].cantidad - result.data[y].impreso) == -1 ? `+${Math.abs(result.data[y].cantidad - result.data[y].impreso)}` : result.data[y].cantidad - result.data[y].impreso,
           result.data[y].sup_name,
           result.data[y].status
@@ -130,8 +149,11 @@ function ImprimirModal(idp) {
     headers: { 'content-type': 'application/json' }
   })
     .then((result) => {
-      let currentInfo = result.data
 
+      let currentInfo = result.data[0]
+      etiquetas_impresas = 0
+      etiquetas_impresas = result.data[1][0].impreso
+      if (etiquetas_impresas == null) etiquetas_impresas = 0
       currentInfo.forEach((obj) => {
         Object.entries(obj).forEach(([key, value]) => {
           if (key.includes("std_pack") && value > 0) {
@@ -142,13 +164,17 @@ function ImprimirModal(idp) {
         });
       });
 
+
+
       $('#modalImpresion').modal({ backdrop: 'static', keyboard: false })
       msap.forEach(element => { element.innerHTML = currentInfo[0].numero_sap })
       mcantidad.forEach(element => { element.innerHTML = currentInfo[0].cantidad })
       mfecha.forEach(element => { element.innerHTML = currentInfo[0].fecha })
       midplan.forEach(element => { element.innerHTML = idp })
-
+      mimpreso.forEach(element =>{element.innerHTML = etiquetas_impresas})
       let btnImprimir = document.querySelectorAll(".btnImprimir")
+      let inputImprimir = document.querySelectorAll(".inputImprimir")
+
       btnImprimir.forEach(btn => {
 
         btn.addEventListener("click", (e) => {
@@ -157,6 +183,37 @@ function ImprimirModal(idp) {
         })
       })
 
+      inputImprimir.forEach(input => {
+        // input.addEventListener("click",(e)=>{PiezasTotales(e)})
+        input.addEventListener("keyup", (e) => { PiezasTotales(e) })
+
+        function PiezasTotales(e) {
+
+          e.preventDefault()
+          if (parseInt(e.target.value) > 0) {
+            e.target.nextElementSibling.disabled = false
+            e.target.nextElementSibling.classList.remove('animate__flipOutX');
+            e.target.nextElementSibling.classList.add('animate__flipInX');
+
+            let capacidad_contenedor = parseInt((e.target.parentNode.parentNode.firstElementChild.innerHTML).replace("Capacidad:", ""))
+            etiquetas_requeridas = parseInt(e.target.value)
+            piezas_totales = capacidad_contenedor * etiquetas_requeridas
+
+            if (piezas_totales + etiquetas_impresas > parseInt(mcantidad[0].innerHTML)) {
+              e.target.nextElementSibling.disabled = true
+              // e.target.value= piezas_totales
+            }
+
+            e.target.nextElementSibling.innerHTML = `Piezas: ${piezas_totales}`
+          }else{
+            e.target.nextElementSibling.disabled = true
+            e.target.nextElementSibling.classList.add('animate__flipOutX');
+            e.target.nextElementSibling.classList.remove('animate__flipInX');
+          }
+
+        }
+      });
+
     })
 
     .catch((err) => { console.error(err) })
@@ -164,7 +221,6 @@ function ImprimirModal(idp) {
 }
 
 function ImprimirManual(idp) {
-
   cantidadManual.value = ""
   let data = { "id": `${idp}` }
   axios({
@@ -174,8 +230,10 @@ function ImprimirManual(idp) {
     headers: { 'content-type': 'application/json' }
   })
     .then((result) => {
-      let currentInfo = result.data
-
+      let currentInfo = result.data[0]
+      etiquetas_impresas = 0
+      etiquetas_impresas = result.data[1][0].impreso
+      if (etiquetas_impresas == null) etiquetas_impresas = 0
 
 
       $('#modalImpresionManual').modal({ backdrop: 'static', keyboard: false })
@@ -183,7 +241,7 @@ function ImprimirManual(idp) {
       mcantidad.forEach(element => { element.innerHTML = currentInfo[0].cantidad })
       mfecha.forEach(element => { element.innerHTML = currentInfo[0].fecha })
       midplan.forEach(element => { element.innerHTML = idp })
-
+      mimpreso.forEach(element =>{element.innerHTML = etiquetas_impresas})
       let btnImprimir = document.querySelectorAll(".btnImprimir")
       btnImprimir.forEach(btn => {
         btn.addEventListener("click", (e) => {
@@ -209,9 +267,14 @@ addCard = function (key, value, cantidadProgramada) {
   <img class="card-img-top mx-auto" src="/img/contenedores/${key}.jpg" alt="Card image cap">
   <div class="card-body">
     <p>Capacidad: ${value}</p>
-
-      <button class="btn btn-info btnImprimir" type="submit" value="${key}-${value}">Etiquetas: ${etiquetas}</button>
-
+    <hr>
+    <div class="form-group">
+      <small id="helpId" class="form-number"><span class="fas fa-hashtag"></span> Etiquetas requeridas:</small>
+      <input type="number" class="form-control inputImprimir mb-4" name="" id="${key}-${value}"  autocomplete="off"  min="0">
+      <button class="btn btn-info rounded-pill btnImprimir animate__flipOutX animate__animated" type="submit" value="${key}-${value}"  disabled></button>
+    </div>
+    
+        
   </div>
 </div>
   `
@@ -235,7 +298,8 @@ function clear() {
 
 function impresion(e) {
 
-  e.preventDefault()
+  let etiquetas_requeridas_ = parseInt(e.target.previousElementSibling.value)
+  if (e.target.id === "btnImprimirManual") etiquetas_requeridas_ = 1
   $('#modalImpresion').modal('hide')
   $('#modalImpresionManual').modal('hide')
   $('#modalSpinner').modal({ backdrop: 'static', keyboard: false })
@@ -247,11 +311,11 @@ function impresion(e) {
   let capacidad = (e.target.value).replace(regex2, "")
   let linea = selectedLinea.options[selectedLinea.selectedIndex].text
 
-  if (parseInt(cantidadManual.value) > 0) { cantidad = parseInt(cantidadManual.value), capacidad = parseInt(cantidadManual.value), contenedor="manual"}
 
-  let data = { "plan_id": `${plan_id}`, "no_sap": `${no_sap}`, "cantidad": cantidad,
-   "contenedor": `${contenedor}`, "capacidad": capacidad, "linea": `${linea}`,"tipo": `EXT`,"impresoType": `Impreso`  }
-  console.log(data);
+  if (parseInt(cantidadManual.value) > 0) { cantidad = parseInt(cantidadManual.value), capacidad = parseInt(cantidadManual.value), contenedor = "manual" }
+
+  let data = { "plan_id": `${plan_id}`, "no_sap": `${no_sap}`, "cantidad": cantidad, "contenedor": `${contenedor}`, "capacidad": capacidad, "linea": `${linea}`, "tipo": `EXT`, "impresoType": `Impreso`, "etiquetas": `${etiquetas_requeridas_}` }
+
   axios({
     method: 'post',
     url: `/impresionEtiqueta`,
@@ -261,7 +325,7 @@ function impresion(e) {
     .then((result) => {
 
       let last_id = result.data.last_id
-      let first_id = last_id - Math.floor(cantidad / capacidad) + 1
+      let first_id = last_id - etiquetas_requeridas_ +1
 
       setTimeout(() => {
         $('#modalSpinner').modal('hide')

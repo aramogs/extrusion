@@ -225,6 +225,21 @@ funcion.getPlanImpresion = (idplan) => {
 }
 
 
+funcion.etiquetasPlan = (idplan) => {
+    return new Promise((resolve, reject) => {
+        dbEX(`
+        SELECT 
+             SUM(cantidad) as impreso
+        FROM
+            extrusion.extrusion_labels
+        WHERE
+            plan_id = ${idplan};
+        `)
+            .then((result) => { resolve(result) })
+            .catch((error) => { reject(error) })
+    })
+}
+
 funcion.agregarIdPlan = (numero_sap, cantidad, linea, sup_name, fecha, turno) => {
 
     return new Promise((resolve, reject) => {
@@ -393,7 +408,7 @@ funcion.insertImpresion = (plan_id, numero_parte, emp_num, cantidad, numero_etiq
             dbEX(`INSERT INTO extrusion_labels (plan_id, numero_parte, emp_num, cantidad, status) 
                 VALUES ('${plan_id}','${numero_parte}',${emp_num},${cantidad},'${impresoType}')`)
                 .then((result) => { resolve(result) })
-                .catch((error) => { reject(error) })
+                .catch((error) => { console.error(error),reject(error) })
         }
     })
 }

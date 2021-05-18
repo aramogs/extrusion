@@ -9,7 +9,7 @@ const upload = multer()
 //Routes
 
 router.get('/', routesController.index_GET);
-router.get('/login/:id', routesController.login);
+router.get('/login/:id', middleware.loginVerify, routesController.login);
 router.get('/acceso_denegado',routesController.accesoDenegado_GET);
 router.get('/mainMenu',middleware.verifyToken,routesController.mainMenu_GET);
 router.post('/userAccess', routesController.userAccess_POST);
