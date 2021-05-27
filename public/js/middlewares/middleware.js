@@ -1,4 +1,5 @@
 const jwt = require('jsonwebtoken');
+const nodeSSPI = require('node-sspi');
 const middleware = {};
 
 middleware.verifyToken = (req, res, next) => {
@@ -14,8 +15,8 @@ middleware.verifyToken = (req, res, next) => {
             let Ttoken = (cookie.split("=")[0]).trim()
             let Tjwt = (cookie.split("=")[1]).trim()
             if (Ttoken == "accessToken") {
-                token_name = Ttoken  
-                token_jwt = Tjwt 
+                token_name = Ttoken
+                token_jwt = Tjwt
             }
         })
 
@@ -53,8 +54,8 @@ middleware.loginVerify = (req, res, next) => {
             let Ttoken = (cookie.split("=")[0]).trim()
             let Tjwt = (cookie.split("=")[1]).trim()
             if (Ttoken == "accessToken") {
-                token_name = Ttoken  
-                token_jwt = Tjwt 
+                token_name = Ttoken
+                token_jwt = Tjwt
             }
         })
 
@@ -68,6 +69,16 @@ middleware.loginVerify = (req, res, next) => {
         }
 
     }
+}
+
+middleware.sspi = (req, res, next) => {
+    let nodeSSPIObj = new nodeSSPI({
+        retrieveGroups: true,
+
+    });
+    nodeSSPIObj.authenticate(req, res, function (err) {
+        res.finished || next()
+    });
 }
 
 module.exports = middleware;

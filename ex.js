@@ -22,18 +22,6 @@ app.use(bodyParser.json());
 
 
 const routes = require('./routes/routes');
-
-//Declarando y adquiriendo nodesspi e informacion de usuario
-app.use(function (req, res, next) {
-  var nodeSSPI = require('node-sspi');
-  var nodeSSPIObj = new nodeSSPI({
-    retrieveGroups: true
-  });
-  nodeSSPIObj.authenticate(req, res, function (err) {
-    res.finished || next()
-  });
-});
-
 app.use(routes);
 
 if (process.env.NODE_ENV == "DEV") {
