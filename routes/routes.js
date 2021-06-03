@@ -32,10 +32,10 @@ router.get('/etiquetasImpresas', middleware.sspi, routesController.etiquetasImpr
 router.post('/tablaSeriales',routesController.tablaSeriales_POST);
 router.post('/tablaSerialesFechasMultiples',routesController.tablaSerialesFechasMultiples_POST);
 router.post('/tablaPlanFechasMultiples',routesController.tablaPlanFechasMultiples_POST);
-router.post('/cancelarSeriales',routesController.cancelarSeriales_POST);
+router.post('/cancelarSeriales',middleware.sspi,routesController.cancelarSeriales_POST);
 router.post('/impresionEtiqueta', middleware.verifyToken,routesController.impresion_POST);
 router.post('/getIdPlans',routesController.getIdPlans_POST);
-router.post('/cancelarSerialesPlan',routesController.cancelarSerialesPlan_POST);
+router.post('/cancelarSerialesPlan',middleware.sspi, routesController.cancelarSerialesPlan_POST);
 router.get('/impresion/', middleware.verifyToken, routesController.impresion_GET);
 router.post('/getProgramacion',routesController.getProgramacion_POST);
 router.post('/procesarSeriales/',  middleware.verifyToken,routesController.procesarSeriales_POST);
