@@ -21,4 +21,4 @@ btn_pt_4.addEventListener("click",()=>{
     window.location.replace(window.location.origin + "/transferPR")
 })
 
-btn_logoff.addEventListener("click",()=>{ document.cookie = "accessToken" + '=; Max-Age=0', location.reload()})
+btn_logoff.addEventListener("click",()=>{ document.cookie = "accessToken" + '=; Max-Age=0', window.location.replace(window.location.origin + "/login/Acreditacion")})
