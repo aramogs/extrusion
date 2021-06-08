@@ -764,4 +764,14 @@ funcion.updateObsoleto = (serial_obsoleto) => {
             .catch((error) => { reject(error) })
     })
 }
+
+
+funcion.getSerial = () => {
+    return new Promise((resolve, reject) => {
+
+        dbEX(`SELECT serial FROM extrusion_labels ORDER BY serial DESC LIMIT 1`)
+            .then((result) => { resolve(result[0]) })
+            .catch((error) => { reject(error) })
+    })
+}
 module.exports = funcion;

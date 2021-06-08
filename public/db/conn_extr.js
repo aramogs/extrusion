@@ -6,7 +6,7 @@ const pool = mysql.createPool({
   host: process.env.DB_EXTR_HOST,
   user: process.env.DB_EXTR_USER,
   password: process.env.DB_EXTR_PASS,
-  database: "extrusion",
+  database: "extrusion_pruebas",
 })
 
 

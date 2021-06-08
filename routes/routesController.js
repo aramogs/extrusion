@@ -492,6 +492,7 @@ controller.impresion_POST = (req, res) => {
 
     async function waitForPromise() {
 
+        let lastSerial = await funcion.getSerial();
         let insert = await funcion.insertImpresion(plan_id, no_sap, operador_id, capacidad, numero_etiquetas,impresoType);
         let values = await funcion.getBaseExtr(no_sap)
         let impre = await funcion.getPrinter(linea)
@@ -501,13 +502,14 @@ controller.impresion_POST = (req, res) => {
         Promise.all([insert, values, impre])
             .then((result) => {
 
-                serial_num = insert.insertId + numero_etiquetas - 1
+                startSerial=lastSerial.serial+1
+                serial_num = startSerial + numero_etiquetas - 1
                 inserted = result[0]
                 values_ = result[1]
                 impresora = result[2][0].printer
 
                 for (let i = 0; i < numero_etiquetas; i++) {
-                    let serial = inserted.insertId++
+                    let serial = startSerial++
 
                     printLabel(i, serial)
                 }
