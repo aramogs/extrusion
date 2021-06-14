@@ -233,7 +233,8 @@ funcion.etiquetasPlan = (idplan) => {
         FROM
             extrusion.extrusion_labels
         WHERE
-            plan_id = ${idplan};
+            plan_id = ${idplan}
+        AND status != "Cancelado";
         `)
             .then((result) => { resolve(result) })
             .catch((error) => { reject(error) })
