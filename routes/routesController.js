@@ -374,7 +374,8 @@ controller.cancelarIdPlan_POST = (req, res) => {
 controller.impresion_GET = (req, res) => {
     let user_id = req.res.locals.authData.id.id
     let user_name = req.res.locals.authData.id.username
-    let todayDate = moment().format("YYYY-MM-DD")
+    let todayDate = moment()
+  
     let start_midnight=moment("00:00:00", 'HH:mm:ss')
     let end_midnight=moment("00:59:59", 'HH:mm:ss')
     let timeNow=moment();
@@ -388,21 +389,26 @@ controller.impresion_GET = (req, res) => {
             let end = moment(element.turno_final, 'HH:mm:ss')
 
             if (end.isBetween(start_midnight,end_midnight)){
-                end.add(1,'days')
+                    
+                if (timeNow.isBetween(start_midnight,end)) {
+                    
+                    start.subtract(1,"days")
+                    todayDate.subtract(1,"days")
+                }
+                end.add(1,"days")
+
             }
- 
+
 
             if (timeNow.isBetween(start,end)) {
-                console.log(timeNow);
-                console.log(start);
-                console.log(end);
-                currentShift = (element.turno_descripcion).substring(0, 2);
-                console.log(currentShift);   
+ 
+                currentShift = (element.turno_descripcion).substring(0, 2); 
+                
             }
         });
 
-
-
+        todayDate= todayDate.format("YYYY-MM-DD")
+        
         funcion.getProgramacionTurno(todayDate, currentShift)
             .then((result) => {
                 turnos = result

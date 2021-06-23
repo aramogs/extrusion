@@ -31,6 +31,9 @@ btnModalTerminar.addEventListener("click", () => { refreshTable() })
 cantidadManual.addEventListener("keyup", () => { verifyCant() })
 btnImprimirManual.addEventListener("click", (e) => { impresion(e), e.preventDefault() })
 
+let start_midnight=moment("00:00:00", 'HH:mm:ss')
+let end_midnight=moment("00:24:00", 'HH:mm:ss')
+let timeNow=moment();
 
 function currentTime() {
 
@@ -38,7 +41,7 @@ function currentTime() {
   let mm = date.getMonth() + 1;
   let dd = date.getDate()
   let yy = date.getFullYear()
-  myDateString = yy + '-' + mm + '-' + dd
+
 
   hour = date.getHours()
   min = date.getMinutes()
@@ -47,6 +50,11 @@ function currentTime() {
   min = updateTime(min)
   sec = updateTime(sec)
   clock.value = hour + " : " + min + " : " + sec
+
+  if (timeNow.isBetween(start_midnight,end_midnight)){
+    dd=dd-1
+  }
+  myDateString = yy + '-' + mm + '-' + dd
   currentFecha.value = myDateString
   // currentTurno.value="T2"
   t = setTimeout(function () { currentTime() }, 1000)
