@@ -599,8 +599,8 @@ funcion.updateSerialesAcred = (seriales, user_id) => {
                 UPDATE 
                     extrusion_labels 
                 SET 
-                    resultado_sap='${serial.result}',
-                    emp_mod='${user_id}'
+                    result_acred='${serial.error}',
+                    emp_acred='${user_id}'
                 WHERE 
                     serial = ${serial.serial_num}
                     `)
