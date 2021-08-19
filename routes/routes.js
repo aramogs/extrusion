@@ -16,7 +16,7 @@ router.post('/userAccess', routesController.userAccess_POST);
 router.get('/backflushEx',middleware.verifyToken, routesController.backflushEx_GET);
 router.get('/consultaEx',middleware.verifyToken, routesController.consultaEx_GET);
 router.get('/cargaProgramacion', middleware.sspi, routesController.cargaProgramacion_GET);
-router.get('/getTurnos',routesController.getTurnos_GET);
+router.post('/getTurnos',routesController.getTurnos_POST);
 router.post('/verificarSAP/:id_carga', middleware.sspi, upload.single("excelFile"), routesController.verificarSAP_POST);
 router.get('/editarProgramacion/:fecha?', middleware.sspi, routesController.editarProgramacion_GET);
 router.post('/tablaProgramacion', routesController.tablaProgramacion_POST);

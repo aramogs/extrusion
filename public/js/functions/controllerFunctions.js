@@ -31,6 +31,8 @@ funcion.getTurnos = () => {
             turno_descripcion
         FROM
             turnos
+        ORDER BY
+            turno_descripcion
         `)
             .then((result) => { resolve(result) })
             .catch((error) => { reject(error) })
@@ -43,7 +45,9 @@ funcion.getTurnosAll = () => {
         SELECT
             *
         FROM
-            turnos`)
+            turnos
+        ORDER BY
+            turno_descripcion`)
             .then((result) => { resolve(result) })
             .catch((error) => { reject(error) })
     })

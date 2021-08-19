@@ -20,6 +20,8 @@ let turnos_programados = []
 let modal_errorText = document.getElementById("modal_errorText")
 let modal_btnCerrar_Error = document.getElementById("modal_btnCerrar_Error")
 
+
+
 btnCancelar.forEach(element => {
     element.addEventListener('click', clearAll)
 });
@@ -78,18 +80,25 @@ const picker = datepicker('#selectedFecha', {
         if (dd <= 9) dd = '0' + dd;
         myDateString = yy + '-' + mm + '-' + dd;
         input.value = myDateString
-        enableTurno()
+
+        let dayofweeknumber= (moment(myDateString,"YY-MM-DD")).weekday()
+        
+
+
+        enableTurno(dayofweeknumber)
     }
 })
 
-function enableTurno() {
+function enableTurno(dayofweeknumber) {
     getProgramacion()
     selectedTurno.disabled = false
+    console.log(dayofweeknumber);
+    let data = { "day": `${dayofweeknumber}` }
     axios({
-        method: 'get',
+        method: 'post',
         url: `/getTurnos`,
-        data: "",
-        headers: { 'content-type': 'application/x-www-form-urlencoded' }
+        data: JSON.stringify(data),
+        headers: { 'content-type': 'application/json' }
     }).then((response) => {
 
         turnos = response.data

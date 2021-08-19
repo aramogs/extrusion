@@ -132,9 +132,20 @@ controller.consultaEx_GET = (req, res) => {
     })
 }
 
-controller.getTurnos_GET = (req, res) => {
+
+controller.getTurnos_POST = (req, res) => {
+    let day=req.body.day
+
     funcion.getTurnos()
         .then((result) => {
+
+            if(day==5){
+                result.splice(0,1)
+                result.splice(2,1)
+            }else{
+                result.splice(1,1)
+                result.splice(3,1)
+            }
 
             res.json(result)
         })
@@ -383,6 +394,16 @@ controller.impresion_GET = (req, res) => {
     async function waitForPromise() {
         let getTurnos = await funcion.getTurnosAll()
 
+
+        if(moment().weekday()===6){
+            getTurnos.splice(0,1)
+            getTurnos.splice(2,1)
+        }else{
+            getTurnos.splice(1,1)
+            getTurnos.splice(3,1)
+        }
+        
+
         getTurnos.forEach(element => {
 
             let start = moment(element.turno_inicio, 'HH:mm:ss')
@@ -525,7 +546,7 @@ controller.impresion_POST = (req, res) => {
         let impre = await funcion.getPrinter(linea)
         let data = {}
 
-
+    
         Promise.all([insert, values, impre])
             .then((result) => {
 
@@ -952,11 +973,17 @@ controller.transferenciaRP_POST = (req, res) => {
             let jsonInfo = JSON.stringify(info)
 
             let send = `{"station":"${estacion}","serial_num":"","process":"${process}", "material":"",  "cantidad":"", "data":${jsonInfo}}`
+
+            console.log(send)
+
+
             amqpRequest(send)
                 .then((result) => {
                     async function updateAcred() {
                         let resultado = JSON.parse(result)
                         let resultadArray = resultado.result
+
+                        
                         let acreditado = await updateTransferido(resultadArray, user_id, "Transferido");
                         res.json(result)
                     }
@@ -1012,7 +1039,7 @@ controller.transferenciaPR_POST = (req, res) => {
         let jsonInfo = JSON.stringify(info)
 
         let send = `{"station":"${estacion}","serial_num":"","process":"${process}", "material":"",  "cantidad":"", "data":${jsonInfo}}`
-
+       
         amqpRequest(send)
             .then((result) => {
 
@@ -1022,7 +1049,6 @@ controller.transferenciaPR_POST = (req, res) => {
 
                     if (resultadArray[0].error == "N/A") {
                         let acreditado = await updateTransferidoPR(resultadArray, user_id, "Retornado");
-
 
                         funcion.updateObsoleto(serial_obsoleto)
                             .then((result) => { })
@@ -1044,5 +1070,15 @@ controller.transferenciaPR_POST = (req, res) => {
     getStatus()
 
 }
+
+
+
+
+
+
+
+
+
+
 
 module.exports = controller;

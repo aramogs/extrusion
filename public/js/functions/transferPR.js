@@ -135,6 +135,7 @@ function submitSerials(e) {
     let data = {
         "plan_id": `${meplan.innerHTML}`, "cantidad": `${return_cantidad.value}`,
         "no_sap": `${mesap.innerHTML}`, "contenedor": `manual`, "capacidad": `${return_cantidad.value}`, "linea": `200`, "tipo": `EXT_RE`,"impresoType": `Impreso_re`
+        ,"etiquetas": `1`
     };
     axios({
         method: 'post',
