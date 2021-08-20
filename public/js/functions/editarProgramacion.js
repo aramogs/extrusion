@@ -46,7 +46,7 @@ if (fecha != "") {
   fillTable()
 }
 
-
+let dayofweeknumber
 const picker = datepicker('#selectFecha', {
     customDays: ['D', 'L', 'M', 'M', 'J', 'V', 'S'],
     overlayPlaceholder: 'Seleccionar Mes',
@@ -65,6 +65,12 @@ const picker = datepicker('#selectFecha', {
         btnAgregar.disabled=false;
         table.clear().draw();
         fillTable();
+
+        dayofweeknumber= (moment(myDateString,"YY-MM-DD")).weekday()
+        
+
+
+        
     }
 })
 
@@ -244,7 +250,7 @@ function cancel(clicked_id)
 function agregar()
   {
     $('#modalAgregar').modal({ backdrop: 'static', keyboard: false })
-    enableTurno()
+    enableTurno(dayofweeknumber)
     
   }
 
@@ -310,14 +316,15 @@ function checkSap()
   }
 
 
-  function enableTurno(){
+  function enableTurno(dayofweeknumber){
     add_turno.disabled = false
+    let data = { "day": `${dayofweeknumber}` }
     axios({
-        method: 'get',
+        method: 'post',
         url: `/getTurnos`,
-        data: "",
-        headers: { 'content-type': 'application/x-www-form-urlencoded' }
-    }).then((response)=>{
+        data: JSON.stringify(data),
+        headers: { 'content-type': 'application/json' }
+    }).then((response) => {
         
         turnos = response.data
  

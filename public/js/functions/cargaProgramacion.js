@@ -92,7 +92,7 @@ const picker = datepicker('#selectedFecha', {
 function enableTurno(dayofweeknumber) {
     getProgramacion()
     selectedTurno.disabled = false
-    console.log(dayofweeknumber);
+
     let data = { "day": `${dayofweeknumber}` }
     axios({
         method: 'post',
