@@ -26,7 +26,7 @@ $(document).ready(function () {
 
     fillTable()
 
-   // $('#modalSpinner').modal({ backdrop: 'static', keyboard: false })
+   $('#modalSpinner').modal({ backdrop: 'static', keyboard: false })
 
 })
 
