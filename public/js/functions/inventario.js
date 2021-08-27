@@ -26,6 +26,8 @@ $(document).ready(function () {
 
     fillTable()
 
+   // $('#modalSpinner').modal({ backdrop: 'static', keyboard: false })
+
 })
 
 
@@ -37,8 +39,7 @@ function fillTable() {
         headers: { 'content-type': 'application/json' }
     }).then((result)=>{ 
             
-        console.log(result);
-           
+      
                 for (let y = 0; y < result.data.length; y++) {
 
                    
@@ -64,6 +65,8 @@ function fillTable() {
                     ] ).draw( false );
 
             }
+            $('#modalSpinner').modal('hide')
+           
         })
         .catch((err) => { console.error(err) })
 }
