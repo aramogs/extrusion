@@ -360,10 +360,40 @@ controller.editarProgramacion_GET = (req, res) => {
 }
 
 
+controller.inventario_GET = (req, res) => {
+
+    user = req.connection.user
+    fecha = req.params.fecha
+    let access = ""
+    acceso(req)
+        .then((result) => {
+            result.forEach(element => {
+                if (element === "TFT\\TFT.DEL.PAGES_Extrusion" || element === "TFT\\TFT.DEL.PAGES_Extrusion_Green") access = "ok"
+            });
+            if (access == "ok") {
+                res.render("inventario.ejs", { user, fecha })
+            } else {
+                res.redirect("/acceso_denegado")
+            }
+        })
+        .catch((err) => { res.redirect("/acceso_denegado") })
+
+}
+
+
 controller.tablaProgramacion_POST = (req, res) => {
 
     let fecha = req.body.fecha
     funcion.getProgramacionFecha(fecha)
+        .then((result) => { res.json(result) })
+        .catch((err) => { console.error(err) })
+
+}
+
+
+controller.getInventario_POST = (req, res) => {
+
+    funcion.getInventario(fecha)
         .then((result) => { res.json(result) })
         .catch((err) => { console.error(err) })
 
@@ -837,21 +867,40 @@ function checkAllStatus(seriales, status) {
             }
             if (status === "Acreditado") {
 
-                if (element.status != status && element.status != "Retornado") {
+                let todayDate = moment()
+                let serialDate = (moment(element.datetime))
+
+                let hours= todayDate.diff(serialDate, 'hours')
+            
+                if(hours<12){
+                    
                     let obj = {}
-                    let error
-                    if (element.status === "Cancelado") error = "Serial Cancelado"
-                    if (element.status === "Impreso") error = "Serial Sin Acreditar"
-                    if (element.status === "No Encontrado") error = "Serial No Encontrado"
-                    if (element.status === "Obsoleto") error = "Serial Obsoleto"
-                    if (element.status === "Transferido") error = "Serial previamente transferido"
-                    if (element.status === "Error") error = "Serial con Error"
-                    if (element.status === "Impreso_re") error = "Serial sin retornar, destruir etiqueta"
                     obj['serial'] = element.serial
-                    obj['error'] = error
+                    obj['error'] = "Serial en Reposo Menor a 12 Horas"
                     obj['result'] = "N/A"
                     noAcreditar.push(obj)
+
+                }else{
+
+                    if (element.status != status && element.status != "Retornado") {
+                        let obj = {}
+                        let error
+                        if (element.status === "Cancelado") error = "Serial Cancelado"
+                        if (element.status === "Impreso") error = "Serial Sin Acreditar"
+                        if (element.status === "No Encontrado") error = "Serial No Encontrado"
+                        if (element.status === "Obsoleto") error = "Serial Obsoleto"
+                        if (element.status === "Transferido") error = "Serial previamente transferido"
+                        if (element.status === "Error") error = "Serial con Error"
+                        if (element.status === "Impreso_re") error = "Serial sin retornar, destruir etiqueta"
+                        obj['serial'] = element.serial
+                        obj['error'] = error
+                        obj['result'] = "N/A"
+                        noAcreditar.push(obj)
+                    }
+
                 }
+
+
             }
 
 

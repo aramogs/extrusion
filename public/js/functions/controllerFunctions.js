@@ -512,7 +512,7 @@ funcion.statusSerial = (seriales) => {
 
             dbEX(`
             SELECT 
-                serial, status 
+                serial, status, datetime
             FROM 
                 extrusion_labels 
             WHERE 
@@ -791,6 +791,17 @@ funcion.getSerial = () => {
 
         dbEX(`SELECT serial FROM extrusion_labels ORDER BY serial DESC LIMIT 1`)
             .then((result) => { resolve(result[0]) })
+            .catch((error) => { reject(error) })
+    })
+}
+
+
+
+funcion.getInventario = () => {
+    return new Promise((resolve, reject) => {
+
+        dbEX(`SELECT * FROM extrusion_labels WHERE status="Acreditado" OR status="Retornado"`)
+            .then((result) => { resolve(result) })
             .catch((error) => { reject(error) })
     })
 }

@@ -1,0 +1,59 @@
+<%- include ("./static/header") %>
+    <%- include ("./static/sidebar") %>
+        <%- include ("./static/navbar") %>
+
+            <br>
+            <div class="container-fluid">
+                
+                <h1 class="display-4 text-center csvTitulo"><span class="icoSidebar fas fa-xs fa-boxes"></span> Seriales en Rack</h1>
+                <a href="/">
+                    <div class="img_sidebar" style="background-image: url(/img/TristoneLogo.png); "></div>
+                  </a>
+            </div>
+
+
+            <div class="container-fluid">
+
+                <div class="table-responsive">
+                    <div class="containerTable">
+                        <div class="table table-responsive" id="table">
+                            <table id="myTable" class="table table-bordered table-striped table-sm hover text-center">
+                                <thead class="thead-dark">
+
+                                    <th><span class="icoSidebar fas fa-key"></span> Serial</th>
+                                    <th><span class="icoSidebar fas fa-clipboard"></span> Plan_ID</th>
+                                    <th><span class="icoSidebar fas fa-key"></span> SAP</th>
+                                    <th><span class="icoSidebar fas fa-user"></span> Emp_num</th>
+                                    <th><span class="icoSidebar fas fa-hashtag"></span> Cantidad</th>
+                                    <th><span class="icoSidebar fas fa-calendar-alt"></span> Fecha </th>
+                                    <th><span class="icoSidebar fas fa-check"></span> Status</th>
+                                    <th><span class="icoSidebar fas fa-clipboard"></span> result_acred</th>
+                                    <th><span class="icoSidebar fas fa-user-check"></span> emp_acred</th>
+                                    <th><span class="icoSidebar fas fa-clipboard"></span> result_transfer</th>
+                                    <th><span class="icoSidebar fas fa-user-edit"></span> emp_transfer</th>
+                                    <th><span class="icoSidebar fas fa-clipboard"></span> result_return</th>
+                                    <th><span class="icoSidebar fas fa-user-edit"></span> emp_return</th>
+
+                                </thead>
+
+                                <tbody>
+
+                                </tbody>
+
+                            </table>
+                        </div>
+                    </div>
+                </div>
+
+
+              
+              
+
+
+            </div>
+            </div>
+
+
+            <%- include ("./static/footer") %>
+
+                <script src="/js/functions/inventario.js"></script>
