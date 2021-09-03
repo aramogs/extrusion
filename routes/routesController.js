@@ -871,8 +871,9 @@ function checkAllStatus(seriales, status) {
                 let serialDate = (moment(element.datetime))
 
                 let hours= todayDate.diff(serialDate, 'hours')
+
             
-                if(hours<12){
+                if(hours<12 && element.status=="Acreditado"){
                     
                     let obj = {}
                     obj['serial'] = element.serial
