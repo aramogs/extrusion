@@ -77,6 +77,7 @@ const picker = datepicker('#selectFecha', {
 
 
 function fillTable() {
+    spinnerDataTabale()
    
     let data = {"fecha":`${myDateString}`}
     axios({

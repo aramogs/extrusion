@@ -322,7 +322,16 @@ funcion.getSerialesFecha = (fecha) => {
             extrusion_labels
         WHERE
             DATE(datetime) LIKE '${fecha}'
-            
+        AND 
+            (
+                    status = "Impreso"
+                OR
+                    status = "Cancelado"
+                OR 
+                    status = "Acreditado"
+                OR
+                    status = "Transferido"
+            )
             `)
             .then((result) => { resolve(result) })
             .catch((error) => { reject(error) })

@@ -32,7 +32,6 @@ $(document).ready(function () {
 
 
 function fillTable() {
-   
     axios({
         method: 'post',
         url: `/getInventario`,
