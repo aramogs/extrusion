@@ -65,10 +65,7 @@ funcion.getProgramacion = (fecha) => {
             fecha = '${fecha}'
         `)
             .then((result) => { resolve(result) })
-            .catch((error) => {
-                console.error(error);
-                reject(error)
-            })
+            .catch((error) => { reject(error) })
     })
 }
 
