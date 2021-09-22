@@ -26,7 +26,7 @@ $(document).ready(function () {
 
     fillTable()
 
-   $('#modalSpinner').modal({ backdrop: 'static', keyboard: false })
+   //$('#modalSpinner').modal({ backdrop: 'static', keyboard: false })
 
 })
 
@@ -64,7 +64,7 @@ function fillTable() {
                     ] ).draw( false );
 
             }
-            $('#modalSpinner').modal('hide')
+            //$('#modalSpinner').modal('hide')
            
         })
         .catch((err) => { console.error(err) })
