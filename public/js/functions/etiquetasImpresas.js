@@ -76,7 +76,9 @@ const picker = datepicker('#selectFecha', {
 
 
 function fillTable() {
-
+  
+  spinnerDataTabale()
+  
   let data = { "fecha": `${myDateString}` }
   axios({
     method: 'post',
@@ -84,12 +86,12 @@ function fillTable() {
     data: JSON.stringify(data),
     headers: { 'content-type': 'application/json' }
   }).then((result) => {
+    table.clear().draw();
     for (let y = 0; y < result.data.length; y++) {
       let cancelar
       if (result.data[y].status == "Impreso") {
 
-        cancelar = `
-                      <div class="form-check">
+        cancelar = `  <div class="form-check">
                       <input class="form-check-input" type="checkbox" value="${result.data[y].serial}" id="flexCheckDefault">
                       </div>
                       `
@@ -98,6 +100,7 @@ function fillTable() {
       } else if (result.data[y].status == "Cancelado" || result.data[y].status == "Obsoleto" || result.data[y].status == "Error" ||result.data[y].status == "Retornado") {
         cancelar = `<span class="icoSidebar fas fa-ban text-secondary"></span>`
         acreditado = `<span class="icoSidebar fas fa-ban text-secondary"></span>`
+
       } else if (result.data[y].status == "Acreditado") {
 
         cancelar = `<span class="icoSidebar fas fa-ban text-secondary"></span>`
@@ -109,7 +112,7 @@ function fillTable() {
         acreditado = `<span class="icoSidebar fas fa-dolly text-success"></span>`
 
       }
-
+      
       table.row.add([
         cancelar,
         result.data[y].serial,
@@ -161,7 +164,7 @@ function reload(tipo) {
     $('#modalMotivo').modal('hide');
     table.clear().draw();
 
-    setTimeout(function () { fillTable(); }, 100);
+    setTimeout(function () { fillTable(); }, 500);
 
   } else {
     motivoPlan.value = "";
@@ -172,7 +175,7 @@ function reload(tipo) {
 
     $('#modalCancelFullId').modal('hide');
     table.clear().draw();
-    setTimeout(function () { fillTable(); }, 100);
+    setTimeout(function () { fillTable(); }, 500);
 
 
   }

@@ -65,10 +65,7 @@ funcion.getProgramacion = (fecha) => {
             fecha = '${fecha}'
         `)
             .then((result) => { resolve(result) })
-            .catch((error) => {
-                console.error(error);
-                reject(error)
-            })
+            .catch((error) => { reject(error) })
     })
 }
 
@@ -322,7 +319,16 @@ funcion.getSerialesFecha = (fecha) => {
             extrusion_labels
         WHERE
             DATE(datetime) LIKE '${fecha}'
-            
+        AND 
+            (
+                    status = "Impreso"
+                OR
+                    status = "Cancelado"
+                OR 
+                    status = "Acreditado"
+                OR
+                    status = "Transferido"
+            )
             `)
             .then((result) => { resolve(result) })
             .catch((error) => { reject(error) })

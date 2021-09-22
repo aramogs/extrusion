@@ -30,3 +30,10 @@ var myScrollFunc = function () {
 };
 
 window.addEventListener("scroll", myScrollFunc);
+
+function spinnerDataTabale() {
+  let empty_table = document.getElementsByClassName("dataTables_empty")
+  empty_table[0].style.fontSize = "50px"
+  empty_table[0].innerHTML = `<i class="text-warning fas fa-stopwatch animate__animated animate__infinite	infinite"></i>`
+  document.getElementsByClassName("fa-stopwatch")[0].classList.add("animate__animated", "animate__infinite",	"infinite", "animate__flipInX")
+}

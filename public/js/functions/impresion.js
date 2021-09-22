@@ -73,6 +73,7 @@ currentTime()
 
 
 function getSelectedTurno() {
+  
   reload()
   let data = { "linea": `${selectedLinea.value}`, "fecha": `${myDateString}`, "turno": `${currentTurno.value}` }
   axios({
@@ -143,7 +144,6 @@ function getSelectedTurno() {
 
 function reload() {
   table.clear().draw();
-
 }
 
 function ImprimirModal(idp) {
