@@ -48,7 +48,7 @@ router.post('/transferenciaRP/', middleware.verifyToken, routesController.transf
 router.post('/getAllInfoSerial', routesController.getAllInfoSerial_POST);
 router.post('/transferenciaPR/', routesController.transferenciaPR_POST);
 
-router.get('/inventario', middleware.sspi, routesController.inventario_GET);
+router.get('/inventario', routesController.inventario_GET);
 router.post('/getInventario/', routesController.getInventario_POST);
 
 module.exports = router;

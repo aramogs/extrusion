@@ -318,6 +318,7 @@ function impresion(e) {
   let contenedor = (e.target.value).replace(regex1, "")
   let capacidad = (e.target.value).replace(regex2, "")
   let linea = selectedLinea.options[selectedLinea.selectedIndex].text
+  console.log(linea);
 
 
   if (parseInt(cantidadManual.value) > 0) { cantidad = parseInt(cantidadManual.value), capacidad = parseInt(cantidadManual.value), contenedor = "manual" }
