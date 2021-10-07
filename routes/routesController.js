@@ -365,18 +365,19 @@ controller.inventario_GET = (req, res) => {
     user = req.connection.user
     fecha = req.params.fecha
     let access = ""
-    acceso(req)
-        .then((result) => {
-            result.forEach(element => {
-                if (element === "TFT\\TFT.DEL.PAGES_Extrusion" || element === "TFT\\TFT.DEL.PAGES_Extrusion_Green") access = "ok"
-            });
-            if (access == "ok") {
-                res.render("inventario.ejs", { user, fecha })
-            } else {
-                res.redirect("/acceso_denegado")
-            }
-        })
-        .catch((err) => { res.redirect("/acceso_denegado") })
+    res.render("inventario.ejs", { user, fecha })
+    // acceso(req)
+    //     .then((result) => {
+    //         result.forEach(element => {
+    //             if (element === "TFT\\TFT.DEL.PAGES_Extrusion" || element === "TFT\\TFT.DEL.PAGES_Extrusion_Green") access = "ok"
+    //         });
+    //         if (access == "ok") {
+    //             res.render("inventario.ejs", { user, fecha })
+    //         } else {
+    //             res.redirect("/acceso_denegado")
+    //         }
+    //     })
+    //     .catch((err) => { res.redirect("/acceso_denegado") })
 
 }
 
@@ -585,6 +586,7 @@ controller.impresion_POST = (req, res) => {
                 inserted = result[0]
                 values_ = result[1]
                 impresora = result[2][0].printer
+
 
                 for (let i = 0; i < etiquetas; i++) {
                     let serial = startSerial++
