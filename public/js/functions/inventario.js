@@ -1,7 +1,7 @@
 
 
 let tableBody = document.getElementById("myTable").getElementsByTagName('tbody')[0]
-
+let table_ = document.getElementById("table_")
 
 $(document).ready(function () {
 
@@ -13,6 +13,7 @@ $(document).ready(function () {
 
 
 function fillTable() {
+  table_.style.display = "none"
   axios({
     method: 'post',
     url: `/getInventario`,
@@ -63,6 +64,7 @@ function fillTable() {
         },
       ]
     })
+    table_.style.display = "block"
     setTimeout(function () { $('#modalSpinner').modal('hide') }, 1000);
 
     
