@@ -8,54 +8,49 @@ let planesAxios
 let chart
 let count = 0
 let barChart = document.getElementById("bar-chart-grouped")
+let tableSerialsBody = document.getElementById("tableSerials").getElementsByTagName("tbody")[0]
+let tablePlanBody = document.getElementById("tablePlan").getElementsByTagName("tbody")[0]
+let table_hide_seriales = document.getElementById("table_hide_seriales")
+let table_hide_plan = document.getElementById("table_hide_plan")
+let barPlan = document.getElementById("barPlan");
+let barSerials = document.getElementById("barSerials");
+let tableSerials
+let tablePlan
 
 
-let tableSerials = $('#tableSerials').DataTable({
-    dom: 'Blfrtip',
-    searching: true,
-    paging: true,
-    info: true,
-    buttons: [
-        {
-            extend: 'excelHtml5',
-            title: `Reporte Extrusion Seriales ${fileDate.toLocaleString()}`,
-            filename: `Reporte Extrusion Seriales ${fileDate.toLocaleString()}`,
-            className: "d-none"
-        }
-    ],
 
-});
-let tablePlan = $('#tablePlan').DataTable({
-    dom: 'Blfrtip',
-    searching: true,
-    paging: true,
-    info: true,
-    buttons: [
-        {
-            extend: 'excelHtml5',
-            title: `Reporte Extrusion Plan ${fileDate.toLocaleString()}`,
-            filename: `Reporte Extrusion Plan ${fileDate.toLocaleString()}`,
-            className: "d-none"
-        }
-    ]
-});
 
 
 
 Search_All.addEventListener("keyup", () => {
+
     tableSerials.search(Search_All.value).draw()
     tablePlan.search(Search_All.value).draw()
 })
 btnExcelMultiple.addEventListener("click", () => {
+
     tableSerials.button('0').trigger()
     tablePlan.button('0').trigger()
 
     btnExcelMultiple.setAttribute('download', 'Grafico.png');
     btnExcelMultiple.setAttribute('href', barChart.toDataURL("image/png").replace("image/png", "image/octet-stream"));
-   
+
 })
 
 
+
+function verifyCount() {
+    
+    if (count != 0) {
+        // chart.destroy()
+        tablePlan.clear().destroy()
+        tableSerials.clear().destroy()
+        barSerials.style.width = 0 + "%";
+        barPlan.style.width = 0 + "%";
+
+    }
+    count++
+}
 
 const desde = datepicker('#selectDesde', {
     id: 1,
@@ -72,14 +67,16 @@ const desde = datepicker('#selectDesde', {
         if (dd <= 9) dd = '0' + dd;
         fechaDesde = yy + '-' + mm + '-' + dd;
         input.value = fechaDesde
-        tableSerials.clear().draw();
+        verifyCount()
         fillTableSeriales()
         fillTablePlan()
-        grafica()
+        // grafica()
+
     }
 })
 
 const hasta = datepicker('#selectHasta', {
+    
     id: 1,
     customDays: ['D', 'L', 'M', 'M', 'J', 'V', 'S'],
     overlayPlaceholder: 'Seleccionar Mes',
@@ -94,20 +91,25 @@ const hasta = datepicker('#selectHasta', {
         if (dd <= 9) dd = '0' + dd;
         fechaHasta = yy + '-' + mm + '-' + dd;
         input.value = fechaHasta
-        tableSerials.clear().draw();
-        tablePlan.clear().draw();
+        verifyCount()
         fillTableSeriales()
         fillTablePlan()
-        grafica()
+        // grafica()
 
     }
 })
 
 
-function fillTableSeriales() {
+async function fillTableSeriales() {
+    let countSerial = 0
 
-    if (fechaHasta == undefined) fechaHasta = fechaDesde
-    let data = { "desde": `${fechaDesde}`, "hasta": `${fechaHasta}` }
+    let data
+    if (fechaHasta == undefined) {
+        data = { "desde": `${fechaDesde}`, "hasta": `${fechaDesde}` }
+    } else {
+        data = { "desde": `${fechaDesde}`, "hasta": `${fechaHasta}` }
+    }
+
     axios({
         method: 'post',
         url: `/tablaSerialesFechasMultiples`,
@@ -115,57 +117,109 @@ function fillTableSeriales() {
         headers: { 'content-type': 'application/json' }
     }).then(result => {
         serialesAxios = result.data
+        table_hide_seriales.style.display = "none"
 
         for (let i = 0; i < result.data.length; i++) {
-            new Date().toLocaleString
 
-            tableSerials.row.add([
-                result.data[i].serial,
-                result.data[i].plan_id,
-                result.data[i].numero_parte,
-                result.data[i].emp_num,
-                result.data[i].cantidad,
-                new Date(result.data[i].datetime).toLocaleString(),
-                result.data[i].motivo_cancel,
-                result.data[i].status,
-                result.data[i].result_acred,
-                result.data[i].emp_acred,
-            ]).draw(false);
+            countSerial++
+            barSerials.style.width = (countSerial / serialesAxios.length) * 100 + "%"
+
+            let row = tableSerialsBody.insertRow();
+
+            row.insertCell(0).innerHTML = result.data[i].serial
+            row.insertCell(1).innerHTML = result.data[i].plan_id
+            row.insertCell(2).innerHTML = result.data[i].numero_parte
+            row.insertCell(3).innerHTML = result.data[i].emp_num
+            row.insertCell(4).innerHTML = result.data[i].cantidad
+            row.insertCell(5).innerHTML = new Date(result.data[i].datetime).toLocaleString()
+            row.insertCell(6).innerHTML = result.data[i].motivo_cancel
+            row.insertCell(7).innerHTML = result.data[i].status
+            row.insertCell(8).innerHTML = result.data[i].result_acred
+            row.insertCell(9).innerHTML = result.data[i].emp_acred
+
+
 
         }
+        table_hide_seriales.style.display = "block"
+
+        tableSerials = $('#tableSerials').DataTable({
+            dom: 'Blfrtip',
+            searching: true,
+            paging: true,
+            info: true,
+            buttons: [
+                {
+                    extend: 'excelHtml5',
+                    title: `Reporte Extrusion Seriales ${fileDate.toLocaleString()}`,
+                    filename: `Reporte Extrusion Seriales ${fileDate.toLocaleString()}`,
+                    className: "d-none"
+                }
+            ],
+
+        })
+
+            ;
     })
         .catch((err) => { console.error(err) })
 }
 
 
-function fillTablePlan() {
+async function fillTablePlan() {
+    let countPlan = 0
 
-    if (fechaHasta == undefined) fechaHasta = fechaDesde
-    let data = { "desde": `${fechaDesde}`, "hasta": `${fechaHasta}` }
+    let data
+    if (fechaHasta == undefined) {
+        data = { "desde": `${fechaDesde}`, "hasta": `${fechaDesde}` }
+    } else {
+        data = { "desde": `${fechaDesde}`, "hasta": `${fechaHasta}` }
+    }
     axios({
         method: 'post',
         url: `/tablaPlanFechasMultiples`,
         data: JSON.stringify(data),
         headers: { 'content-type': 'application/json' }
     }).then(result => {
-
         planesAxios = result.data
-        for (let i = 0; i < result.data.length; i++) {
-            new Date().toLocaleString
+        table_hide_plan.style.display = "none"
 
-            tablePlan.row.add([
-                result.data[i].plan_id,
-                result.data[i].numero_sap,
-                result.data[i].cantidad,
-                result.data[i].linea,
-                result.data[i].sup_name,
-                new Date(result.data[i].fecha).toLocaleDateString(),
-                result.data[i].turno,
-                result.data[i].status,
-                result.data[i].motivo_cancel,
-            ]).draw(false);
+
+
+        for (let i = 0; i < result.data.length; i++) {
+
+            countPlan++
+            barPlan.style.width = (countPlan / planesAxios.length) * 100 + "%"
+
+            let row2 = tablePlanBody.insertRow();
+
+            row2.insertCell(0).innerHTML = result.data[i].plan_id
+            row2.insertCell(1).innerHTML = result.data[i].numero_sap
+            row2.insertCell(2).innerHTML = result.data[i].cantidad
+            row2.insertCell(3).innerHTML = result.data[i].linea
+            row2.insertCell(4).innerHTML = result.data[i].sup_name
+            row2.insertCell(5).innerHTML = new Date(result.data[i].fecha).toLocaleDateString()
+            row2.insertCell(6).innerHTML = result.data[i].turno
+            row2.insertCell(7).innerHTML = result.data[i].status
+            row2.insertCell(8).innerHTML = result.data[i].motivo_cancel
+
+
 
         }
+        table_hide_plan.style.display = "block"
+        tablePlan = $('#tablePlan').DataTable({
+            dom: 'Blfrtip',
+            searching: true,
+            paging: true,
+            info: true,
+            buttons: [
+                {
+                    extend: 'excelHtml5',
+                    title: `Reporte Extrusion Plan ${fileDate.toLocaleString()}`,
+                    filename: `Reporte Extrusion Plan ${fileDate.toLocaleString()}`,
+                    className: "d-none"
+                }
+            ]
+        });
+
     })
         .catch((err) => { console.error(err) })
 }
@@ -173,8 +227,12 @@ function fillTablePlan() {
 
 function grafica() {
 
-    if (fechaHasta == undefined) fechaHasta = fechaDesde
-    let data = { "desde": `${fechaDesde}`, "hasta": `${fechaHasta}` }
+    let data
+    if (fechaHasta == undefined) {
+        data = { "desde": `${fechaDesde}`, "hasta": `${fechaDesde}` }
+    } else {
+        data = { "desde": `${fechaDesde}`, "hasta": `${fechaHasta}` }
+    }
     axios({
         method: 'post',
         url: `/reporteGrafico`,
@@ -200,7 +258,6 @@ function grafica() {
                 producido.push(valor.producido)
             });
 
-            if (count != 0) chart.destroy()
 
             chart = new Chart(barChart, {
 
@@ -235,7 +292,7 @@ function grafica() {
                                 mode: 'x',
                                 sensitivity: 3,
                                 speed: 1,
-                                
+
                             },
                             zoom: {
                                 enabled: true,
