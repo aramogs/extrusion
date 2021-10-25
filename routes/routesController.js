@@ -794,13 +794,13 @@ controller.procesarSeriales_POST = (req, res) => {
 
             let info = await infoSeriales(arraySeriales)
             let jsonInfo = JSON.stringify(info)
-            let send = `{"station":"${estacion}","serial_num":"","process":"${process}", "material":"",  "cantidad":"", "data":${jsonInfo}}`
+            let send = `{"station":"${estacion}","serial_num":"","process":"${process}", "material":"",  "cantidad":"", "user_id":"${user_id}", "data":${jsonInfo}}`
             amqpRequest(send)
                 .then((result) => {
                     async function updateAcred() {
                         let resultado = JSON.parse(result)
                         let resultadArray = resultado.result
-                        let acreditado = await updateAcreditado(resultadArray, user_id);
+                        // let acreditado = await updateAcreditado(resultadArray, user_id);
                         res.json(result)
                     } updateAcred()
                 })
