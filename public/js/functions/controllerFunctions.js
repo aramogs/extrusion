@@ -626,13 +626,7 @@ funcion.updateSerialesAcred = (seriales, user_id) => {
                     })
                     .catch((error) => { reject(error) })
             }
-
-
-
-
         });
-
-
     })
 }
 
