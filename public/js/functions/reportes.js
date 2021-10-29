@@ -70,7 +70,7 @@ const desde = datepicker('#selectDesde', {
         verifyCount()
         fillTableSeriales()
         fillTablePlan()
-        // grafica()
+        grafica()
 
     }
 })
@@ -94,7 +94,7 @@ const hasta = datepicker('#selectHasta', {
         verifyCount()
         fillTableSeriales()
         fillTablePlan()
-        // grafica()
+        grafica()
 
     }
 })
