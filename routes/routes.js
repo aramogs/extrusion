@@ -32,8 +32,10 @@ router.get('/etiquetasImpresas', middleware.sspi, routesController.etiquetasImpr
 router.post('/tablaSeriales',routesController.tablaSeriales_POST);
 router.post('/tablaSerialesFechasMultiples',routesController.tablaSerialesFechasMultiples_POST);
 router.post('/tablaPlanFechasMultiples',routesController.tablaPlanFechasMultiples_POST);
-router.post('/cancelarSeriales',middleware.sspi,routesController.cancelarSeriales_POST);
+router.post('/cancelarSeriales',middleware.sspi,middleware.verifyToken,routesController.cancelarSeriales_POST);
+router.post('/cancelarSerialesRetorno',middleware.sspi,middleware.verifyToken,routesController.cancelarSerialesRetorno_POST);
 router.post('/impresionEtiqueta', middleware.verifyToken,routesController.impresion_POST);
+router.post('/impresionEtiquetaRetorno', middleware.verifyToken,routesController.impresionPR_POST);
 router.post('/getIdPlans',routesController.getIdPlans_POST);
 router.post('/cancelarSerialesPlan',middleware.sspi, routesController.cancelarSerialesPlan_POST);
 router.get('/impresion/', middleware.verifyToken, routesController.impresion_GET);
@@ -46,7 +48,9 @@ router.get('/transferRP',middleware.verifyToken, routesController.transferRP_GET
 router.get('/transferPR',middleware.verifyToken, routesController.transferPR_GET);
 router.post('/transferenciaRP/', middleware.verifyToken, routesController.transferenciaRP_POST);
 router.post('/getAllInfoSerial', routesController.getAllInfoSerial_POST);
-router.post('/transferenciaPR/', routesController.transferenciaPR_POST);
+router.post('/getAllInfoMaterial', routesController.getAllInfoMaterial_POST);
+router.post('/verifyProcessBEx', routesController.verifyProcessBEx_POST);
+router.post('/confirmacionPR/', routesController.confirmacionPR_POST);
 
 router.get('/inventario', routesController.inventario_GET);
 router.post('/getInventario/', routesController.getInventario_POST);

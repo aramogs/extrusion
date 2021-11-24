@@ -49,7 +49,7 @@
             <h5 class="mb-0">
               <button class="btn btn-link btn-block text-left text-white" data-toggle="collapse"
                 data-target="#collapseOne" aria-expanded="true" aria-controls="collapseOne">
-                1: Extrusion
+                1: Acreditacion
               </button>
             </h5>
           </div>
@@ -63,7 +63,7 @@
 
               <button id="btn_pt_2" class="btn btn-outline-warning btn-block mt-4 mb-4" data-target="#collapseOne"
                 aria-expanded="true" aria-controls="collapseOne">
-                2: Verificar acreditacion
+                2: Verificar Acreditacion
               </button>
 
 
@@ -74,29 +74,77 @@
         <div class="card bg-dark">
           <div class="card-header" id="headingTwo">
             <h5 class="mb-0">
-              <button class="btn btn-link btn-block text-left text-white" data-toggle="collapse"
-                data-target="#collapseTwo" aria-expanded="true" aria-controls="collapseTwo">
-                2: Materialistas
+              <button class="btn btn-link btn-block text-left text-white collapsed" data-toggle="collapse"
+                data-target="#collapse3" aria-expanded="false" aria-controls="collapse3">
+                2: Ubicacion Rack
               </button>
             </h5>
           </div>
 
-          <div id="collapseTwo" class="collapse show" aria-labelledby="headingTwo" data-parent="#accordion">
+          <div id="collapse3" class="collapse" aria-labelledby="headingTwo" data-parent="#accordion">
             <div class="container">
-              <button id="btn_pt_3" class="btn btn-outline-info btn-block mt-4 mb-4" data-target="#collapseTwo"
-                aria-expanded="true" aria-controls="collapseTwo">
-                1: Transferencia Rack a Piso
-              </button>
+              <button id="btn_sfe_1" class="btn btn-outline-info btn-block mt-4 mb-4" data-target="#collapse"
+              aria-expanded="true" aria-controls="collapse3">
+              1: Consulta Ubicaciones EXT
+            </button>
 
-              <button id="btn_pt_4" class="btn btn-outline-info btn-block mt-4 mb-4" data-target="#collapseTwo"
-                aria-expanded="true" aria-controls="collapseTwo">
-                2: Transferencia Piso a Rack
+              <button id="btn_sfe_2" class="btn btn-outline-info btn-block mt-4 mb-4" data-target="#collapse"
+                aria-expanded="true" aria-controls="collapse3">
+                2: Ubicacion Multiple EXT
               </button>
-
 
             </div>
           </div>
-        </div>
+          </div>
+
+          <div class="card bg-dark">
+            <div class="card-header" id="headingTwo">
+              <h5 class="mb-0">
+                <button class="btn btn-link btn-block text-left text-white" data-toggle="collapse"
+                  data-target="#collapseTwo" aria-expanded="true" aria-controls="collapseTwo">
+                  2: Transferencias
+                </button>
+              </h5>
+            </div>
+  
+            <div id="collapseTwo" class="collapse show" aria-labelledby="headingTwo" data-parent="#accordion">
+              <div class="container">
+                <button id="btn_pt_3" class="btn btn-outline-info btn-block mt-4 mb-4" data-target="#collapseTwo"
+                  aria-expanded="true" aria-controls="collapseTwo">
+                  1: Transferencia Rack a Piso
+                </button>
+  
+                <button id="btn_pt_4" class="btn btn-outline-info btn-block mt-4 mb-4" data-target="#collapseTwo"
+                  aria-expanded="true" aria-controls="collapseTwo">
+                  2: Transferencia Piso a Rack
+                </button>
+  
+  
+              </div>
+            </div>
+          </div>
+
+          <div class="card bg-dark">
+            <div class="card-header" id="headingTwo">
+              <h5 class="mb-0">
+                <button class="btn btn-link btn-block text-left text-white collapsed" data-toggle="collapse"
+                  data-target="#collapse4" aria-expanded="false" aria-controls="collapse4">
+                  4: Conteo Ciclico
+                </button>
+              </h5>
+            </div>
+  
+            <div id="collapse4" class="collapse" aria-labelledby="headingTwo" data-parent="#accordion">
+              <div class="container">
+                <button id="btn_cce_1" class="btn btn-outline-info btn-block mt-4 mb-4" data-target="#collapse"
+                aria-expanded="true" aria-controls="collapse4">
+                1: Conteo EXT
+              </button>
+  
+  
+              </div>
+            </div>
+            </div>
 
       </div>
     </div>

@@ -1,307 +1,412 @@
 <%- include ("./static/header") %>
-<%- include ("./static/sidebar") %>
-<%- include ("./static/navbar") %>
+  <%- include ("./static/sidebar") %>
+    <%- include ("./static/navbar") %>
 
 
-<nav aria-label="breadcrumb">
-  <ol class="breadcrumb">
-    <li class="breadcrumb-item"><a href="/mainMenu" class="text-warning"><span class="fas fa-arrow-circle-left text-warning"></span> Menu</a></li>
-    <li class="breadcrumb-item active" aria-current="page">Transferencia Piso a Rack</li>
-  </ol>
-</nav>
+      <nav aria-label="breadcrumb">
+        <ol class="breadcrumb">
+          <li class="breadcrumb-item"><a href="/mainMenu" class="text-warning"><span
+                class="fas fa-arrow-circle-left text-warning"></span> Menu</a></li>
+          <li class="breadcrumb-item active" aria-current="page">Transferencia Piso a Rack</li>
+        </ol>
+      </nav>
 
 
-<div class="col-lg-12 frame">
+      <div class="col-lg-12 frame">
 
-  <div class="row">
-    <div class="col-lg-4"></div>
+        <div class="row">
+          <div class="col-lg-4"></div>
 
-    <div class="col-lg-4 d-none d-md-block">
-      <div class="card">
-        <div class="card-header "><strong>Datos de Usuario</strong></div>
-        <div class="card-body">
-          <table class="table table-sm borderless">
-            <tbody>
-              <tr>
-                <td><small><strong>ID:</strong></small></td>
-                <td><small id="user_id"><%= user_id %></small> </td>
-              </tr>
-              <tr>
-                <td><small><strong>Nombre:</strong></small></td>
-                <td><small id="user_name"><%= user_name  %></small> </td>
-              </tr>
-            </tbody>
-          </table>
+          <div class="col-lg-4 d-none d-md-block">
+            <div class="card">
+              <div class="card-header "><strong>Datos de Usuario</strong></div>
+              <div class="card-body">
+                <table class="table table-sm borderless">
+                  <tbody>
+                    <tr>
+                      <td><small><strong>ID:</strong></small></td>
+                      <td><small id="user_id">
+                          <%= user_id %>
+                        </small> </td>
+                    </tr>
+                    <tr>
+                      <td><small><strong>Nombre:</strong></small></td>
+                      <td><small id="user_name">
+                          <%= user_name %>
+                        </small> </td>
+                    </tr>
+                  </tbody>
+                </table>
+              </div>
+            </div>
+          </div>
+          <div class="col-lg-4"></div>
         </div>
-      </div>
-    </div>
-    <div class="col-lg-4"></div>
-  </div>
 
-  <div class="row">
-    <div class="col-lg-4"></div>
-    <div class="col-lg-4 text-center">
-      <form id="submitSerial">
+        <div class="row">
+          <div class="col-lg-4"></div>
+          <div class="col-lg-4 text-center">
+            <form id="submitSerial">
 
-        <h4 class="text-center animate__animated animate__bounceIn d-none d-lg-block" display: inline-block>
-          Transferencia Piso <i class="fas fa-caret-right"></i> Rack:</h4>
-        <span class="fas fa-boxes text-warning mt-2" style="font-size: 2rem;"></span>
+              <h4 class="text-center animate__animated animate__bounceIn d-none d-lg-block" display: inline-block>
+                Transferencia Piso <i class="fas fa-caret-right"></i> Rack:</h4>
+              <span class="fas fa-boxes text-warning mt-2" style="font-size: 2rem;"></span>
 
-        <div class="form-group">
+              <div class="form-group">
 
 
 
-          <label for="serial_num">Serial EXT <i class="fas fa-barcode" style="font-size: 1rem;"></i></label>
-          <input type="text" class="form-control" name="serial_num" id="serial_num" aria-describedby="helpId"
-            placeholder="" autocomplete="off">
-          <small id="helpId" class="form-text text-muted"></small>
+                <label for="serial_num">Serial EXT <i class="fas fa-barcode" style="font-size: 1rem;"></i></label>
+                <input type="text" class="form-control" name="serial_num" id="serial_num" aria-describedby="helpId"
+                  placeholder="" autocomplete="off">
+                <small id="helpId" class="form-text text-muted"></small>
+              </div>
+            </form>
+            <div class="alert alert-danger animate__flipOutX animate__animated role=" alert" id="alerta_prefijo">Error:
+              Verificar escaneo
+            </div>
+
+          </div>
+          <div class="col-lg-4"></div>
         </div>
-      </form>
-      <div class="alert alert-danger animate__flipOutX animate__animated role=" alert" id="alerta_prefijo">Error:
-        Verificar escaneo
+
+  
+
+
+
+
       </div>
 
-    </div>
-    <div class="col-lg-4"></div>
-  </div>
 
+      <div class="modal fade" id="modalEditar" tabindex="-1" role="dialog" aria-labelledby="exampleModalCenterTitle"
+        aria-hidden="true">
+        <div class="modal-dialog " role="document">
+          <div class="modal-content">
+            <form id="submitArray_form">
+              <div class="modal-body">
 
-
-
-
-</div>
-
-
-<div class="modal fade" id="modalEditar" tabindex="-1" role="dialog"
-  aria-labelledby="exampleModalCenterTitle" aria-hidden="true">
-  <div class="modal-dialog " role="document">
-      <div class="modal-content">
-        <form id="submitArray_form">
-          <div class="modal-body">
-
-              <div class="card">
+                <div class="card">
                   <div class="card-header text-center">
-                      <!-- <img src="/img/sap.png" alt="SAP" srcset="" class="card-mov"> -->
-                      <h4 class="card-mov"><span class="text-secondary fas fa-label"></span>
-                          Informacion
-                      </h4>
+                    <!-- <img src="/img/sap.png" alt="SAP" srcset="" class="card-mov"> -->
+                    <h4 class="card-mov"><span class="text-secondary fas fa-label"></span>
+                      Informacion
+                    </h4>
                   </div>
 
                   <div class="card-body">
                     <div class="row">
                       <div class="col-5">
-                          <h7>Plan Id:</h7>
+                        <h7>Plan Id:</h7>
                       </div>
                       <div class="col-7">
-                          <h7 class="text-left"><span class="badge badge-info" id="meplan"></span>
-                          </h7>
+                        <h7 class="text-left"><span class="badge badge-info" id="meplan"></span>
+                        </h7>
                       </div>
-                  </div>
+                    </div>
 
-                      <div class="row">
-                          <div class="col-5">
-                              <h7>SAP:</h7>
-                          </div>
-                          <div class="col-7">
-                              <h7 class="text-left"><span class="badge badge-info" id="mesap"></span>
-                              </h7>
-                          </div>
+                    <div class="row">
+                      <div class="col-5">
+                        <h7>SAP:</h7>
                       </div>
-
-                      <div class="row">
-                          <div class="col-5">
-                              <h7>Cantidad: </h7>
-                          </div>
-                          <div class="col-7">
-                              <h7 class="text-left"><span class="badge badge-info" id="mecantidad"></span></h7>
-                          </div>
+                      <div class="col-7">
+                        <h7 class="text-left"><span class="badge badge-info" id="mesap"></span>
+                        </h7>
                       </div>
+                    </div>
 
-                      <div class="d-none d-lg-block">
-                          <div class="row ">
-                              <div class="col-5">
-                                  <h7 class="text-left">Fecha: </h7>
-                              </div>
-                              <div class="col-7">
-                                  <h7 class="text-left"><span class="badge badge-info"
-                                          id="mefecha"></span></h7>
-                              </div>
-                          </div>
+                    <div class="row">
+                      <div class="col-5">
+                        <h7>Cantidad: </h7>
                       </div>
-                      <hr>
+                      <div class="col-7">
+                        <h7 class="text-left"><span class="badge badge-info" id="mecantidad"></span></h7>
+                      </div>
+                    </div>
+
+                    <div class="d-none d-lg-block">
+                      <div class="row ">
+                        <div class="col-5">
+                          <h7 class="text-left">Fecha: </h7>
+                        </div>
+                        <div class="col-7">
+                          <h7 class="text-left"><span class="badge badge-info" id="mefecha"></span></h7>
+                        </div>
+                      </div>
+                    </div>
+                    <hr>
 
 
 
-                      <form action="/editar_idplan" method="POST" id="formEditar">
-                          <div class="container">
-                              <div class="row">
+                    <form method="POST" id="formEditar">
+                      <div class="container">
+                        <div class="row">
 
-                                  <div class="row d-none d-lg-block">
-                                      <div class="col-lg-12">
-                                          <h5>Cantidad:</h5>
-                                      </div>
-                                  </div>
-                                  <div class="input-group mb-3">
-                                      <div class="input-group-prepend">
-                                          <span class="input-group-text fas fa-edit"
-                                              id="basic-addon1"></span>
-                                      </div>
-                                      <input type="number" class="form-control" name="return_cantidad"
-                                          id="return_cantidad" placeholder="" min="1"  autocomplete="off" required>
-                                  </div>
-
-
-
-                              </div>
+                          <div class="row d-none d-lg-block">
+                            <div class="col-lg-12">
+                              <h5>Cantidad:</h5>
+                            </div>
                           </div>
+                          <div class="input-group mb-3">
+                            <div class="input-group-prepend">
+                              <span class="input-group-text fas fa-edit" id="basic-addon1"></span>
+                            </div>
+                            <input type="number" class="form-control" name="return_cantidad" id="return_cantidad"
+                              placeholder="" min="1" autocomplete="off" required>
+                          </div>
+
+
+
+                        </div>
+                      </div>
 
                   </div>
+                </div>
+
               </div>
 
-          </div>
+              <div class="modal-footer">
+                <button type="button" class="btn btn-secondary btnCerrar" data-dismiss="modal">Cerrar</button>
+                <button type="submit" id="btnCancel_e" class="btn btn-info">Imprimir</button>
+              </div>
+              <input type="text" class="form-control" name="midplane" id="midplane" aria-describedby="helpId" value=""
+                hidden>
+            </form>
 
-          <div class="modal-footer">
-              <button type="button" class="btn btn-secondary btnCerrar"
-                  data-dismiss="modal">Cerrar</button>
-              <button formAction="/editar_idplan" type="submit" id="btnCancel_e"
-                  class="btn btn-info">Imprimir</button>
-          </div>
-          <input type="text" class="form-control" name="midplane" id="midplane"
-              aria-describedby="helpId" value="" hidden>
-          </form>
-
-      </div>
-  </div>
-</div>
-
-<!-- Modal Success-->
-<div class="modal fade" id="modalSuccess" tabindex="-1" role="dialog" aria-labelledby="modelTitleId" aria-hidden="true">
-  <div class="modal-dialog modal-dialog-scrollable" role="document">
-    <div class="modal-content">
-      <div class="modal-header card-mov">
-        <img src="/img/sap.png" alt="SAP" srcset="" class="card-mov">
-        <button type="button" class="close" data-dismiss="modal" aria-label="Close">
-        </button>
-      </div>
-      <div class="modal-body">
-        <div class="row">
-          <div class="col-2">
-            <i class="fas fa-check-circle text-success" style="font-size: 2rem;"> </i>
-          </div>
-          <div class="col">
-            <h5>Seriales Procesados con Exito</h5>
           </div>
         </div>
       </div>
-      <div class="modal-footer">
-        <button id="btnCerrar_Success" type="button" class="btn btn-secondary btnCerrar"
-          data-dismiss="modal">Cerrar</button>
+
+
+      <div class="modal fade" id="modalMaterial" tabindex="-1" role="dialog" aria-labelledby="exampleModalCenterTitle"
+        aria-hidden="true">
+        <div class="modal-dialog " role="document">
+          <div class="modal-content">
+            <form id="submitMaterial_form">
+              <div class="modal-body">
+
+                <div class="card">
+                  <div class="card-header text-center">
+                    <!-- <img src="/img/sap.png" alt="SAP" srcset="" class="card-mov"> -->
+                    <h4 class="card-mov"><span class="text-secondary fas fa-label"></span>
+                      Informacion
+                    </h4>
+                  </div>
+
+                  <div class="card-body">
+                    <div class="row">
+                      <div class="col-5">
+                        <h7>SAP:</h7>
+                      </div>
+                      <div class="col-7">
+                        <h7 class="text-left"><span class="badge badge-info" id="maSAP"></span>
+                        </h7>
+                      </div>
+                    </div>
+
+                    <div class="row">
+                      <div class="col-5">
+                        <h7>Descripcion:</h7>
+                      </div>
+                      <div class="col-7">
+                        <h7 class="text-left"><span class="badge badge-info" id="maDesc"></span>
+                        </h7>
+                      </div>
+                    </div>
+
+                    <div class="row">
+                      <div class="col-5">
+                        <h7>Mandril: </h7>
+                      </div>
+                      <div class="col-7">
+                        <h7 class="text-left"><span class="badge badge-info" id="maMand"></span></h7>
+                      </div>
+                    </div>
+
+                    <div class="d-none d-lg-block">
+                      <div class="row ">
+                        <div class="col-5">
+                          <h7 class="text-left">Familia: </h7>
+                        </div>
+                        <div class="col-7">
+                          <h7 class="text-left"><span class="badge badge-info" id="maFam"></span></h7>
+                        </div>
+                      </div>
+                    </div>
+                    <hr>
+
+
+
+                    <form method="POST" id="formEditarMaterial">
+                      <div class="container">
+                        <div class="row">
+
+                          <div class="row d-none d-lg-block">
+                            <div class="col-lg-12">
+                              <h5>Cantidad:</h5>
+                            </div>
+                          </div>
+                          <div class="input-group mb-3">
+                            <div class="input-group-prepend">
+                              <span class="input-group-text fas fa-edit" id="basic-addon1"></span>
+                            </div>
+                            <input type="number" class="form-control" name="return_cantidadM" id="return_cantidadM"
+                              placeholder="" min="1" autocomplete="off" required>
+
+                          </div>
+
+                        </div>
+                      </div>
+
+                  </div>
+                </div>
+
+              </div>
+
+              <div class="modal-footer">
+                <button type="button" class="btn btn-secondary btnCerrar" data-dismiss="modal">Cerrar</button>
+                <button type="submit" id="btnCancel_eMaterial" class="btn btn-info">Imprimir</button>
+              </div>
+              <input type="text" class="form-control" name="midplaneMaterial" id="midplaneMaterial"
+                aria-describedby="helpId" value="" hidden>
+            </form>
+
+          </div>
+        </div>
       </div>
-    </div>
-  </div>
-</div>
 
-<!-- Modal Error-->
-<div class="modal fade" id="modalError" tabindex="-1" role="dialog" aria-labelledby="modelTitleId" aria-hidden="true">
-  <div class="modal-dialog modal-dialog-scrollable" role="document">
-    <div class="modal-content">
-      <div class="modal-header card-mov">
-        <img src="/img/sap.png" alt="SAP" srcset="" class="card-mov">
-        <h3 class="card-mov"> Error(s): <span class="badge badge-danger" id="cantidadErrores"></span> </h3>
-        <button type="button" class="close" data-dismiss="modal" aria-label="Close">
-        </button>
-      </div>
-      <div class="modal-body">
-        <div class="row">
-
-          <div class="col-lg-12">
-
-            <h5 id="errorText" hidden><span class="fas fa-exclamation-circle text-danger"></span><span
-                id="errorTextField"></span></h5>
-
-            <div id="tabla_consulta_container" class="table-responsive">
-              <table id="tabla_consulta" class="table table-hover table-sm  table-striped text-center ">
-                <thead class="thead-dark">
-                  <tr class="header">
-                    <th>SU:</th>
-                    <th>Error:</th>
-                  </tr>
-                </thead>
-                <tbody>
-                  <!-- INFO AGREGADA DESDE JAVASCRIPT -->
-                </tbody>
-              </table>
+      <!-- Modal Success-->
+      <div class="modal fade" id="modalSuccess" tabindex="-1" role="dialog" aria-labelledby="modelTitleId"
+        aria-hidden="true">
+        <div class="modal-dialog modal-dialog-scrollable" role="document">
+          <div class="modal-content">
+            <div class="modal-header card-mov">
+              <img src="/img/sap.png" alt="SAP" srcset="" class="card-mov">
+              <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+              </button>
+            </div>
+            <div class="modal-body">
+              <div class="row">
+                <div class="col-2">
+                  <i class="fas fa-check-circle text-success" style="font-size: 2rem;"> </i>
+                </div>
+                <div class="col">
+                  <h5>Seriales Procesados con Exito</h5>
+                </div>
+              </div>
+            </div>
+            <div class="modal-footer">
+              <button id="btnCerrar_Success" type="button" class="btn btn-secondary btnCerrar"
+                data-dismiss="modal">Cerrar</button>
             </div>
           </div>
         </div>
-
       </div>
-      <div class="modal-footer">
-        <button id="btnCerrar_Error" type="button" class="btn btn-outline-warning btnCerrar" data-dismiss="modal">Cerrar
-        </button>
 
-      </div>
-    </div>
-  </div>
-</div>
+      <!-- Modal Error-->
+      <div class="modal fade" id="modalError" tabindex="-1" role="dialog" aria-labelledby="modelTitleId"
+        aria-hidden="true">
+        <div class="modal-dialog modal-dialog-scrollable" role="document">
+          <div class="modal-content">
+            <div class="modal-header card-mov">
+              <img src="/img/sap.png" alt="SAP" srcset="" class="card-mov">
+              <h3 class="card-mov"> Error(s): <span class="badge badge-danger" id="cantidadErrores"></span> </h3>
+              <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+              </button>
+            </div>
+            <div class="modal-body">
+              <div class="row">
 
+                <div class="col-lg-12">
 
-<div class="modal fade animate__animated animate__zoomInDown" id="modalSerialSuccess"  tabindex="-1" role="dialog" aria-labelledby="modelTitleId" aria-hidden="true">
-                <div class="modal-dialog">
-                    <div class="modal-content">
-                        <div class="modal-body text-center">
-                            <h5 id="tituloSuccess"></h5>
-                            <p id="cantidadSuccess" style="font-size: x-large"></p>
-                        </div>
+                  <h5 id="errorText" hidden><span class="fas fa-exclamation-circle text-danger"></span><span
+                      id="errorTextField"></span></h5>
 
-                        <form id="confirmSerial_form">
-                          <div class="col-12 col-lg-12 text-center mb-2">
-                            <input type="text" class="form-control" name="confirmSerial" id="confirmSerial" autocomplete="off">
-                          </div>
-                        </form>
-                        <div class="col-12 col-lg-12 text-center">
-                          <div class="alert alert-danger animate__flipOutX animate__animated role=" alert" id="alerta_prefijo_confirm">Error:
-                            Serial Incorrecto
-                          </div>
-
-                        </div>
-
-                        <div class="modal-footer">
-                            <button type="submit" class="btn btn-primary btn-block mr-auto" id="btnModalTerminar"
-                            onClick="cancelSerial()" data-dismiss="modal"><span class="text-white fas fa-times-circle"></span>
-                                Cancelar</button>
-
-                                
-                        </div>
-                    </div>
+                  <div id="tabla_consulta_container" class="table-responsive">
+                    <table id="tabla_consulta" class="table table-hover table-sm  table-striped text-center ">
+                      <thead class="thead-dark">
+                        <tr class="header">
+                          <th>SU:</th>
+                          <th>Error:</th>
+                        </tr>
+                      </thead>
+                      <tbody>
+                        <!-- INFO AGREGADA DESDE JAVASCRIPT -->
+                      </tbody>
+                    </table>
+                  </div>
                 </div>
-</div>
+              </div>
 
+            </div>
+            <div class="modal-footer">
+              <button id="btnCerrar_Error" type="button" class="btn btn-outline-warning btnCerrar"
+                data-dismiss="modal">Cerrar
+              </button>
 
-<!-- Modal Spinners -->
-<div class="modal fade" id="modalSpinner" tabindex="-1" aria-labelledby="myModalLabel" aria-hidden="true">
-  <div class="modal-dialog modal-dialog-scrollable">
-    <div class="modal-content">
-      <div class="modal-header text-center">
-        <h2 class="modal-title "> <span class="text-secondary  fas fa-stopwatch"></span>
-          Procesando</h2>
-        <div class="spinner-grow spinner-grow-sm text-warning mt-4 cdelay-1" role="status">
-          <span class="sr-only">Loading...</span>
-        </div>
-        <div class="spinner-grow spinner-grow-sm text-primary mt-4 cdelay-2" role="status">
-          <span class="sr-only">Loading...</span>
-        </div>
-        <div class="spinner-grow spinner-grow-sm text-secondary mt-4 cdelay-3" role="status">
-          <span class="sr-only">Loading...</span>
+            </div>
+          </div>
         </div>
       </div>
-    </div>
-  </div>
-</div>
 
-<%- include ("./static/footer") %>
-<script type="text/javascript" src="/js/functions/transferPR.js"></script>
 
-</body>
+      <div class="modal fade animate__animated animate__zoomInDown" id="modalSerialSuccess" tabindex="-1" role="dialog"
+        aria-labelledby="modelTitleId" aria-hidden="true">
+        <div class="modal-dialog">
+          <div class="modal-content">
+            <div class="modal-body text-center">
+              <h5 id="tituloSuccess"></h5>
+              <p id="cantidadSuccess" style="font-size: x-large"></p>
+            </div>
 
-</html>
+            <form id="confirmSerial_form">
+              <div class="col-12 col-lg-12 text-center mb-2">
+                <input type="text" class="form-control" name="confirmSerial" id="confirmSerial" autocomplete="off">
+              </div>
+            </form>
+            <div class="col-12 col-lg-12 text-center">
+              <div class="alert alert-danger animate__flipOutX animate__animated role=" alert"
+                id="alerta_prefijo_confirm">Error:
+                Serial Incorrecto
+              </div>
+
+            </div>
+
+            <div class="modal-footer">
+              <button type="submit" class="btn btn-primary btn-block mr-auto" id="btnModalTerminar"
+                onClick="cancelSerial()" data-dismiss="modal"><span class="text-white fas fa-times-circle"></span>
+                Cancelar</button>
+
+
+            </div>
+          </div>
+        </div>
+      </div>
+
+
+      <!-- Modal Spinners -->
+      <div class="modal fade" id="modalSpinner" tabindex="-1" aria-labelledby="myModalLabel" aria-hidden="true">
+        <div class="modal-dialog modal-dialog-scrollable">
+          <div class="modal-content">
+            <div class="modal-header text-center">
+              <h2 class="modal-title "> <span class="text-secondary  fas fa-stopwatch"></span>
+                Procesando</h2>
+              <div class="spinner-grow spinner-grow-sm text-warning mt-4 cdelay-1" role="status">
+                <span class="sr-only">Loading...</span>
+              </div>
+              <div class="spinner-grow spinner-grow-sm text-primary mt-4 cdelay-2" role="status">
+                <span class="sr-only">Loading...</span>
+              </div>
+              <div class="spinner-grow spinner-grow-sm text-secondary mt-4 cdelay-3" role="status">
+                <span class="sr-only">Loading...</span>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <%- include ("./static/footer") %>
+        <script type="text/javascript" src="/js/functions/transferPR.js"></script>
+
+        </body>
+
+        </html>

@@ -19,7 +19,8 @@ let div_btn_procesar_seriales = document.getElementById("div_btn_procesar_serial
 let submitArray_form = document.getElementById("submitArray_form")
 let serialsArray = []
 let modalStorage = document.getElementById("modalStorage")
-
+let beginOF = document.getElementById("beginOF")
+let endOF = document.getElementById("endOF")
 
 
 
@@ -148,9 +149,12 @@ function verifyQuantity() {
 
 
 
-function submitSerials(e) {
-    e.preventDefault()
 
+function submitSerials(e) {
+    beginOF.innerHTML = 0
+    endOF.innerHTML = serialsArray.length
+    e.preventDefault()
+    
     $('#modalStorage').modal('hide')
     setTimeout(() => {
         soundOk()
@@ -158,9 +162,10 @@ function submitSerials(e) {
     soundOk()
 
     $('#modalCantidad').modal('hide')
-    $('#modalSpinner').modal({ backdrop: 'static', keyboard: false })
+    $('#modalCountDown').modal({ backdrop: 'static', keyboard: false })
 
     let data = { "seriales": `${serialsArray}` };
+    let interval = setInterval(verifyProcessBEx, 1000);
     axios({
         method: 'post',
         url: "/procesarSeriales",
@@ -172,7 +177,7 @@ function submitSerials(e) {
     })
         .then((result) => {
 
-
+            
             response = JSON.parse(result.data)
 
             soundOk()
@@ -207,18 +212,43 @@ function submitSerials(e) {
                 cantidadErrores.innerHTML = errors
               
                 setTimeout(function () { 
-                    $('#modalSpinner').modal('hide')
+                    clearInterval(interval);
+                    $('#modalCountDown').modal('hide')
                     $('#modalError').modal({ backdrop: 'static', keyboard: false })
                  }, 500);
               
             } else {
-                $('#modalSpinner').modal('hide')
+                clearInterval(interval);
+                $('#modalCountDown').modal('hide')
                 $('#modalSuccess').modal({ backdrop: 'static', keyboard: false })
             }
-
+            
         })
         .catch((err) => {
             console.error(err);
         })
 }
 
+
+function verifyProcessBEx() {
+    
+    let data = { "seriales": `${serialsArray}` };
+    axios({
+        method: 'post',
+        url: "/verifyProcessBEx",
+        data: JSON.stringify(data),
+        headers: {
+            'Content-Type': 'application/json'
+        }
+
+    })
+    .then(result =>{
+        beginOF.innerHTML = result.data.COUNT
+        endOF.innerHTML = serialsArray.length
+   
+    })
+    .catch(err =>{
+       
+        console.error(err);
+    })
+ }

@@ -19,18 +19,26 @@ let tabla_consulta_container = document.getElementById("tabla_consulta_container
 let submitArray_form = document.getElementById("submitArray_form")
 let confirmSerial_form = document.getElementById("confirmSerial_form")
 let serialsArray = []
+let numero_parte = ""
 let modalStorage = document.getElementById("modalStorage")
 let meplan = document.getElementById("meplan")
 let mesap = document.getElementById("mesap")
 let mecantidad = document.getElementById("mecantidad")
 let mefecha = document.getElementById("mefecha")
 let return_cantidad = document.getElementById("return_cantidad")
+
 let tituloSuccess = document.getElementById("tituloSuccess")
 let cantidadSuccess = document.getElementById("cantidadSuccess")
 let confirmSerial = document.getElementById("confirmSerial")
 let btnModalTerminar = document.getElementById("btnModalTerminar")
 let user_id = document.getElementById("user_id")
 
+let maSAP = document.getElementById("maSAP")
+let maDesc = document.getElementById("maDesc")
+let maMand = document.getElementById("maMand")
+let maFam = document.getElementById("maFam")
+let return_cantidadM = document.getElementById("return_cantidadM")
+let submitMaterial_form = document.getElementById("submitMaterial_form")
 
 serial_num.focus()
 btnCerrar.forEach(element => {
@@ -52,6 +60,8 @@ btnCerrar_Error.addEventListener("click", cleanInput())
 
 return_cantidad.addEventListener("keyup", checkCantidad)
 
+submitMaterial_form.addEventListener("submit", submitMaterial)
+
 
 
 
@@ -60,7 +70,9 @@ function cleanInput() {
     serial_num.value = ""
     confirmSerial.value = ""
     return_cantidad.value = ""
+    return_cantidadM.value = ""
     serialsArray = []
+    numero_parte = ""
     serial_num.focus()
 
 }
@@ -71,7 +83,13 @@ function listAdd(e) {
 
     serial = serial_num.value;
     const regex = /.*[a-zA-Z].*/;
-    if (serial.charAt(0) !== "S" && serial.charAt(0) !== "s" || (serial.substring(1)).length < 9 || regex.exec(serial.substring(1)) !== null) {
+
+    if (serial.charAt(0) === "P" || serial.charAt(0) === "p" && (serial.substring(1)).length > 11) {
+        soundOk()
+        material = (serial_num.value).substring(1)
+        consultarMaterial();
+        
+    } else if (serial.charAt(0) !== "S" && serial.charAt(0) !== "s" || (serial.substring(1)).length < 9 || regex.exec(serial.substring(1)) !== null) {
         soundWrong()
         alerta_prefijo.classList.remove("animate__flipOutX", "animate__animated")
         alerta_prefijo.classList.add("animate__flipInX", "animate__animated")
@@ -84,12 +102,7 @@ function listAdd(e) {
 
 
     } else if (serialsArray.indexOf((serial_num.value).substring(1)) === -1 && serialsArray.indexOf(`0${(serial_num.value).substring(1)}`) === -1) {
-
-
-
         soundOk()
-
-
         if ((serial_num.value).substring(1).length < 10) {
             serialsArray.push(`0${(serial_num.value).substring(1)}`)
         } else {
@@ -113,12 +126,6 @@ function listAdd(e) {
 
 
 
-
-
-
-
-
-
 function submitSerials(e) {
 
     e.preventDefault()
@@ -133,13 +140,13 @@ function submitSerials(e) {
     $('#modalSpinner').modal({ backdrop: 'static', keyboard: false })
 
     let data = {
-        "plan_id": `${meplan.innerHTML}`, "cantidad": `${return_cantidad.value}`,
-        "no_sap": `${mesap.innerHTML}`, "contenedor": `manual`, "capacidad": `${return_cantidad.value}`, "linea": `200`, "tipo": `EXT_RE`,"impresoType": `Impreso_re`
-        ,"etiquetas": `1`
+        "serial_num": `${(serial_num.value).substring(1)}`,"plan_id": `${meplan.innerHTML}`, "cantidad": `${return_cantidad.value}`,
+        "no_sap": `${mesap.innerHTML}`, "contenedor": `manual`, "capacidad": `${return_cantidad.value}`, "linea": `200`, "tipo": `EXT_RE`, "impresoType": `Impreso_re`
+        , "etiquetas": `1`
     };
     axios({
         method: 'post',
-        url: "/impresionEtiqueta",
+        url: "/impresionEtiquetaRetorno",
         data: JSON.stringify(data),
         headers: {
             'Content-Type': 'application/json'
@@ -147,19 +154,117 @@ function submitSerials(e) {
 
     })
         .then((result) => {
+            
+            response = JSON.parse(result.data)
+            if (response.error !== "N/A") {
+                
+                tabla_consulta.innerHTML = ""
 
-            response = result.data
-            setTimeout(function () {
+                let newRow = tabla_consulta.insertRow(tabla_consulta.rows.length);
+
+                let row = `
+                                <tr class="bg-danger">
+                                    <td>N/A</td>
+                                    <td>${response.error}</td>
+                                </tr>
+                                `
+                newRow.innerHTML = row
+                newRow.classList.add("bg-danger", "text-white")
+
+                cantidadErrores.innerHTML = "1"
+
                 $('#modalSpinner').modal('hide')
-            }, 1000);
-            setTimeout(function () {
-                $('#modalSerialSuccess').modal({ backdrop: 'static', keyboard: false })
-                tituloSuccess.innerHTML = `<h2><span class="badge badge-info"><pan class="fas fa-barcode"></span></span> Confirmar Serial:</h2>`
-                cantidadSuccess.innerHTML = `${response.last_id}`
-                confirmSerial.focus()
-            }, 1200);
+                setTimeout(function () {
+                    $('#modalError').modal({ backdrop: 'static', keyboard: false })
+                }, 500);
 
-            return_cantidad.value = ""
+            }else{
+                setTimeout(function () {
+                    $('#modalSpinner').modal('hide')
+                }, 1000);
+                setTimeout(function () {
+                    $('#modalSerialSuccess').modal({ backdrop: 'static', keyboard: false })
+                    tituloSuccess.innerHTML = `<h2><span class="badge badge-info"><pan class="fas fa-barcode"></span></span> Confirmar Serial:</h2>`
+                    cantidadSuccess.innerHTML = `${response.serial}`
+                    confirmSerial.focus()
+                }, 1200);
+    
+                return_cantidad.value = ""
+            }
+            
+        })
+        .catch((err) => {
+            console.error(err);
+        })
+}
+
+function submitMaterial(e) {
+
+    e.preventDefault()
+
+
+    $('#modalMaterial').modal('hide')
+    setTimeout(() => {
+        soundOk()
+    }, 150);
+    soundOk()
+
+    $('#modalSpinner').modal({ backdrop: 'static', keyboard: false })
+
+    let data = {
+        "plan_id": "0", "cantidad": `${return_cantidadM.value}`,
+        "no_sap": `${maSAP.innerHTML}`, "contenedor": `manual`, "capacidad": `${return_cantidadM.value}`, "linea": `200`, "tipo": `EXT_RE`, "impresoType": `Impreso_re`
+        , "etiquetas": `1`
+    };
+    axios({
+        method: 'post',
+        url: "/impresionEtiquetaRetorno",
+        data: JSON.stringify(data),
+        headers: {
+            'Content-Type': 'application/json'
+        }
+
+    })
+        .then((result) => {
+            
+            response = JSON.parse(result.data)
+            
+            if (response.error !== "N/A") {
+                
+                tabla_consulta.innerHTML = ""
+
+                let newRow = tabla_consulta.insertRow(tabla_consulta.rows.length);
+
+                let row = `
+                                <tr class="bg-danger">
+                                    <td>N/A</td>
+                                    <td>${response.error}</td>
+                                </tr>
+                                `
+                newRow.innerHTML = row
+                newRow.classList.add("bg-danger", "text-white")
+
+                cantidadErrores.innerHTML = "1"
+
+                $('#modalSpinner').modal('hide')
+                setTimeout(function () {
+                    $('#modalError').modal({ backdrop: 'static', keyboard: false })
+                }, 500);
+
+            }else{
+                setTimeout(function () {
+                    $('#modalSpinner').modal('hide')
+                }, 1000);
+                setTimeout(function () {
+                    $('#modalSerialSuccess').modal({ backdrop: 'static', keyboard: false })
+                    tituloSuccess.innerHTML = `<h2><span class="badge badge-info"><pan class="fas fa-barcode"></span></span> Confirmar Serial:</h2>`
+                    cantidadSuccess.innerHTML = `${response.serial}`
+                    confirmSerial.focus()
+                }, 1200);
+    
+                return_cantidad.value = ""
+            }
+
 
 
         })
@@ -167,8 +272,6 @@ function submitSerials(e) {
             console.error(err);
         })
 }
-
-
 
 function consultarSerial() {
 
@@ -198,29 +301,81 @@ function consultarSerial() {
             } else {
                 //errorMessage(response.error)
                 tabla_consulta.innerHTML = ""
+                let newRow = tabla_consulta.insertRow(tabla_consulta.rows.length);
 
-
-                console.log(response);
-                    let newRow = tabla_consulta.insertRow(tabla_consulta.rows.length);
-
-                        let row = `
+                let row = `
                                 <tr class="bg-danger">
                                     <td>${response.serial_num}</td>
                                     <td>${response.error}</td>
                                 </tr>
                                 `
-                                newRow.innerHTML = row
-                        newRow.classList.add("bg-danger", "text-white")
- 
+                newRow.innerHTML = row
+                newRow.classList.add("bg-danger", "text-white")
+
                 cantidadErrores.innerHTML = "1"
 
                 $('#modalSpinner').modal('hide')
                 setTimeout(function () {
                     $('#modalError').modal({ backdrop: 'static', keyboard: false })
                 }, 500);
-                
+
             }
             serialsArray = []
+            //serial_num.value=""
+
+        })
+        .catch((err) => {
+            console.error(err);
+        })
+}
+
+
+function consultarMaterial() {
+
+    let data = { "material": `${material}` };
+    axios({
+        method: 'post',
+        url: "/getAllInfoMaterial",
+        data: JSON.stringify(data),
+        headers: {
+            'Content-Type': 'application/json'
+        }
+
+    })
+        .then((result) => {
+            response = result.data
+            if (response.length !== 0) {
+
+                $('#modalMaterial').modal({ backdrop: 'static', keyboard: false })
+                maSAP.innerHTML = response[0].no_sap
+                maDesc.innerHTML = response[0].description
+                maMand.innerHTML = response[0].cust_part
+                maFam.innerHTML = response[0].family
+
+            } else {
+                //errorMessage(response.error)
+                tabla_consulta.innerHTML = ""
+
+                let newRow = tabla_consulta.insertRow(tabla_consulta.rows.length);
+
+                let row = `
+                                <tr class="bg-danger">
+                                    <td>N/A</td>
+                                    <td>Material no encontrado</td>
+                                </tr>
+                                `
+                newRow.innerHTML = row
+                newRow.classList.add("bg-danger", "text-white")
+
+                cantidadErrores.innerHTML = "1"
+
+                $('#modalSpinner').modal('hide')
+                setTimeout(function () {
+                    $('#modalError').modal({ backdrop: 'static', keyboard: false })
+                }, 500);
+
+            }
+            materialArray = []
             //serial_num.value=""
 
         })
@@ -260,6 +415,8 @@ function checkCantidad() {
 }
 
 
+
+
 function confirmSerialFunc(e) {
 
     e.preventDefault()
@@ -272,63 +429,20 @@ function confirmSerialFunc(e) {
             $('#modalSpinner').modal({ backdrop: 'static', keyboard: false })
         }, 500);
 
-        let data = { "serial": `${confirmSerial.value.substring(1)}`, "user": `${user_id.innerHTML}`, "serial_obsoleto": `${serial_num.value.substring(1)}` };
+        let data = { "serial": `${confirmSerial.value.substring(1)}`, "user": `${user_id.innerHTML}`, "serial_obsoleto": `${serial_num.value}` };
         axios({
             method: 'post',
-            url: "/transferenciaPR",
+            url: "/confirmacionPR",
             data: JSON.stringify(data),
             headers: {
                 'Content-Type': 'application/json'
             }
-
         })
             .then((result) => {
-
-                response = JSON.parse(result.data)
-
-                soundOk()
-                errorText.hidden = true
-                tabla_consulta_container.hidden = false
-                let arregloResultados = response.result
-                let errors = 0
-
-                arregloResultados.forEach(element => {
-                    if (element.error != "N/A") {
-                        errors++
-                    }
-                });
-
-                if (errors != 0) {
-                    tabla_consulta.innerHTML = ""
-                    arregloResultados.forEach(element => {
-                        let newRow = tabla_consulta.insertRow(tabla_consulta.rows.length);
-                        if (element.error != "N/A") {
-                            let row = `
-                                    <tr class="bg-danger">
-                                        <td>${element.serial}</td>
-                                        <td>${element.error}</td>
-                                    </tr>
-                                    `
-                            newRow.classList.add("bg-danger", "text-white")
-                            return newRow.innerHTML = row;
-                        }
-
-
-                    })
-                    cantidadErrores.innerHTML = errors
-
+                cleanInput()
+                setTimeout(function () {
                     $('#modalSpinner').modal('hide')
-                    setTimeout(function () {
-                        $('#modalError').modal({ backdrop: 'static', keyboard: false })
-                    }, 500);
-
-
-                } else {
-                    $('#modalSpinner').modal('hide')
-                    setTimeout(function () {
-                        $('#modalSuccess').modal({ backdrop: 'static', keyboard: false })
-                    }, 500);
-                }
+                }, 1000);
 
             })
             .catch((err) => {
@@ -356,7 +470,7 @@ function cancelSerial() {
     let data = { "seriales": `${cantidadSuccess.innerHTML}`, "motivo": `Retorno Cancelado`, "tipo": `retorno`, "user": `${user_id.innerHTML}` };
     axios({
         method: 'post',
-        url: "/cancelarSeriales",
+        url: "/cancelarSerialesRetorno",
         data: JSON.stringify(data),
         headers: {
             'Content-Type': 'application/json'

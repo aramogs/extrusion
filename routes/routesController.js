@@ -134,17 +134,17 @@ controller.consultaEx_GET = (req, res) => {
 
 
 controller.getTurnos_POST = (req, res) => {
-    let day=req.body.day
+    let day = req.body.day
 
     funcion.getTurnos()
         .then((result) => {
 
-            if(day==5){
-                result.splice(0,1)
-                result.splice(2,1)
-            }else{
-                result.splice(1,1)
-                result.splice(3,1)
+            if (day == 5) {
+                result.splice(0, 1)
+                result.splice(2, 1)
+            } else {
+                result.splice(1, 1)
+                result.splice(3, 1)
             }
 
             res.json(result)
@@ -417,50 +417,50 @@ controller.impresion_GET = (req, res) => {
     let user_id = req.res.locals.authData.id.id
     let user_name = req.res.locals.authData.id.username
     let todayDate = moment()
-  
-    let start_midnight=moment("00:00:00", 'HH:mm:ss')
-    let end_midnight=moment("00:59:59", 'HH:mm:ss')
-    let timeNow=moment();
 
+    let start_midnight = moment("00:00:00", 'HH:mm:ss')
+    let end_midnight = moment("00:59:59", 'HH:mm:ss')
+    let timeNow = moment();
+    let currentShift
     async function waitForPromise() {
         let getTurnos = await funcion.getTurnosAll()
 
 
-        if(moment().weekday()===6){
-            getTurnos.splice(0,1)
-            getTurnos.splice(2,1)
-        }else{
-            getTurnos.splice(1,1)
-            getTurnos.splice(3,1)
+        if (moment().weekday() === 6) {
+            getTurnos.splice(0, 1)
+            getTurnos.splice(2, 1)
+        } else {
+            getTurnos.splice(1, 1)
+            getTurnos.splice(3, 1)
         }
-        
+
 
         getTurnos.forEach(element => {
 
             let start = moment(element.turno_inicio, 'HH:mm:ss')
             let end = moment(element.turno_final, 'HH:mm:ss')
 
-            if (end.isBetween(start_midnight,end_midnight)){
-                    
-                if (timeNow.isBetween(start_midnight,end)) {
-                    
-                    start.subtract(1,"days")
-                    todayDate.subtract(1,"days")
+            if (end.isBetween(start_midnight, end_midnight)) {
+
+                if (timeNow.isBetween(start_midnight, end)) {
+
+                    start.subtract(1, "days")
+                    todayDate.subtract(1, "days")
                 }
-                end.add(1,"days")
+                end.add(1, "days")
 
             }
 
 
-            if (timeNow.isBetween(start,end)) {
- 
-                currentShift = (element.turno_descripcion).substring(0, 2); 
-                
+            if (timeNow.isBetween(start, end)) {
+
+                currentShift = (element.turno_descripcion).substring(0, 2);
+
             }
         });
 
-        todayDate= todayDate.format("YYYY-MM-DD")
-        
+        todayDate = todayDate.format("YYYY-MM-DD")
+
         funcion.getProgramacionTurno(todayDate, currentShift)
             .then((result) => {
                 turnos = result
@@ -562,75 +562,27 @@ controller.impresion_POST = (req, res) => {
     let serial_num
     let impresoType = req.body.impresoType
 
-    if (cantidad === capacidad) {
-        numero_etiquetas = 1
-    } else {
-        numero_etiquetas = Math.floor(cantidad / capacidad)
-    }
+
 
 
     async function waitForPromise() {
 
-        let lastSerial = await funcion.getSerial();
-        let insert = await funcion.insertImpresion(plan_id, no_sap, operador_id, capacidad, etiquetas,impresoType);
-        let values = await funcion.getBaseExtr(no_sap)
-        let impre = await funcion.getPrinter(linea)
-        let data = {}
-
-    
-        Promise.all([insert, values, impre])
-            .then((result) => {
-
-                startSerial=lastSerial.serial+1
-                serial_num = startSerial + etiquetas - 1
-                inserted = result[0]
-                values_ = result[1]
-                impresora = result[2][0].printer
-
-
-                for (let i = 0; i < etiquetas; i++) {
-                    let serial = startSerial++
-
-                    printLabel(i, serial)
-                }
-
-                function printLabel(i, serial) {
-
-                    setTimeout(() => {
-                        for (const [key, value] of Object.entries(values_[0])) {
-
-                            if (`${key}` === `${contenedor}`) data['quant'] = value
-                            if (contenedor === "manual") data['quant'] = cantidad
-                            data[`${key}`] = value
-                            data[`printer`] = impresora
-                            data['serial'] = serial
-                            data['line'] = linea
-                            data['emp_num'] = operador_name
-
-                        }
-                        axios({
-                            method: 'post',
-                            url: `http://${process.env.BARTENDER_SERVER}:${process.env.BARTENDER_PORT}/Integration/${tipo}/Execute/`,
-                            data: JSON.stringify(data),
-                            headers: { 'content-type': 'application/json' }
-                        })
-
-                    }, 1000 * i);
-                }
-
+        let process = "handling_ext"
+        let send = `{"plan_id":${plan_id},"serial_num":"","process":"${process}", "material":"${no_sap}",  "cantidad":${capacidad}, "numero_etiquetas":${etiquetas}, "station": "${linea}","impresoType":"${impresoType}","operator_name":"${operador_name}", "operator_id":${operador_id}}`
+        amqpRequest(send)
+            .then(result => {
+                res.json(result)
             })
-            .then(() => {
-
-                res.json({ "last_id": serial_num })
-                funcion.UpdatePlan(plan_id)
+            .catch(err => {
+                console.error(err);
             })
+
     }
-
-
     waitForPromise()
-
-
 }
+
+
+
 
 
 controller.checkSap_POST = (req, res) => {
@@ -711,9 +663,52 @@ controller.cancelarSeriales_POST = (req, res) => {
     funcion.cancelarSeriales(arraySeriales, motivo, user)
         .then((result) => { res.json(result) })
         .catch((err) => { console.error(err) })
+}
 
+controller.cancelarSerialesRetorno_POST = (req, res) => {
+
+    let seriales = req.body.seriales
+    let motivo = req.body.motivo
+    let arraySeriales = seriales.split(',')
+    let estacion = uuidv4();
+    let process = "transfer_ext_rp"
+    let user_id = req.res.locals.authData.id.id
+    let tipo = req.body.tipo
+    let user
+    if (tipo == "retorno") {
+        user = req.body.user
+    } else {
+        user = (req.connection.user).substring(3)
+    }
+
+
+    funcion.cancelarSeriales(arraySeriales, motivo, user)
+        .then((result) => { })
+        .catch((err) => { console.error(err) })
+
+
+    async function getStatus() {
+
+        let info = await infoSeriales(arraySeriales)
+        let jsonInfo = JSON.stringify(info)
+
+        let send = `{"station":"${estacion}","serial_num":"","process":"${process}", "material":"",  "cantidad":"", "user_id": "${user_id}","data":${jsonInfo}}`
+
+        amqpRequest(send)
+            .then((result) => {
+                async function updateAcred() {
+                    let resultado = JSON.parse(result)
+                    res.json(result)
+                }
+                updateAcred()
+
+            })
+            .catch((err) => { console.error(err) })
+    }
+    getStatus()
 
 }
+
 
 
 controller.getIdPlans_POST = (req, res) => {
@@ -812,6 +807,7 @@ controller.procesarSeriales_POST = (req, res) => {
 
 }
 
+
 controller.consultarSeriales_POST = (req, res) => {
 
     let seriales = req.body.seriales
@@ -872,18 +868,18 @@ function checkAllStatus(seriales, status) {
                 let todayDate = moment()
                 let serialDate = (moment(element.datetime))
 
-                let hours= todayDate.diff(serialDate, 'hours')
+                let hours = todayDate.diff(serialDate, 'hours')
 
-            
-                if(hours<12 && element.status=="Acreditado"){
-                    
+
+                if (hours < 12 && element.status == "Acreditado") {
+
                     let obj = {}
                     obj['serial'] = element.serial
                     obj['error'] = "Serial en Reposo Menor a 12 Horas"
                     obj['result'] = "N/A"
                     noAcreditar.push(obj)
 
-                }else{
+                } else {
 
                     if (element.status != status && element.status != "Retornado") {
                         let obj = {}
@@ -953,9 +949,9 @@ function updateTransferido(seriales, user_id, status) {
     })
 }
 
-function updateTransferidoPR(seriales, user_id, status) {
+function updateTransferidoPR(serial, user_id, status) {
     return new Promise((resolve, reject) => {
-        funcion.updateSerialesTransferidosPR(seriales, user_id, status)
+        funcion.updateSerialesTransferidosPR(serial, user_id, status)
             .then((result) => {
                 resolve(result)
             })
@@ -1024,19 +1020,12 @@ controller.transferenciaRP_POST = (req, res) => {
             let info = await infoSeriales(arraySeriales)
             let jsonInfo = JSON.stringify(info)
 
-            let send = `{"station":"${estacion}","serial_num":"","process":"${process}", "material":"",  "cantidad":"", "data":${jsonInfo}}`
-
-            console.log(send)
-
+            let send = `{"station":"${estacion}","serial_num":"","process":"${process}", "material":"",  "cantidad":"", "user_id": "${user_id}","data":${jsonInfo}}`
 
             amqpRequest(send)
                 .then((result) => {
                     async function updateAcred() {
                         let resultado = JSON.parse(result)
-                        let resultadArray = resultado.result
-
-                        
-                        let acreditado = await updateTransferido(resultadArray, user_id, "Transferido");
                         res.json(result)
                     }
                     updateAcred()
@@ -1073,64 +1062,93 @@ controller.getAllInfoSerial_POST = (req, res) => {
     getStatus()
 }
 
+controller.getAllInfoMaterial_POST = (req, res) => {
+
+    let material = req.body.material
 
 
-controller.transferenciaPR_POST = (req, res) => {
 
-    let seriales = req.body.serial
-    let serial_obsoleto = req.body.serial_obsoleto
-    let arraySeriales = seriales.split(',')
-    let estacion = uuidv4();
-    let process = "transfer_ext_pr"
+
+    funcion.getAllInfoMaterial(material)
+        .then(result => { res.json(result) })
+        .catch(err => { console.error(err) })
+
+
+}
+
+controller.verifyProcessBEx_POST = (req, res) => {
+
+    let serial = req.body.seriales
+    let arraySeriales = serial.split(',')
+
+    async function getStatus() {
+
+        funcion.countSeriales(arraySeriales)
+            .then(result => { res.json(result) })
+            .catch(err => { console.error(err) })
+
+
+    }
+    getStatus()
+}
+
+
+controller.impresionPR_POST = (req, res) => {
+    let plan_id = req.body.plan_id
+    let no_sap = req.body.no_sap
+    let operador_id = req.res.locals.authData.id.id
+    let operador_name = req.res.locals.authData.id.username
+    let cantidad = parseInt(req.body.cantidad)
+    let contenedor = req.body.contenedor
+    let capacidad = parseInt(req.body.capacidad)
+    let etiquetas = parseInt(req.body.etiquetas)
+    let linea = req.body.linea
+    let tipo = req.body.tipo
+    let serial_num = req.body.serial_num
+    let impresoType = req.body.impresoType
+
+
+
+
+    async function waitForPromise() {
+
+        let process = "storage_unit_ext_pr"
+        let send = `{"plan_id":${plan_id},"serial_num":"${serial_num}","process":"${process}", "material":"${no_sap}",  "cantidad":${capacidad}, "numero_etiquetas":${etiquetas}, "station": "${linea}","impresoType":"${impresoType}","operator_name":"${operador_name}", "operator_id":${operador_id}}`
+        amqpRequest(send)
+            .then(result => {
+                res.json(result)
+            })
+            .catch(err => {
+                console.error(err);
+            })
+
+    }
+    waitForPromise()
+}
+
+controller.confirmacionPR_POST = (req, res) => {
+
+    let serial = req.body.serial
+    let serial_obsoleto = (req.body.serial_obsoleto).substring(1)
+    let type = serial_obsoleto.charAt(0)
 
 
     async function getStatus() {
 
         let user_id = req.body.user
-        let info = await infoSeriales(arraySeriales)
-        let jsonInfo = JSON.stringify(info)
-
-        let send = `{"station":"${estacion}","serial_num":"","process":"${process}", "material":"",  "cantidad":"", "data":${jsonInfo}}`
-       
-        amqpRequest(send)
-            .then((result) => {
-
-                async function updateAcred() {
-                    let resultado = JSON.parse(result)
-                    let resultadArray = resultado.result
-
-                    if (resultadArray[0].error == "N/A") {
-                        let acreditado = await updateTransferidoPR(resultadArray, user_id, "Retornado");
-
-                        funcion.updateObsoleto(serial_obsoleto)
-                            .then((result) => { })
-                            .catch((err) => { console.error(err) })
-
-                        res.json(result)
-                    } else {
-                        let acreditado = await updateTransferidoPR(resultadArray, user_id, "Error");
-                        res.json(result)
-                    }
-
-                }
-                updateAcred()
-
-            })
-            .catch((err) => { console.error(err) })
+        let acreditado = await updateTransferidoPR(serial, user_id, "Retornado");
+        if (type === "S" || type === "s") {
+            funcion.updateObsoleto(serial_obsoleto)
+                .then((result) => { })
+                .catch((err) => { console.error(err) })
+            res.json()
+        } else {
+            res.json()
+        }
 
     }
     getStatus()
-
 }
-
-
-
-
-
-
-
-
-
 
 
 module.exports = controller;

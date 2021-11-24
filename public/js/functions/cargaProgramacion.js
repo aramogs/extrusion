@@ -107,6 +107,7 @@ function enableTurno(dayofweeknumber) {
         option.text = "Seleccionar"
         selectedTurno.add(option)
         turnos.forEach(element => {
+
             turno = element.turno_descripcion
             option = document.createElement('option')
             option.text = turno

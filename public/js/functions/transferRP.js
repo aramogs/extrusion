@@ -163,7 +163,7 @@ function submitSerials(e) {
     $('#modalCantidad').modal('hide')
     $('#modalSpinner').modal({ backdrop: 'static', keyboard: false })
 
-    let data = { "seriales": `${serialsArray}` };
+    let data = { "seriales": `${serialsArray}`};
     axios({
         method: 'post',
         url: "/transferenciaRP",
@@ -180,10 +180,12 @@ function submitSerials(e) {
             soundOk()
             errorText.hidden = true
             tabla_consulta_container.hidden = false
-            let arregloResultados = response.result
+            
+            let result_ = response.result
+            
             let errors = 0
 
-            arregloResultados.forEach(element => {
+            result_.forEach(element => {
                 if (element.error != "N/A") {
                     errors++
                 }
@@ -191,7 +193,7 @@ function submitSerials(e) {
 
             if (errors != 0) {
                 tabla_consulta.innerHTML = ""
-                arregloResultados.forEach(element => {
+                result_.forEach(element => {
                     let newRow = tabla_consulta.insertRow(tabla_consulta.rows.length);
                     if (element.error != "N/A") {
                         let row = `

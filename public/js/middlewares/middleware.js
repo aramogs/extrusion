@@ -20,7 +20,6 @@ middleware.verifyToken = (req, res, next) => {
             }
         })
 
-
         if (token_name == "accessToken") {
             jwt.verify(token_jwt, 'tristone', (err, authData) => {
                 if (err) {
@@ -48,7 +47,8 @@ middleware.loginVerify = (req, res, next) => {
 
         let cookies = (req.headers.cookie).split(";")
         let token_name
-        let token_jwt
+        let token_jwt   
+ 
 
         cookies.forEach(cookie => {
             let Ttoken = (cookie.split("=")[0]).trim()
@@ -66,6 +66,8 @@ middleware.loginVerify = (req, res, next) => {
                 if (ubicacion === "Impresion") res.redirect("/impresion")
 
             })
+        }else{
+            res.render('login.ejs')
         }
 
     }

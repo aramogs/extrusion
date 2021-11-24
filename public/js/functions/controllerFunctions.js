@@ -34,7 +34,7 @@ funcion.getTurnos = () => {
         ORDER BY
             turno_descripcion
         `)
-            .then((result) => { resolve(result) })
+            .then((result) => { resolve(result)})
             .catch((error) => { reject(error) })
     })
 }
@@ -64,7 +64,7 @@ funcion.getProgramacion = (fecha) => {
         WHERE
             fecha = '${fecha}'
         `)
-            .then((result) => { resolve(result) })
+            .then((result) => { resolve(result)})
             .catch((error) => { reject(error) })
     })
 }
@@ -675,45 +675,20 @@ funcion.updateSerialesTransferidos = (seriales,user_id, status) => {
 
 
 
-funcion.updateSerialesTransferidosPR = (seriales,user_id, status) => {
+funcion.updateSerialesTransferidosPR = (serial,user_id, status) => {
 
     return new Promise((resolve, reject) => {
-        let affectedRows = 0
-        
-        seriales.forEach(element => {
-            let resultSap
-            if(element.transfer_order=="N/A"){
-                resultSap=element.error
-            }else{
-                resultSap=element.transfer_order
-            }
-
             dbEX(`
                 UPDATE 
                     extrusion_labels 
                 SET 
                     status='${status}',
-                    result_return='${resultSap}',
                     emp_return='${user_id}'
                 WHERE 
-                    serial = ${element.serial}
+                    serial = ${serial}
                     `)
-                .then((result) => {
-
-                    if (result.affectedRows == 1) {
-                        affectedRows++
-                        if (affectedRows == seriales.length) {
-
-                            resolve(affectedRows)
-                        }
-                    }
-                })
-                .catch((error) => { reject(error) })
-
-
-            
-        });
-
+                .then((result) => {resolve(result)})
+                .catch((error) => {reject(error)})
 
     })
 }
@@ -765,6 +740,50 @@ funcion.getAllInfoSerial = (serial) => {
 
             `)
             .then((result) => { resolve(result) })
+            .catch((error) => { reject(error) })
+    })
+}
+
+funcion.getAllInfoMaterial = (material) => {
+    return new Promise((resolve, reject) => {
+
+        db(`SELECT *
+        FROM 
+            extr 
+        WHERE 
+            no_sap= "${material}"
+            
+
+            `)
+            .then((result) => { resolve(result) })
+            .catch((error) => { reject(error) })
+    })
+}
+
+funcion.countSeriales = (arraySeriales) => {
+    let count = 1
+    let query = ""
+    arraySeriales.forEach(serial => {
+        if (count == 1) {
+           query = ` ${serial} AND status = "Acreditado"` 
+        }else{
+            query += ` OR serial = ${serial} AND status = "Acreditado"`
+        }
+        count++
+        
+    });
+
+    return new Promise((resolve, reject) => {
+
+        dbEX(`
+        SELECT 
+            COUNT(serial) AS "COUNT"
+        FROM extrusion.extrusion_labels 
+        WHERE serial = ${query} ;
+            
+
+            `)
+            .then((result) => { resolve(result[0]) })
             .catch((error) => { reject(error) })
     })
 }

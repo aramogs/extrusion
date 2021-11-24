@@ -7,8 +7,8 @@
                     <li class="breadcrumb-item active text-info text-center" aria-current="page">
                         <%=user_id%>
                     </li>
-                    <li class="breadcrumb-item active" aria-current="page"><button type="button" id="btn_logoff"
-                            class="btn btn-danger btn-sm btn-block" btn-lg btn-block">Cerrar sesion</button></li>
+                    <li class="breadcrumb-item active" aria-current="page"><a type="button" id="btn_logoff"
+                            class="btn btn-danger btn-sm " >Cerrar sesion</a></li>
                 </ol>
             </nav>
 
@@ -339,29 +339,85 @@
                 </div>
             </div>
 
-            <div class="modal fade animate__animated animate__zoomInDown" id="modalSuccess" tabindex="-1"
-                aria-hidden="true">
-                <div class="modal-dialog">
-                    <div class="modal-content">
-                        <div class="modal-body text-center">
-                            <h5 id="tituloSuccess"></h5>
-                            <p id="cantidadSuccess" style="font-size: x-large"></p>
-                        </div>
-                        <div class="modal-footer">
-                            <button type="button" class="btn btn-primary btn-block mr-auto" id="btnModalTerminar"
-                                data-dismiss="modal"><span class="text-white fas fa-times-circle"></span>
-                                Terminar</button>
-                        </div>
+            <div class="modal fade" id="modalSuccess" tabindex="-1" role="dialog" aria-labelledby="modelTitleId" aria-hidden="true">
+                <div class="modal-dialog modal-dialog-scrollable" role="document">
+                  <div class="modal-content">
+                    <div class="modal-header card-mov">
+                      <img src="/img/sap.png" alt="SAP" srcset="" class="card-mov">
+                      <h3 class="card-mov"> Etiqueta(s): <span class="badge badge-success" id="cantidadSuccess"></span> </h3>
+                      <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                      </button>
                     </div>
+                    <div class="modal-body">
+                      <div class="row">
+              
+                        <div class="col-lg-12 text-center" id="succesDiv">
+                           
+                            <!-- Agregado por javascript -->
+
+                        </div>
+                      </div>
+              
+                    </div>
+                    <div class="modal-footer">
+                      <button id="btnCerrar_Success" type="button" class="btn btn-outline-warning btnCerrar" data-dismiss="modal">Cerrar
+                      </button>
+              
+                    </div>
+                  </div>
                 </div>
-            </div>
+              </div>
+
+            <div class="modal fade" id="modalError" tabindex="-1" role="dialog" aria-labelledby="modelTitleId" aria-hidden="true">
+                <div class="modal-dialog modal-dialog-scrollable" role="document">
+                  <div class="modal-content">
+                    <div class="modal-header card-mov">
+                      <img src="/img/sap.png" alt="SAP" srcset="" class="card-mov">
+                      <h3 class="card-mov"> Error(s): <span class="badge badge-danger" id="cantidadErrores"></span> </h3>
+                      <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                      </button>
+                    </div>
+                    <div class="modal-body">
+                      <div class="row">
+              
+                        <div class="col-lg-12">
+              
+                          <h5 id="errorText" hidden><span class="fas fa-exclamation-circle text-danger"></span><span
+                              id="errorTextField"></span></h5>
+              
+                          <div id="tabla_consulta_container" class="table-responsive">
+                            <table id="tabla_consulta" class="table table-hover table-sm  table-striped text-center ">
+                              <thead class="thead-dark">
+                                <tr class="header">
+                                  <th>SU:</th>
+                                  <th>Error:</th>
+                                </tr>
+                              </thead>
+                              <tbody>
+                                <!-- INFO AGREGADA DESDE JAVASCRIPT -->
+                              </tbody>
+                            </table>
+                          </div>
+                        </div>
+                      </div>
+              
+                    </div>
+                    <div class="modal-footer">
+                      <button id="btnCerrar_Error" type="button" class="btn btn-outline-warning btnCerrar" data-dismiss="modal">Cerrar
+                      </button>
+              
+                    </div>
+                  </div>
+                </div>
+              </div>
+
 
             <div class="modal fade" id="modalSpinner" tabindex="-1" aria-labelledby="myModalLabel" aria-hidden="true">
                 <div class="modal-dialog">
                     <div class="modal-content">
                         <div class="modal-header text-center">
                             <h2 class="modal-title "> <span class="text-secondary  fas fa-stopwatch"></span>
-                                Procesando archivo</h2>
+                                Procesando etiquetas</h2>
                             <div class="spinner-grow spinner-grow-sm text-warning mt-4 cdelay-1" role="status">
                                 <span class="sr-only">Loading...</span>
                             </div>
@@ -375,6 +431,7 @@
                     </div>
                 </div>
             </div>
+
 
 
             <%- include ("./static/footer") %>

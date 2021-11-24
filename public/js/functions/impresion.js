@@ -15,25 +15,35 @@ let cotenedorSection = document.getElementById("cotenedorSection")
 let btnCerrar = document.getElementsByClassName("btnCerrar")
 let regex1 = /\-(.*)/
 let regex2 = /^(.*?)\-/
-let tituloSuccess = document.getElementById("tituloSuccess")
-let cantidadSuccess = document.getElementById("cantidadSuccess")
-let btnModalTerminar = document.getElementById("btnModalTerminar")
+
 let cantidadManual = document.getElementById("cantidadManual")
 let btnImprimirManual = document.getElementById("btnImprimirManual")
 let etiquetas_impresas = 0
 let piezas_totales = 0
 let etiquetas_requeridas = 0
 
+
+let tituloSuccess = document.getElementById("tituloSuccess")
+let cantidadSuccess = document.getElementById("cantidadSuccess")
+let btnCerrar_Success = document.getElementById("btnCerrar_Success")
+
+let errorText = document.getElementById("errorText")
+let errorTextField = document.getElementById("errorTextField")
+let cantidadErrores = document.getElementById("cantidadErrores")
+let tabla_consulta_container = document.getElementById("tabla_consulta_container")
+let btn_verificar_cantidad = document.getElementById("btn_verificar_cantidad")
+let succesDiv = document.getElementById("succesDiv")
+
 btn_logoff.addEventListener("click", () => { document.cookie = "accessToken" + '=; Max-Age=0', window.location.replace(window.location.origin + "/login/Impresion") })
 selectedLinea.addEventListener("change", () => { getSelectedTurno() })
 btnCerrar[0].addEventListener("click", () => { clear() })
-btnModalTerminar.addEventListener("click", () => { refreshTable() })
+btnCerrar_Success.addEventListener("click", () => { refreshTable() })
 cantidadManual.addEventListener("keyup", () => { verifyCant() })
 btnImprimirManual.addEventListener("click", (e) => { impresion(e), e.preventDefault() })
 
-let start_midnight=moment("00:00:00", 'HH:mm:ss')
-let end_midnight=moment("00:24:00", 'HH:mm:ss')
-let timeNow=moment();
+let start_midnight = moment("00:00:00", 'HH:mm:ss')
+let end_midnight = moment("00:24:00", 'HH:mm:ss')
+let timeNow = moment();
 
 function currentTime() {
 
@@ -51,8 +61,8 @@ function currentTime() {
   sec = updateTime(sec)
   clock.value = hour + " : " + min + " : " + sec
 
-  if (timeNow.isBetween(start_midnight,end_midnight)){
-    dd=dd-1
+  if (timeNow.isBetween(start_midnight, end_midnight)) {
+    dd = dd - 1
   }
   myDateString = yy + '-' + mm + '-' + dd
   currentFecha.value = myDateString
@@ -73,7 +83,7 @@ currentTime()
 
 
 function getSelectedTurno() {
-  
+
   reload()
   let data = { "linea": `${selectedLinea.value}`, "fecha": `${myDateString}`, "turno": `${currentTurno.value}` }
   axios({
@@ -87,7 +97,6 @@ function getSelectedTurno() {
       for (let y = 0; y < result.data.length; y++) {
         let iteracion = result.data[y]
         let condicion = iteracion.cantidad - iteracion.impreso
-
 
         let imprimir
         if (result.data[y].status !== "Cancelado") {
@@ -179,7 +188,7 @@ function ImprimirModal(idp) {
       mcantidad.forEach(element => { element.innerHTML = currentInfo[0].cantidad })
       mfecha.forEach(element => { element.innerHTML = currentInfo[0].fecha })
       midplan.forEach(element => { element.innerHTML = idp })
-      mimpreso.forEach(element =>{element.innerHTML = etiquetas_impresas})
+      mimpreso.forEach(element => { element.innerHTML = etiquetas_impresas })
       let btnImprimir = document.querySelectorAll(".btnImprimir")
       let inputImprimir = document.querySelectorAll(".inputImprimir")
 
@@ -213,7 +222,7 @@ function ImprimirModal(idp) {
             }
 
             e.target.nextElementSibling.innerHTML = `Piezas: ${piezas_totales}`
-          }else{
+          } else {
             e.target.nextElementSibling.disabled = true
             e.target.nextElementSibling.classList.add('animate__flipOutX');
             e.target.nextElementSibling.classList.remove('animate__flipInX');
@@ -249,7 +258,7 @@ function ImprimirManual(idp) {
       mcantidad.forEach(element => { element.innerHTML = currentInfo[0].cantidad })
       mfecha.forEach(element => { element.innerHTML = currentInfo[0].fecha })
       midplan.forEach(element => { element.innerHTML = idp })
-      mimpreso.forEach(element =>{element.innerHTML = etiquetas_impresas})
+      mimpreso.forEach(element => { element.innerHTML = etiquetas_impresas })
       let btnImprimir = document.querySelectorAll(".btnImprimir")
       btnImprimir.forEach(btn => {
         btn.addEventListener("click", (e) => {
@@ -300,12 +309,12 @@ addCard = function (key, value, cantidadProgramada) {
 function clear() {
   let ul = document.getElementById("cotenedorSection")
   ul.innerHTML = ""
+  succesDiv.innerHTML = ""
 }
 
 
 
 function impresion(e) {
-
   let etiquetas_requeridas_ = parseInt(e.target.previousElementSibling.value)
   if (e.target.id === "btnImprimirManual") etiquetas_requeridas_ = 1
   $('#modalImpresion').modal('hide')
@@ -318,7 +327,6 @@ function impresion(e) {
   let contenedor = (e.target.value).replace(regex1, "")
   let capacidad = (e.target.value).replace(regex2, "")
   let linea = selectedLinea.options[selectedLinea.selectedIndex].text
-  console.log(linea);
 
 
   if (parseInt(cantidadManual.value) > 0) { cantidad = parseInt(cantidadManual.value), capacidad = parseInt(cantidadManual.value), contenedor = "manual" }
@@ -332,18 +340,75 @@ function impresion(e) {
     headers: { 'content-type': 'application/json' }
   })
     .then((result) => {
+      
+      response = JSON.parse(result.data)
 
-      let last_id = result.data.last_id
-      let first_id = last_id - etiquetas_requeridas_ +1
 
-      setTimeout(() => {
-        $('#modalSpinner').modal('hide')
+      if (response.error === "N/A") {
+        
 
-      }, 500);
+        let result = response.result
+        let result_mod = ""
+        result_mod = JSON.parse(result).replace("[", "").replace("]", "").replace(/'/g, '"')
+        let objectStringArray = (new Function("return [" + result_mod + "];")());
+    
+        objectStringArray.forEach(element => {
 
-      $('#modalSuccess').modal({ backdrop: 'static', keyboard: false })
-      tituloSuccess.innerHTML = `<h2><span class="badge badge-info"><pan class="fas fa-barcode"></span></span> Seriales impresos:</h2>`
-      cantidadSuccess.innerHTML = `${first_id} - ${last_id}`
+          if (typeof (element.result) != "number") {
+            let badge = `<span class="badge badge-success">${element.serial_num}</span> `
+            // newRow.classList.add("bg-danger", "text-white")
+            succesDiv.innerHTML += badge
+          }
+
+
+        })
+
+        setTimeout(() => { soundOk(), $('#modalSpinner').modal('hide') }, 500);
+        $('#modalSuccess').modal({ backdrop: 'static', keyboard: false })
+
+      } else {
+
+        soundWrong()
+        errorText.hidden = true
+        tabla_consulta_container.hidden = false
+        let result = response.result
+        let result_mod = ""
+
+        result_mod = JSON.parse(result).replace("[", "").replace("]", "").replace(/'/g, '"')
+
+        let objectStringArray = (new Function("return [" + result_mod + "];")());
+        let errors = 0
+
+        objectStringArray.forEach(element => {
+          if (typeof (element.result) != "number") {
+            errors++
+          }
+        });
+
+        if (errors != 0) {
+          tabla_consulta.innerHTML = ""
+          objectStringArray.forEach(element => {
+            let newRow = tabla_consulta.insertRow(tabla_consulta.rows.length);
+            if (typeof (element.result) != "number") {
+              let row = `
+                                <tr class="bg-danger">
+                                    <td>${element.error}</td>
+                                </tr>
+                                `
+              newRow.classList.add("bg-danger", "text-white")
+              return newRow.innerHTML = row;
+            }
+
+
+          })
+          cantidadErrores.innerHTML = errors
+          $('#modalSpinner').modal('hide')
+          $('#modalError').modal({ backdrop: 'static', keyboard: false })
+        } else {
+          $('#modalSpinner').modal('hide')
+          $('#modalError').modal({ backdrop: 'static', keyboard: false })
+        }
+      }
 
 
     })
