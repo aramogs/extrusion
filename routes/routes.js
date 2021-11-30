@@ -33,7 +33,7 @@ router.post('/tablaSeriales',routesController.tablaSeriales_POST);
 router.post('/tablaSerialesFechasMultiples',routesController.tablaSerialesFechasMultiples_POST);
 router.post('/tablaPlanFechasMultiples',routesController.tablaPlanFechasMultiples_POST);
 router.post('/cancelarSeriales',middleware.sspi,middleware.verifyToken,routesController.cancelarSeriales_POST);
-router.post('/cancelarSerialesRetorno',middleware.sspi,middleware.verifyToken,routesController.cancelarSerialesRetorno_POST);
+router.post('/cancelarSerialesRetorno',middleware.sspi,routesController.cancelarSerialesRetorno_POST);
 router.post('/impresionEtiqueta', middleware.verifyToken,routesController.impresion_POST);
 router.post('/impresionEtiquetaRetorno', middleware.verifyToken,routesController.impresionPR_POST);
 router.post('/getIdPlans',routesController.getIdPlans_POST);
