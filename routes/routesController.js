@@ -90,7 +90,7 @@ controller.userAccess_POST = (req, res) => {
 function accessToken(user_id, user_name) {
     return new Promise((resolve, reject) => {
         const id = { id: `${user_id}`, username: `${user_name}` }
-        jwt.sign({ id }, `tristone`, { expiresIn: '1h' }, (err, token) => {
+        jwt.sign({ id }, `tristone`, {/*expiresIn: '1h'*/}, (err, token) => {
             resolve(token)
             reject(err)
         })
@@ -100,9 +100,8 @@ function accessToken(user_id, user_name) {
 
 function cookieSet(req, res, result) {
 
-    let minutes = 60;
+    let minutes = 15;
     const time = minutes * 60 * 1000;
-
     res.cookie('accessToken', result,
         {
             maxAge: time,
@@ -1113,7 +1112,7 @@ controller.impresionPR_POST = (req, res) => {
     async function waitForPromise() {
 
         let process = "storage_unit_ext_pr"
-        let send = `{"plan_id":${plan_id},"serial_num":"${serial_num}","process":"${process}", "material":"${no_sap}",  "cantidad":${capacidad}, "numero_etiquetas":${etiquetas}, "station": "${linea}","impresoType":"${impresoType}","operator_name":"${operador_name}", "operator_id":${operador_id}}`
+        let send = `{"plan_id":${plan_id},"serial_num":"${serial_num}","process":"${process}", "material":"${no_sap}",  "cantidad":${capacidad}, "numero_etiquetas":${etiquetas}, "station": "${linea}","impresoType":"${impresoType}","operator_name":"${operador_name}", "operator_id":"${operador_id}"}`
         amqpRequest(send)
             .then(result => {
                 res.json(result)

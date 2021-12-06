@@ -25,8 +25,13 @@ middleware.verifyToken = (req, res, next) => {
                 if (err) {
                     res.render('login.ejs')
 
-                } else {
-
+                } else {                    
+                    res.clearCookie("accessToken");
+                    res.cookie("accessToken",token_jwt,{
+                        maxAge: 900000 /*10 Minutos*/ ,
+                        httpOnly: false,
+                        secure: process.env.NODE_ENV === 'production' ? true : false
+                    })
                     res.locals.authData = authData
                     next()
                 }

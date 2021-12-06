@@ -186,8 +186,9 @@ function submitSerials(e) {
                     $('#modalSerialSuccess').modal({ backdrop: 'static', keyboard: false })
                     tituloSuccess.innerHTML = `<h2><span class="badge badge-info"><pan class="fas fa-barcode"></span></span> Confirmar Serial:</h2>`
                     cantidadSuccess.innerHTML = `${response.serial}`
-                    confirmSerial.focus()
-                }, 1200);
+                    setTimeout(function() { confirmSerial.focus() }, 500);
+                    
+                }, 500);
     
                 return_cantidad.value = ""
             }
@@ -291,11 +292,17 @@ function consultarSerial() {
             if (response.error == undefined) {
 
 
+                
+                
+
                 $('#modalEditar').modal({ backdrop: 'static', keyboard: false })
+
                 meplan.innerHTML = response.plan_id
                 mesap.innerHTML = response.numero_parte
                 mecantidad.innerHTML = response.cantidad
                 mefecha.innerHTML = response.datetime
+                
+                setTimeout(function() { return_cantidad.focus() }, 500);
 
 
             } else {
