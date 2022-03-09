@@ -5,13 +5,12 @@ let amqp = require('amqplib/callback_api');
 const { v4: uuidv4 } = require('uuid');
 const jwt = require('jsonwebtoken');
 const moment = require('moment')
-const axios = require('axios')
+
 //Require Funciones
 const funcion = require('../public/js/functions/controllerFunctions');
 
 //Require ExcelJs
 const Excel = require('exceljs');
-
 
 
 
@@ -51,7 +50,6 @@ function acceso(req) {
 }
 
 controller.mainMenu_GET = (req, res) => {
-
     let user_id = req.res.locals.authData.id.id
     let user_name = req.res.locals.authData.id.username
     res.render('main_menu.ejs', {
@@ -424,7 +422,6 @@ controller.impresion_GET = (req, res) => {
     async function waitForPromise() {
         let getTurnos = await funcion.getTurnosAll()
 
-
         if (moment().weekday() === 6) {
             getTurnos.splice(0, 1)
             getTurnos.splice(2, 1)
@@ -453,8 +450,7 @@ controller.impresion_GET = (req, res) => {
 
             if (timeNow.isBetween(start, end)) {
 
-                currentShift = (element.turno_descripcion).substring(0, 2);
-
+                currentShift = (element.turno_descripcion).substring(0, 2);           
             }
         });
 
@@ -562,12 +558,10 @@ controller.impresion_POST = (req, res) => {
     let impresoType = req.body.impresoType
 
 
-
-
     async function waitForPromise() {
-
         let process = "handling_ext"
         let send = `{"plan_id":${plan_id},"serial_num":"","process":"${process}", "material":"${no_sap}",  "cantidad":${capacidad}, "numero_etiquetas":${etiquetas}, "station": "${linea}","impresoType":"${impresoType}","operator_name":"${operador_name}", "operator_id":${operador_id}}`
+        
         amqpRequest(send)
             .then(result => {
                 res.json(result)
