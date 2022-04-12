@@ -50,6 +50,8 @@ router.post('/getAllInfoSerial', routesController.getAllInfoSerial_POST);
 router.post('/getAllInfoMaterial', routesController.getAllInfoMaterial_POST);
 router.post('/verifyProcessBEx', routesController.verifyProcessBEx_POST);
 router.post('/confirmacionPR/', routesController.confirmacionPR_POST);
+router.get('/cargaHule',middleware.verifyToken, routesController.cargaHule_GET);
+router.post('/verificarHule',  middleware.verifyToken, routesController.verificarHule_POST);
 
 router.get('/inventario', routesController.inventario_GET);
 router.post('/getInventario/', routesController.getInventario_POST);

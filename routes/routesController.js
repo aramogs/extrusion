@@ -1143,5 +1143,42 @@ controller.confirmacionPR_POST = (req, res) => {
     getStatus()
 }
 
+controller.cargaHule_GET = (req, res) => {
+    let user_id = req.res.locals.authData.id.id
+    let user_name = req.res.locals.authData.id.username
+    res.render('carga_hule.ejs', {
+        user_id,
+        user_name
+    })
+}
+
+controller.verificarHule_POST = (req, res) => {
+    console.log(req.body);
+    console.log(req.res.locals.authData);
+
+    let process = req.body.process
+    let no_sap = req.body.material
+    let serial_num = req.body.serial_num
+    let operador_id = req.res.locals.authData.id.id
+    let operador_name = req.res.locals.authData.id.username
+    // TODO cambiar a MAC address cuando se cambie todo extrusion
+    // TODO cambiar a queue extrusion cuando se cambie todo extrusion
+    let station = "00:00:00:00:00:00"
+    
+
+    async function waitForPromise() {
+
+        let send = `{"process":"${process}", "material":"${no_sap}", "serial_num":"${serial_num}",  "station": "${station}", "operator_name":"${operador_name}", "operator_id":"${operador_id}"}`
+        amqpRequest(send)
+            .then(result => {
+                res.json(result)
+            })
+            .catch(err => {
+                console.error(err);
+            })
+
+    }
+    waitForPromise()
+}
 
 module.exports = controller;
