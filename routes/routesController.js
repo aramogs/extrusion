@@ -1158,9 +1158,10 @@ controller.verificarHule_POST = (req, res) => {
 
     let process = req.body.process
     let no_sap = req.body.material
-    let serial_num = req.body.serial_num
+    let serial_num = req.body.serial
     let operador_id = req.res.locals.authData.id.id
     let operador_name = req.res.locals.authData.id.username
+    let linea = req.body.linea
     // TODO cambiar a MAC address cuando se cambie todo extrusion
     // TODO cambiar a queue extrusion cuando se cambie todo extrusion
     let station = "00:00:00:00:00:00"
@@ -1168,7 +1169,7 @@ controller.verificarHule_POST = (req, res) => {
 
     async function waitForPromise() {
 
-        let send = `{"process":"${process}", "material":"${no_sap}", "serial_num":"${serial_num}",  "station": "${station}", "operator_name":"${operador_name}", "operator_id":"${operador_id}"}`
+        let send = `{"process":"${process}", "material":"${no_sap}", "serial_num":"${serial_num}",  "station": "${station}", "operator_name":"${operador_name}", "operator_id":"${operador_id}", "line":"${linea}"}`
         amqpRequest(send)
             .then(result => {
                 res.json(result)

@@ -1,79 +1,108 @@
-let value = false
-let serial_num = document.getElementById("serial_num")
+
+let part_num = document.getElementById("part_num")
 let alerta_prefijo = document.getElementById("alerta_prefijo")
-let submitSerial = document.getElementById("submitSerial")
-
-
-let submitCantidad = document.getElementById("submitCantidad")
-let cantidadSubmit = document.getElementById("cantidadSubmit")
-let alerta_cantidad = document.getElementById("alerta_cantidad")
-let Bserial = document.getElementById("Bserial")
-let Bmaterial = document.getElementById("Bmaterial")
-let Bstock = document.getElementById("Bstock")
-let Bdescription = document.getElementById("Bdescription")
-let Bweigth = document.getElementById("Bweigth")
+let alerta_prefijo2 = document.getElementById("alerta_prefijo2")
 let material = ""
-let serial = ""
-let errorText = document.getElementById("errorText")
 let btnCerrar = document.querySelectorAll(".btnCerrar")
-let successText = document.getElementById("successText")
-let user_id = document.getElementById("user_id")
 let verifySerial = document.getElementById("verifySerial")
 let submit_Serial = document.getElementById("submit_Serial")
-
 let tabla_consulta = document.getElementById('tabla_consulta').getElementsByTagName('tbody')[0];
+let line
 
-serial_num.focus()
 
-serial_num.addEventListener("keyup", check_qualifier)
+$(document).ready(function () {
+    part_num.focus()
+});
 
 btnCerrar.forEach(element => {
     element.addEventListener("click", cleanInput)
+
+
 });
 
-function check_qualifier() {
 
-    serial = serial_num.value;
-    material = serial_num.value;
+submitPartNumber.addEventListener("submit", (e) => {
+    e.preventDefault()
 
-    if (material.charAt(0) === "P" || material.charAt(0) === "p") {
-        if ((material.substring(1)).length > 11) {
-            soundOk()
-            $('#modalSerial').modal({ backdrop: 'static', keyboard: false })
+    let material= part_num.value
 
+    let lineaIndex=material.lastIndexOf("L")
+    let linea = material.substring(lineaIndex + 1);
+    line= linea
+
+        if ((material.charAt(0) === "P" || material.charAt(0) === "p") && lineaIndex > -1) {
+            if ((material.substring(1)).length > `5`) {
+                soundOk()
+         
+                $('#modalSerial').modal({ backdrop: 'static', keyboard: false })
+    
+                setTimeout(() => {
+                    verifySerial.focus()
+                }, 500);
+            }
+            else{
+                part_num.value=""
+                alerta_prefijo.classList.remove("animate__flipOutX", "animate__animated")
+                alerta_prefijo.classList.add("animate__flipInX", "animate__animated")
+                setTimeout(() => {
+                    alerta_prefijo.classList.remove("animate__flipInX", "animate__animated")
+                    alerta_prefijo.classList.add("animate__flipOutX", "animate__animated")
+                }, 2000);
+            }
+        } else {
+            part_num.value=""
+            value = true
+
+            alerta_prefijo.classList.remove("animate__flipOutX", "animate__animated")
+            alerta_prefijo.classList.add("animate__flipInX", "animate__animated")
             setTimeout(() => {
-                verifySerial.focus()
-            }, 500);
+                alerta_prefijo.classList.remove("animate__flipInX", "animate__animated")
+                alerta_prefijo.classList.add("animate__flipOutX", "animate__animated")
+            }, 2000);
+    
         }
-    } else {
-        value = true
-        soundOk()
-        alerta_prefijo.classList.remove("animate__flipInX", "animate__animated")
-        alerta_prefijo.classList.add("animate__flipOutX", "animate__animated")
 
-    }
-}
+})
 
 function cleanInput() {
-    serial_num.disabled = false
-    serial_num.value = ""
+    part_num.disabled = false
+    part_num.value = ""
     value = false
+    verifySerial.value=""
+
+    setTimeout(() => {
+        part_num.focus()
+    }, 500);
 }
 
-submit_Serial.addEventListener("submit", (e)=>{
+submit_Serial.addEventListener("submit", (e) => {
     e.preventDefault()
-    consultarMaterial()
+    let serial= verifySerial.value
+
+    if (serial.charAt(0) === "S" || serial.charAt(0) === "s") {
+        consultarMaterial()
+    }else{
+        verifySerial.value=""
+        alerta_prefijo2.classList.remove("animate__flipOutX", "animate__animated")
+        alerta_prefijo2.classList.add("animate__flipInX", "animate__animated")
+        setTimeout(() => {
+            alerta_prefijo2.classList.remove("animate__flipInX", "animate__animated")
+            alerta_prefijo2.classList.add("animate__flipOutX", "animate__animated")
+        }, 2000);
+    }
+
+
 })
 
 function consultarMaterial() {
 
     setTimeout(() => { $('#modalSerial').modal('hide') }, 500);
     $('#modalSpinner').modal({ backdrop: 'static', keyboard: false })
-    serial_num.disabled = true
-    let material_ =  material.substring(1)
-    let serial_num_ = verifySerial.value.substring(1)
+    part_num.disabled = true
+    let material_ = part_num.value.substring(1, part_num.value.lastIndexOf('L'));
+    let serial_= verifySerial.value.substring(1)
 
-    let data = { "process": "verify_rubber", "material": `${material_}`, "serial_num": `${serial_num_}`};
+    let data = { "process": "verify_rubber", "material": `${material_}`, "serial": `${serial_}`,"linea": `${line}` };
     axios({
         method: 'post',
         url: "/verificarHule",
@@ -84,171 +113,55 @@ function consultarMaterial() {
     })
         .then((result) => {
 
-            if ((result.data).includes("<!DOCTYPE html>")) {
 
-                setTimeout(() => {
-                    location.href = "/login"
-                }, 1000);
-                soundWrong()
+            response = JSON.parse(result.data)
+            soundOk()
+
+            let errors = 0
+            let arregloResultados=[]
+            if (response.error != "N/A") {
+                arregloResultados.push(response.error)
+                errors++
             }
 
-            let response = JSON.parse(result.data)
+            if (errors != 0) {
+                tabla_consulta.innerHTML = ""
+                arregloResultados.forEach(element => {
+                    let newRow = tabla_consulta.insertRow(tabla_consulta.rows.length);
+                    if (element.error != "N/A") {
+                        let row = `
+                                <tr class="bg-danger">
+                                    <td>${element}</td>
+                                </tr>
+                                `
+                        newRow.classList.add("bg-danger", "text-white")
+                        return newRow.innerHTML = row;
+                    }
 
-            if (response.error !== "N/A") {
-                soundWrong()
-                errorText.innerHTML = response.error
-                setTimeout(() => { $('#modalSpinner').modal('hide') }, 500);
-                $('#modalError').modal({ backdrop: 'static', keyboard: false })
+
+                })
+              
+                setTimeout(function () { 
+
+                    $('#modalSpinner').modal('hide')
+                    $('#modalError').modal({ backdrop: 'static', keyboard: false })
+                 }, 500);
+              
             } else {
 
-                let storage_bins = []
-                let arregloFinal = []
-                tabla_consulta.innerHTML = ""
-                soundOk()
-                let result = response.result
-
-                for (let i = 0; i < result.length; i++) {
-                    if (storage_bins.indexOf(result[i].storage_bin) === -1) {
-                        storage_bins.push(`${result[i].storage_bin}`)
-                    }
-                }
-
-
-                for (let i = 0; i < storage_bins.length; i++) {
-                    let count = 0
-                    let recentDate = ""
-                    for (let y = 0; y < result.length; y++) {
-                        if (storage_bins[i] == result[y].storage_bin) {
-                            count++
-                            if (recentDate < result[y].gr_date) {
-                                recentDate = result[y].gr_date
-                            }
-                        }
-                    }
-                    let push = { "storage_bin": `${storage_bins[i]}`, "count": `${count}`, "recentDate": `${recentDate}` }
-                    arregloFinal.push(push)
-
-                }
-
-                const arregloFinalSortDate = arregloFinal.sort((a, b) => b.recentDate - a.recentDate)
-                arregloFinalSortDate.forEach(element => {
-                    row = `
-                        <tr>
-                            <td>${element.storage_bin}</td>
-                            <td>${element.count}</td>
-                            <td>${element.recentDate}</td>
-                        </tr>
-                        `
-
-                    let newRow = tabla_consulta.insertRow(tabla_consulta.rows.length);
-                    return newRow.innerHTML = row;
-                });
-
                 $('#modalSpinner').modal('hide')
-                $('#myModal').modal({ backdrop: 'static', keyboard: false })
-
+                transferSuccess.innerHTML="Transfer Order Created: "+response.result
+                $('#modalSuccess').modal({ backdrop: 'static', keyboard: false })
             }
 
         })
         .catch((err) => { console.error(err) })
 
+
+
 }
 
 
-// submitSerial.addEventListener("submit", function (e) {
-//     e.preventDefault()
-
-//     if (value == true) {
-//         $('#modalSpinner').modal({ backdrop: 'static', keyboard: false })
-//         serial_num.disabled = true
-//         let serial_
-
-//         if (serial.substring(1).length < 10) {
-//             serial_ = `0${serial.substring(1)}`
-//         } else {
-//             serial_ = serial.substring(1)
-//         }
-
-//         let data = { "proceso": "location_mp_serial", "serial": `${serial_}`, "user_id": user_id.innerHTML };
-//         axios({
-//             method: 'post',
-//             url: "/getUbicaciones",
-//             headers: {
-//                 'Content-Type': 'application/json'
-//             },
-//             data: JSON.stringify(data)
-//         })
-//             .then((result) => {
-
-//                 if ((result.data).includes("<!DOCTYPE html>")) {
-
-//                     setTimeout(() => {
-//                         location.href = "/login"
-//                     }, 1000);
-//                     soundWrong()
-//                 }
-
-//                 let response = JSON.parse(result.data)
-
-//                 if (response.error !== "N/A") {
-//                     soundWrong()
-//                     errorText.innerHTML = response.error
-//                     setTimeout(() => { $('#modalSpinner').modal('hide') }, 500);
-//                     $('#modalError').modal({ backdrop: 'static', keyboard: false })
-//                 } else {
-
-//                     let storage_bins = []
-//                     let arregloFinal = []
-//                     tabla_consulta.innerHTML = ""
-//                     soundOk()
-//                     let result = response.result
-
-//                     for (let i = 0; i < result.length; i++) {
-//                         if (storage_bins.indexOf(result[i].storage_bin) === -1) {
-//                             storage_bins.push(`${result[i].storage_bin}`)
-//                         }
-//                     }
-
-
-//                     for (let i = 0; i < storage_bins.length; i++) {
-//                         let count = 0
-//                         let recentDate = ""
-//                         for (let y = 0; y < result.length; y++) {
-//                             if (storage_bins[i] == result[y].storage_bin) {
-//                                 count++
-//                                 if (recentDate < result[y].gr_date) {
-//                                     recentDate = result[y].gr_date
-//                                 }
-//                             }
-//                         }
-//                         let push = { "storage_bin": `${storage_bins[i]}`, "count": `${count}`, "recentDate": `${recentDate}` }
-//                         arregloFinal.push(push)
-
-//                     }
-
-//                     const arregloFinalSortDate = arregloFinal.sort((a, b) => b.recentDate - a.recentDate)
-//                     arregloFinalSortDate.forEach(element => {
-//                         row = `
-//                         <tr>
-//                             <td>${element.storage_bin}</td>
-//                             <td>${element.count}</td>
-//                             <td>${element.recentDate}</td>
-//                         </tr>
-//                         `
-
-//                         let newRow = tabla_consulta.insertRow(tabla_consulta.rows.length);
-//                         return newRow.innerHTML = row;
-//                     });
-
-//                     $('#modalSpinner').modal('hide')
-//                     $('#myModal').modal({ backdrop: 'static', keyboard: false })
-
-//                 }
-
-//             })
-//             .catch((err) => { console.error(err) })
-//     }
-// })
 
 
 
