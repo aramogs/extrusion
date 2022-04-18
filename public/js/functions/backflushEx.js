@@ -154,7 +154,7 @@ function submitSerials(e) {
     beginOF.innerHTML = 0
     endOF.innerHTML = serialsArray.length
     e.preventDefault()
-    
+
     $('#modalStorage').modal('hide')
     setTimeout(() => {
         soundOk()
@@ -177,52 +177,75 @@ function submitSerials(e) {
     })
         .then((result) => {
 
-            
+
             response = JSON.parse(result.data)
 
-            soundOk()
-            errorText.hidden = true
-            tabla_consulta_container.hidden = false
-            let arregloResultados = response.result
-            let errors = 0
-
-            arregloResultados.forEach(element => {
-                if (element.error != "N/A") {
-                    errors++
-                }
-            });
-
-            if (errors != 0) {
+            if (response.error != "N/A") {
                 tabla_consulta.innerHTML = ""
-                arregloResultados.forEach(element => {
                     let newRow = tabla_consulta.insertRow(tabla_consulta.rows.length);
-                    if (element.error != "N/A") {
+            
                         let row = `
+                                <tr class="bg-danger">
+                                    <td>N/A</td>
+                                    <td>${response.error}</td>
+                                </tr>
+                                `
+                        newRow.classList.add("bg-danger", "text-white")
+                        newRow.innerHTML = row;
+                
+
+                cantidadErrores.innerHTML = 1
+
+                setTimeout(function () {
+                    clearInterval(interval);
+                    $('#modalCountDown').modal('hide')
+                    $('#modalError').modal({ backdrop: 'static', keyboard: false })
+                }, 500);
+
+            } else {
+                soundOk()
+                errorText.hidden = true
+                tabla_consulta_container.hidden = false
+                let arregloResultados = response.result
+                let errors = 0
+
+                arregloResultados.forEach(element => {
+                    if (element.error != "N/A") {
+                        errors++
+                    }
+                });
+
+                if (errors != 0) {
+                    tabla_consulta.innerHTML = ""
+                    arregloResultados.forEach(element => {
+                        let newRow = tabla_consulta.insertRow(tabla_consulta.rows.length);
+                        if (element.error != "N/A") {
+                            let row = `
                                 <tr class="bg-danger">
                                     <td>${element.serial_num}</td>
                                     <td>${element.error}</td>
                                 </tr>
                                 `
-                        newRow.classList.add("bg-danger", "text-white")
-                        return newRow.innerHTML = row;
-                    }
+                            newRow.classList.add("bg-danger", "text-white")
+                            return newRow.innerHTML = row;
+                        }
 
 
-                })
-                cantidadErrores.innerHTML = errors
-              
-                setTimeout(function () { 
+                    })
+                    cantidadErrores.innerHTML = errors
+
+                    setTimeout(function () {
+                        clearInterval(interval);
+                        $('#modalCountDown').modal('hide')
+                        $('#modalError').modal({ backdrop: 'static', keyboard: false })
+                    }, 500);
+
+                } else {
                     clearInterval(interval);
                     $('#modalCountDown').modal('hide')
-                    $('#modalError').modal({ backdrop: 'static', keyboard: false })
-                 }, 500);
-              
-            } else {
-                clearInterval(interval);
-                $('#modalCountDown').modal('hide')
-                $('#modalSuccess').modal({ backdrop: 'static', keyboard: false })
+                    $('#modalSuccess').modal({ backdrop: 'static', keyboard: false })
+                }
             }
-            
         })
         .catch((err) => {
             console.error(err);
@@ -231,7 +254,7 @@ function submitSerials(e) {
 
 
 function verifyProcessBEx() {
-    
+
     let data = { "seriales": `${serialsArray}` };
     axios({
         method: 'post',
@@ -242,13 +265,13 @@ function verifyProcessBEx() {
         }
 
     })
-    .then(result =>{
-        beginOF.innerHTML = result.data.COUNT
-        endOF.innerHTML = serialsArray.length
-   
-    })
-    .catch(err =>{
-       
-        console.error(err);
-    })
- }
+        .then(result => {
+            beginOF.innerHTML = result.data.COUNT
+            endOF.innerHTML = serialsArray.length
+
+        })
+        .catch(err => {
+
+            console.error(err);
+        })
+}

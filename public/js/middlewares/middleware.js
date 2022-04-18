@@ -87,14 +87,28 @@ middleware.sspi = (req, res, next) => {
     });
 }
 
-middleware.remoteMAC = (req, res, next) => {
-    if (req.ip != "::1") {
-        macfromip.getMac((req.ip).replace(regex, ""), function (err, data) {
-            err ? console.log(err): res.locals.mac = {mac:data,ip: (req.ip).replace(regex, "")}; next()
-        });
+function validMac(mac) {
+    return /^[0-9a-f]{1,2}([.:-])[0-9a-f]{1,2}(?:\1[0-9a-f]{1,2}){4}$/.test(mac)
+}
+
+middleware.macFromIP = (req, res, next) => {
+    const regex = /::ffff:/gm;
+    let ip = (req.ip).replace(regex, "")
+    let localIp = (req.hostname).replace(regex, "")
+
+    if (ip === "::1" || ip === localIp) {
+        res.locals.macIP = { "mac": "00:00:00:00:00:00", "ip": "10.56.99.21" }; next()
     } else {
-        res.locals.mac = {mac:"X2-XX-XX-XX-XX-XX", ip: "10.56.99.200"}
-        next()
+        macfromip.getMac(ip, (err, mac) => {
+
+            if (err == "The IP address cannot be self") {/* DO NOTHING*/ }
+
+            if (!validMac(mac) || mac == "d8-ce-3a-88-c3-72") {
+                res.render('mac_invalida.ejs', { mac })
+            } else {
+                res.locals.macIP = { "mac": mac, "ip": ip }; next()
+            }
+        });
     }
 }
 

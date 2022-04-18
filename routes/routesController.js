@@ -280,7 +280,7 @@ controller.cargaProgramacion_GET = (req, res) => {
 
 
 
-function amqpRequest(data) {
+function amqpRequest(data, queue) {
     return new Promise((resolve, reject) => {
         let send = data
         let args = process.argv.slice(2);
@@ -324,7 +324,7 @@ function amqpRequest(data) {
                         noAck: true
                     });
 
-                    channel.sendToQueue('rpc_queue',
+                    channel.sendToQueue(queue,
                         Buffer.from(send.toString()), {
                         correlationId: correlationId,
                         replyTo: q.queue
@@ -544,6 +544,7 @@ controller.idplanImpresion_POST = (req, res) => {
 }
 
 controller.impresion_POST = (req, res) => {
+    let estacion = req.res.locals.macIP.mac
     let plan_id = req.body.plan_id
     let no_sap = req.body.no_sap
     let operador_id = req.res.locals.authData.id.id
@@ -560,9 +561,9 @@ controller.impresion_POST = (req, res) => {
 
     async function waitForPromise() {
         let process = "handling_ext"
-        let send = `{"plan_id":${plan_id},"serial_num":"","process":"${process}", "material":"${no_sap}",  "cantidad":${capacidad}, "numero_etiquetas":${etiquetas}, "station": "${linea}","impresoType":"${impresoType}","operator_name":"${operador_name}", "operator_id":${operador_id}}`
+        let send = `{"station": "${estacion}", "plan_id":${plan_id},"serial_num":"","process":"${process}", "material":"${no_sap}",  "cantidad":${capacidad}, "numero_etiquetas":${etiquetas}, "line": "${linea}","impresoType":"${impresoType}","operator_name":"${operador_name}", "operator_id":${operador_id}}`
         
-        amqpRequest(send)
+        amqpRequest(send, "rpc_ext_labels")
             .then(result => {
                 res.json(result)
             })
@@ -663,7 +664,7 @@ controller.cancelarSerialesRetorno_POST = (req, res) => {
     let seriales = req.body.seriales
     let motivo = req.body.motivo
     let arraySeriales = seriales.split(',')
-    let estacion = uuidv4();
+    let estacion = req.res.locals.macIP.mac
     let process = "transfer_ext_rp"
     let user_id = req.res.locals.authData.id.id
     let tipo = req.body.tipo
@@ -687,7 +688,7 @@ controller.cancelarSerialesRetorno_POST = (req, res) => {
 
         let send = `{"station":"${estacion}","serial_num":"","process":"${process}", "material":"",  "cantidad":"", "user_id": "${user_id}","data":${jsonInfo}}`
 
-        amqpRequest(send)
+        amqpRequest(send, "rpc_ext")
             .then((result) => {
                 async function updateAcred() {
                     let resultado = JSON.parse(result)
@@ -760,7 +761,7 @@ controller.procesarSeriales_POST = (req, res) => {
 
     let seriales = req.body.seriales
     let arraySeriales = seriales.split(',')
-    let estacion = uuidv4();
+    let estacion = req.res.locals.macIP.mac
     let process = "confirm_ext_hu"
     let user_id = req.res.locals.authData.id.id
     let user_name = req.res.locals.authData.id.username
@@ -783,7 +784,7 @@ controller.procesarSeriales_POST = (req, res) => {
             let info = await infoSeriales(arraySeriales)
             let jsonInfo = JSON.stringify(info)
             let send = `{"station":"${estacion}","serial_num":"","process":"${process}", "material":"",  "cantidad":"", "user_id":"${user_id}", "data":${jsonInfo}}`
-            amqpRequest(send)
+            amqpRequest(send, "rpc_ext")
                 .then((result) => {
                     async function updateAcred() {
                         let resultado = JSON.parse(result)
@@ -990,7 +991,7 @@ controller.transferenciaRP_POST = (req, res) => {
 
     let seriales = req.body.seriales
     let arraySeriales = seriales.split(',')
-    let estacion = uuidv4();
+    let estacion = req.res.locals.macIP.mac
     let process = "transfer_ext_rp"
     let user_id = req.res.locals.authData.id.id
     let user_name = req.res.locals.authData.id.username
@@ -1015,7 +1016,7 @@ controller.transferenciaRP_POST = (req, res) => {
 
             let send = `{"station":"${estacion}","serial_num":"","process":"${process}", "material":"",  "cantidad":"", "user_id": "${user_id}","data":${jsonInfo}}`
 
-            amqpRequest(send)
+            amqpRequest(send, "rpc_ext")
                 .then((result) => {
                     async function updateAcred() {
                         let resultado = JSON.parse(result)
@@ -1087,6 +1088,7 @@ controller.verifyProcessBEx_POST = (req, res) => {
 
 
 controller.impresionPR_POST = (req, res) => {
+    let estacion = req.res.locals.macIP.mac
     let plan_id = req.body.plan_id
     let no_sap = req.body.no_sap
     let operador_id = req.res.locals.authData.id.id
@@ -1106,8 +1108,8 @@ controller.impresionPR_POST = (req, res) => {
     async function waitForPromise() {
 
         let process = "storage_unit_ext_pr"
-        let send = `{"plan_id":${plan_id},"serial_num":"${serial_num}","process":"${process}", "material":"${no_sap}",  "cantidad":${capacidad}, "numero_etiquetas":${etiquetas}, "station": "${linea}","impresoType":"${impresoType}","operator_name":"${operador_name}", "operator_id":"${operador_id}"}`
-        amqpRequest(send)
+        let send = `{"station":"${estacion}", "plan_id":${plan_id},"serial_num":"${serial_num}","process":"${process}", "material":"${no_sap}",  "cantidad":${capacidad}, "numero_etiquetas":${etiquetas}, "line": "${linea}","impresoType":"${impresoType}","operator_name":"${operador_name}", "operator_id":"${operador_id}"}`
+        amqpRequest(send, "rpc_ext")
             .then(result => {
                 res.json(result)
             })
@@ -1153,24 +1155,19 @@ controller.cargaHule_GET = (req, res) => {
 }
 
 controller.verificarHule_POST = (req, res) => {
-    console.log(req.body);
-    console.log(req.res.locals.authData);
-
+    let station = req.res.locals.macIP.mac
     let process = req.body.process
     let no_sap = req.body.material
     let serial_num = req.body.serial
     let operador_id = req.res.locals.authData.id.id
     let operador_name = req.res.locals.authData.id.username
     let linea = req.body.linea
-    // TODO cambiar a MAC address cuando se cambie todo extrusion
-    // TODO cambiar a queue extrusion cuando se cambie todo extrusion
-    let station = "00:00:00:00:00:00"
-    
+   
 
     async function waitForPromise() {
 
         let send = `{"process":"${process}", "material":"${no_sap}", "serial_num":"${serial_num}",  "station": "${station}", "operator_name":"${operador_name}", "operator_id":"${operador_id}", "line":"${linea}"}`
-        amqpRequest(send)
+        amqpRequest(send, "rpc_ext")
             .then(result => {
                 res.json(result)
             })
