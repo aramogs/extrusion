@@ -97,13 +97,13 @@ middleware.macFromIP = (req, res, next) => {
     let localIp = (req.hostname).replace(regex, "")
 
     if (ip === "::1" || ip === localIp) {
-        res.locals.macIP = { "mac": "00:00:00:00:00:00", "ip": "10.56.99.21" }; next()
+        res.locals.macIP = { "mac": "00-00-00-00-00-00", "ip": "10.56.99.21" }; next()
     } else {
         macfromip.getMac(ip, (err, mac) => {
 
             if (err == "The IP address cannot be self") {/* DO NOTHING*/ }
 
-            if (!validMac(mac) || mac == "d8-ce-3a-88-c3-72") {
+            if (!validMac(mac)) {
                 res.render('mac_invalida.ejs', { mac })
             } else {
                 res.locals.macIP = { "mac": mac, "ip": ip }; next()
