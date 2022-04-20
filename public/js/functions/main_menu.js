@@ -28,13 +28,13 @@ btn_logoff.addEventListener("click",()=>{ document.cookie = "accessToken" + '=; 
 
 // SE REDIRIGE A PAGINA 3014 DE TRANSFERENCIAS
 btn_sfe_1.addEventListener("click", ()=>{
-    location.replace("http://10.56.99.201:3014/consultaEXT")
+    location.replace("http://10.56.99.21:3014/consultaEXT")
 })
 btn_sfe_2.addEventListener("click", ()=>{
-    location.replace("http://10.56.99.201:3014/transferEXT")
+    location.replace("http://10.56.99.21:3014/transferEXT")
 })
 btn_cce_1.addEventListener("click", ()=>{
-    location.replace("http://10.56.99.201:3014/conteo_ciclico/EXT")
+    location.replace("http://10.56.99.21:3014/conteo_ciclico/EXT")
 })
 
 btn_ce_1.addEventListener("click", ()=>{
