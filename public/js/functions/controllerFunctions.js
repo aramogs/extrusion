@@ -824,4 +824,7 @@ funcion.getInventario = () => {
             .catch((error) => { reject(error) })
     })
 }
+
+
+
 module.exports = funcion;

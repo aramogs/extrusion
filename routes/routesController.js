@@ -2,7 +2,6 @@
 const controller = {};
 
 let amqp = require('amqplib/callback_api');
-const { v4: uuidv4 } = require('uuid');
 const jwt = require('jsonwebtoken');
 const moment = require('moment')
 
@@ -11,7 +10,8 @@ const funcion = require('../public/js/functions/controllerFunctions');
 
 //Require ExcelJs
 const Excel = require('exceljs');
-
+//Require ExcelJs
+const axios = require('axios');
 
 
 
@@ -1177,6 +1177,110 @@ controller.verificarHule_POST = (req, res) => {
 
     }
     waitForPromise()
+}
+
+controller.consultaEXT_GET = (req, res) => {
+    let user_id = req.res.locals.authData.id.id
+    let user_name = req.res.locals.authData.id.username
+    res.render('consulta_ext.ejs', {
+        user_id,
+        user_name
+    })
+}
+
+controller.getUbicacionesEXTMandrel_POST = (req, res) => {
+
+    let estacion = req.res.locals.macIP.mac
+    let mandrel = req.body.mandrel
+    let proceso = req.body.proceso
+    let user_id = req.res.locals.authData.id.id
+
+    let send = `{
+        "station":"${estacion}",
+        "mandrel": "${mandrel}",
+        "process":"${proceso}", 
+        "user_id":"${user_id}"
+    }`
+
+    axios({
+        method: 'post',
+        url: `http://${process.env.API_ADDRESS}:3014/getUbicacionesEXTMandrel`,
+        headers: {
+            'Content-Type': 'application/json'
+        },
+        data: send
+    })
+        .then(result => { res.send(result.data) })
+        .catch(err => { res.json(JSON.stringify(err)) })
+}
+
+
+controller.getUbicacionesEXTSerial_POST = (req, res) => {
+    let estacion = req.res.locals.macIP.mac
+    let serial_num = req.body.serial
+    let proceso = req.body.proceso
+    let user_id = req.res.locals.authData.id.id
+
+
+
+    let send = `{
+            "station":"${estacion}",
+            "serial": "${serial_num}",
+            "process":"${proceso}", 
+            "user_id":"${user_id}"
+        }`
+
+        axios({
+            method: 'post',
+            url: `http://${process.env.API_ADDRESS}:3014/getUbicacionesEXTSerial`,
+            headers: {
+                'Content-Type': 'application/json'
+            },
+            data: send
+        })
+            .then(result => { res.send(result.data) })
+            .catch(err => { res.json(JSON.stringify(err)) })
+}
+
+controller.transferEXT_GET = (req, res) => {
+    let user_id = req.res.locals.authData.id.id
+    let user_name = req.res.locals.authData.id.username
+    res.render('transfer_ext.ejs', {
+        user_id,
+        user_name
+    })
+}
+
+controller.postSerialsEXT_POST = (req, res) => {
+    let estacion = req.res.locals.macIP.mac
+    let serial = req.body.serial
+    let material = null
+    let cantidad = null
+    let proceso = req.body.proceso
+    let storage_bin = req.body.storage_bin
+    let user_id = req.res.locals.authData.id.id
+
+
+    let send = `{
+            "station":"${estacion}",
+            "serial":"${serial}",
+            "material": "${material}",
+            "cantidad":"${cantidad}", 
+            "process":"${proceso}", 
+            "storage_bin": "${storage_bin}", 
+            "user_id":"${user_id}"
+        }`
+
+        axios({
+            method: 'post',
+            url: `http://${process.env.API_ADDRESS}:3014/postSerialesEXT`,
+            headers: {
+                'Content-Type': 'application/json'
+            },
+            data: send
+        })
+            .then(result => { res.json(result.data) })
+            .catch(err => { res.json(err) })
 }
 
 module.exports = controller;
