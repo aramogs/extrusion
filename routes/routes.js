@@ -56,4 +56,10 @@ router.post('/verificarHule',  middleware.verifyToken, middleware.macFromIP, rou
 router.get('/inventario', routesController.inventario_GET);
 router.post('/getInventario/', routesController.getInventario_POST);
 
+router.get('/consultaEXT',middleware.verifyToken, routesController.consultaEXT_GET);
+router.post("/getUbicacionesEXTMandrel",middleware.verifyToken, middleware.macFromIP, routesController.getUbicacionesEXTMandrel_POST);
+router.post("/getUbicacionesEXTSerial",middleware.verifyToken, middleware.macFromIP, routesController.getUbicacionesEXTSerial_POST);
+router.get('/transferEXT',middleware.verifyToken, routesController.transferEXT_GET);
+router.post('/postSerialesRedisEXT',middleware.verifyToken, middleware.macFromIP, routesController.postSerialsEXT_POST);
+
 module.exports = router;

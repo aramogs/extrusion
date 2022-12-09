@@ -28,10 +28,10 @@ btn_logoff.addEventListener("click",()=>{ document.cookie = "accessToken" + '=; 
 
 // SE REDIRIGE A PAGINA 3014 DE TRANSFERENCIAS
 btn_sfe_1.addEventListener("click", ()=>{
-    location.replace("http://10.56.99.21:3014/consultaEXT")
+    location.replace("/consultaEXT")
 })
 btn_sfe_2.addEventListener("click", ()=>{
-    location.replace("http://10.56.99.21:3014/transferEXT")
+    location.replace("/transferEXT")
 })
 btn_cce_1.addEventListener("click", ()=>{
     location.replace("http://10.56.99.21:3014/conteo_ciclico/EXT")
