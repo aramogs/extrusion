@@ -173,56 +173,104 @@ function submitSerials(e) {
         }
 
     })
-        .then((result) => {
+    .then((result) => {
+        let response = result.data
+        let errors = 0
+        soundOk()
+        errorText.hidden = true
+        tabla_consulta_container.hidden = false
 
-
-            response = JSON.parse(result.data)
-            soundOk()
-            errorText.hidden = true
-            tabla_consulta_container.hidden = false
-            
-            let result_ = response.result
-            
-            let errors = 0
-
-            result_.forEach(element => {
-                if (element.error != "N/A") {
-                    errors++
-                }
-            });
-
-            if (errors != 0) {
-                tabla_consulta.innerHTML = ""
-                result_.forEach(element => {
-                    let newRow = tabla_consulta.insertRow(tabla_consulta.rows.length);
-                    if (element.error != "N/A") {
-                        let row = `
-                                <tr class="bg-danger">
-                                    <td>${element.serial}</td>
-                                    <td>${element.error}</td>
-                                </tr>
-                                `
-                        newRow.classList.add("bg-danger", "text-white")
-                        return newRow.innerHTML = row;
-                    }
-
-
-                })
-                cantidadErrores.innerHTML = errors
-
-                setTimeout(function () {
-                    $('#modalSpinner').modal('hide')
-                    $('#modalError').modal({ backdrop: 'static', keyboard: false })
-                }, 500);
-
+        tabla_consulta.innerHTML = ""
+        response.forEach(element => {
+            let newRow = tabla_consulta.insertRow(tabla_consulta.rows.length);
+            if (element.name || element.key) {
+                let row = `
+                <tr class="bg-danger">
+                    <td>${element.abapMsgV1}</td>
+                    <td>${element.key ? element.key : element.message}</td>
+                </tr>
+                `
+                newRow.classList.add("bg-danger", "text-white")
+                errors++
+                return newRow.innerHTML = row;
             } else {
-                $('#modalSpinner').modal('hide')
-                $('#modalSuccess').modal({ backdrop: 'static', keyboard: false })
+                let row = `
+                <tr >
+                    <td>${(element.I_LENUM).replace(/^0+/gm, "")}</td>
+                    <td>${element.E_TANUM}</td>
+                </tr>
+                `
+
+                return newRow.innerHTML = row;
             }
 
+
         })
-        .catch((err) => {
-            console.error(err);
-        })
+        cantidadErrores.innerHTML = errors
+
+        setTimeout(function () {
+            $('#modalSpinner').modal('hide')
+            $('#modalError').modal({ backdrop: 'static', keyboard: false })
+        }, 500);
+
+    })
+    .catch(err => {
+
+        setTimeout(function () {
+            cantidadErrores.innerHTML = err
+            $('#modalSpinner').modal('hide')
+            $('#modalError').modal({ backdrop: 'static', keyboard: false })
+        }, 500);
+    })
+        // .then((result) => {
+
+        //     response = JSON.parse(result.data)
+        //     soundOk()
+        //     errorText.hidden = true
+        //     tabla_consulta_container.hidden = false
+            
+        //     let result_ = response.result
+            
+        //     let errors = 0
+
+        //     result_.forEach(element => {
+        //         if (element.error != "N/A") {
+        //             errors++
+        //         }
+        //     });
+
+        //     if (errors != 0) {
+        //         tabla_consulta.innerHTML = ""
+        //         result_.forEach(element => {
+        //             let newRow = tabla_consulta.insertRow(tabla_consulta.rows.length);
+        //             if (element.error != "N/A") {
+        //                 let row = `
+        //                         <tr class="bg-danger">
+        //                             <td>${element.serial}</td>
+        //                             <td>${element.error}</td>
+        //                         </tr>
+        //                         `
+        //                 newRow.classList.add("bg-danger", "text-white")
+        //                 return newRow.innerHTML = row;
+        //             }
+
+
+        //         })
+        //         cantidadErrores.innerHTML = errors
+
+        //         setTimeout(function () {
+        //             $('#modalSpinner').modal('hide')
+        //             $('#modalError').modal({ backdrop: 'static', keyboard: false })
+        //         }, 500);
+
+        //     } else {
+        //         $('#modalSpinner').modal('hide')
+        //         $('#modalSuccess').modal({ backdrop: 'static', keyboard: false })
+        //     }
+
+        // })
+        // .catch((err) => {
+        //     console.error(err);
+        // })
 }
 

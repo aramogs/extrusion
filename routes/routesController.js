@@ -659,49 +659,49 @@ controller.cancelarSeriales_POST = (req, res) => {
         .catch((err) => { console.error(err) })
 }
 
-controller.cancelarSerialesRetorno_POST = (req, res) => {
+// controller.cancelarSerialesRetorno_POST = (req, res) => {
 
-    let seriales = req.body.seriales
-    let motivo = req.body.motivo
-    let arraySeriales = seriales.split(',')
-    let estacion = req.res.locals.macIP.mac
-    let process = "transfer_ext_rp"
-    let user_id = req.res.locals.authData.id.id
-    let tipo = req.body.tipo
-    let user
-    if (tipo == "retorno") {
-        user = req.body.user
-    } else {
-        user = (req.connection.user).substring(3)
-    }
-
-
-    funcion.cancelarSeriales(arraySeriales, motivo, user)
-        .then((result) => { })
-        .catch((err) => { console.error(err) })
+//     let seriales = req.body.seriales
+//     let motivo = req.body.motivo
+//     let arraySeriales = seriales.split(',')
+//     let estacion = req.res.locals.macIP.mac
+//     let process = "transfer_ext_rp"
+//     let user_id = req.res.locals.authData.id.id
+//     let tipo = req.body.tipo
+//     let user
+//     if (tipo == "retorno") {
+//         user = req.body.user
+//     } else {
+//         user = (req.connection.user).substring(3)
+//     }
 
 
-    async function getStatus() {
+//     funcion.cancelarSeriales(arraySeriales, motivo, user)
+//         .then((result) => { })
+//         .catch((err) => { console.error(err) })
 
-        let info = await infoSeriales(arraySeriales)
-        let jsonInfo = JSON.stringify(info)
 
-        let send = `{"station":"${estacion}","serial_num":"","process":"${process}", "material":"",  "cantidad":"", "user_id": "${user_id}","data":${jsonInfo}}`
+//     async function getStatus() {
 
-        amqpRequest(send, "rpc_ext")
-            .then((result) => {
-                async function updateAcred() {
-                    let resultado = JSON.parse(result)
-                    res.json(result)
-                }
-                updateAcred()
+//         let info = await infoSeriales(arraySeriales)
+//         let jsonInfo = JSON.stringify(info)
 
-            })
-            .catch((err) => { console.error(err) })
-    }
-    getStatus()
+//         let send = `{"station":"${estacion}","serial_num":"","process":"${process}", "material":"",  "cantidad":"", "user_id": "${user_id}","data":${jsonInfo}}`
 
-}
+//         amqpRequest(send, "rpc_ext")
+//             .then((result) => {
+//                 async function updateAcred() {
+//                     let resultado = JSON.parse(result)
+//                     res.json(result)
+//                 }
+//                 updateAcred()
+
+//             })
+//             .catch((err) => { console.error(err) })
+//     }
+//     getStatus()
+
+// }
 
 
 
@@ -987,48 +987,32 @@ controller.transferPR_GET = (req, res) => {
     })
 }
 
+
 controller.transferenciaRP_POST = (req, res) => {
 
     let seriales = req.body.seriales
-    let arraySeriales = seriales.split(',')
+    // let arraySeriales = seriales.split(',')
     let estacion = req.res.locals.macIP.mac
-    let process = "transfer_ext_rp"
+    let proceso = "transfer_ext_rp"
     let user_id = req.res.locals.authData.id.id
     let user_name = req.res.locals.authData.id.username
+    let send = `{
+        "station":"${estacion}",
+        "serial": "${seriales}",
+        "process":"${proceso}", 
+        "user_id":"${user_id}"
+    }`
 
-    async function getStatus() {
-
-        let allStatus = await statusSeriales(arraySeriales)
-        let checkStatus = await checkAllStatus(allStatus, "Acreditado")
-
-        if (checkStatus.length > 0) {
-
-            let obj = {}
-            obj['result'] = checkStatus
-            obj['error'] = "N/A"
-            res.json(JSON.stringify(obj))
-
-        } else {
-
-
-            let info = await infoSeriales(arraySeriales)
-            let jsonInfo = JSON.stringify(info)
-
-            let send = `{"station":"${estacion}","serial_num":"","process":"${process}", "material":"",  "cantidad":"", "user_id": "${user_id}","data":${jsonInfo}}`
-
-            amqpRequest(send, "rpc_ext")
-                .then((result) => {
-                    async function updateAcred() {
-                        let resultado = JSON.parse(result)
-                        res.json(result)
-                    }
-                    updateAcred()
-
-                })
-                .catch((err) => { console.error(err) })
-        }
-    }
-    getStatus()
+    axios({
+        method: 'post',
+        url: `http://${process.env.API_ADDRESS}:3014/transferEXTRP`,
+        headers: {
+            'Content-Type': 'application/json'
+        },
+        data: send
+    })
+        .then(result => { res.send(result.data) })
+        .catch(err => { res.json(JSON.stringify(err)) })
 
 }
 
@@ -1103,22 +1087,22 @@ controller.impresionPR_POST = (req, res) => {
     let impresoType = req.body.impresoType
 
 
-
-
-    async function waitForPromise() {
-
-        let process = "storage_unit_ext_pr"
-        let send = `{"station":"${estacion}", "plan_id":${plan_id},"serial_num":"${serial_num}","process":"${process}", "material":"${no_sap}",  "cantidad":${capacidad}, "numero_etiquetas":${etiquetas}, "line": "${linea}","impresoType":"${impresoType}","operator_name":"${operador_name}", "operator_id":"${operador_id}"}`
-        amqpRequest(send, "rpc_ext")
-            .then(result => {
-                res.json(result)
-            })
-            .catch(err => {
-                console.error(err);
-            })
-
-    }
-    waitForPromise()
+    let send = `{
+        "station":"${estacion}",
+        "cantidad": "${cantidad}",
+        "material":"${no_sap}",
+        "operador_name":"${operador_name}" 
+    }`
+    axios({
+        method: 'post',
+        url: `http://${process.env.API_ADDRESS}:3014/transferEXTPR`,
+        headers: {
+            'Content-Type': 'application/json'
+        },
+        data: send
+    })
+        .then(result => { res.send(result.data) })
+        .catch(err => { res.json(JSON.stringify(err)) })
 }
 
 controller.confirmacionPR_POST = (req, res) => {
@@ -1144,6 +1128,42 @@ controller.confirmacionPR_POST = (req, res) => {
     }
     getStatus()
 }
+
+controller.auditoriaProduccion_GET = (req, res) => {
+    let estacion = req.res.locals.macIP.mac
+    let user_id = req.res.locals.authData.id.id
+    let user_name = req.res.locals.authData.id.username
+    res.render('auditoria_produccion.ejs', {
+        user_id,
+        user_name,
+        estacion
+    });
+}
+
+controller.auditoriaEXT_POST = (req, res) => {
+    let estacion = req.res.locals.macIP.mac
+    let serial = req.body.serial
+    let proceso = req.body.proceso
+    let user_id = req.res.locals.authData.id.id
+
+    let send = `{
+            "station":"${estacion}",
+            "serial":"${serial}",
+            "process":"${proceso}", 
+            "user_id":"${user_id}"
+        }`
+    axios({
+        method: 'post',
+        url: `http://${process.env.API_ADDRESS}:3014/auditoriaEXT`,
+        headers: {
+            'Content-Type': 'application/json'
+        },
+        data: send
+    })
+        .then(result => { res.send(result.data) })
+        .catch(err => { res.json(JSON.stringify(err)) })
+}
+
 
 controller.cargaHule_GET = (req, res) => {
     let user_id = req.res.locals.authData.id.id

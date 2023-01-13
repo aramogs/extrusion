@@ -1,5 +1,3 @@
-
-
 let serial_num = document.getElementById("serial_num")
 let alerta_prefijo = document.getElementById("alerta_prefijo")
 let alerta_prefijo_confirm = document.getElementById("alerta_prefijo_confirm")
@@ -63,8 +61,6 @@ return_cantidad.addEventListener("keyup", checkCantidad)
 submitMaterial_form.addEventListener("submit", submitMaterial)
 
 
-
-
 function cleanInput() {
     serial_num.disabled = false
     serial_num.value = ""
@@ -77,7 +73,6 @@ function cleanInput() {
 
 }
 
-
 function listAdd(e) {
     e.preventDefault()
 
@@ -88,29 +83,6 @@ function listAdd(e) {
         soundOk()
         material = (serial_num.value).substring(1)
         consultarMaterial();
-        
-    } else if (serial.charAt(0) !== "S" && serial.charAt(0) !== "s" || (serial.substring(1)).length < 9 || regex.exec(serial.substring(1)) !== null) {
-        soundWrong()
-        alerta_prefijo.classList.remove("animate__flipOutX", "animate__animated")
-        alerta_prefijo.classList.add("animate__flipInX", "animate__animated")
-        serial_num.value = ""
-
-        setTimeout(() => {
-            alerta_prefijo.classList.remove("animate__flipInX", "animate__animated")
-            alerta_prefijo.classList.add("animate__flipOutX", "animate__animated")
-        }, 2000);
-
-
-    } else if (serialsArray.indexOf((serial_num.value).substring(1)) === -1 && serialsArray.indexOf(`0${(serial_num.value).substring(1)}`) === -1) {
-        soundOk()
-        if ((serial_num.value).substring(1).length < 10) {
-            serialsArray.push(`0${(serial_num.value).substring(1)}`)
-        } else {
-            serialsArray.push((serial_num.value).substring(1))
-        }
-
-        consultarSerial();
-
     } else {
         soundWrong()
         alerta_prefijo.classList.remove("animate__flipOutX", "animate__animated")
@@ -123,8 +95,6 @@ function listAdd(e) {
         }, 2000);
     }
 }
-
-
 
 function submitSerials(e) {
 
@@ -227,28 +197,25 @@ function submitMaterial(e) {
 
     })
         .then((result) => {
-            
-            response = JSON.parse(result.data)
-            
-            if (response.error !== "N/A") {
-                
-                tabla_consulta.innerHTML = ""
 
+            response = result.data
+            
+            if (response.key) {
+                tabla_consulta.innerHTML = ""
                 let newRow = tabla_consulta.insertRow(tabla_consulta.rows.length);
 
                 let row = `
                                 <tr class="bg-danger">
                                     <td>N/A</td>
-                                    <td>${response.error}</td>
+                                    <td>${response.key}</td>
                                 </tr>
                                 `
                 newRow.innerHTML = row
                 newRow.classList.add("bg-danger", "text-white")
-
                 cantidadErrores.innerHTML = "1"
-
-                $('#modalSpinner').modal('hide')
+                
                 setTimeout(function () {
+                    $('#modalSpinner').modal('hide')
                     $('#modalError').modal({ backdrop: 'static', keyboard: false })
                 }, 500);
 
@@ -259,7 +226,7 @@ function submitMaterial(e) {
                 setTimeout(function () {
                     $('#modalSerialSuccess').modal({ backdrop: 'static', keyboard: false })
                     tituloSuccess.innerHTML = `<h2><span class="badge badge-info"><pan class="fas fa-barcode"></span></span> Confirmar Serial:</h2>`
-                    cantidadSuccess.innerHTML = `${response.serial}`
+                    cantidadSuccess.innerHTML = `${parseInt(response.NLENR)}`
                     confirmSerial.focus()
                 }, 1200);
     
@@ -273,69 +240,6 @@ function submitMaterial(e) {
             console.error(err);
         })
 }
-
-function consultarSerial() {
-
-    let data = { "serial": `${serialsArray}` };
-    axios({
-        method: 'post',
-        url: "/getAllInfoSerial",
-        data: JSON.stringify(data),
-        headers: {
-            'Content-Type': 'application/json'
-        }
-
-    })
-        .then((result) => {
-
-            response = result.data[0]
-            if (response.error == undefined) {
-
-
-                
-                
-
-                $('#modalEditar').modal({ backdrop: 'static', keyboard: false })
-
-                meplan.innerHTML = response.plan_id
-                mesap.innerHTML = response.numero_parte
-                mecantidad.innerHTML = response.cantidad
-                mefecha.innerHTML = response.datetime
-                
-                setTimeout(function() { return_cantidad.focus() }, 500);
-
-
-            } else {
-                //errorMessage(response.error)
-                tabla_consulta.innerHTML = ""
-                let newRow = tabla_consulta.insertRow(tabla_consulta.rows.length);
-
-                let row = `
-                                <tr class="bg-danger">
-                                    <td>${response.serial_num}</td>
-                                    <td>${response.error}</td>
-                                </tr>
-                                `
-                newRow.innerHTML = row
-                newRow.classList.add("bg-danger", "text-white")
-
-                cantidadErrores.innerHTML = "1"
-
-                $('#modalSpinner').modal('hide')
-                setTimeout(function () {
-                    $('#modalError').modal({ backdrop: 'static', keyboard: false })
-                }, 500);
-
-            }
-            serialsArray = []
-            //serial_num.value=""
-
-        })
-        .catch((err) => {
-            console.error(err);
-        })
-}
-
 
 function consultarMaterial() {
 
@@ -383,14 +287,12 @@ function consultarMaterial() {
 
             }
             materialArray = []
-            //serial_num.value=""
 
         })
         .catch((err) => {
             console.error(err);
         })
 }
-
 
 function errorMessage(message) {
 
@@ -420,9 +322,6 @@ function checkCantidad() {
 
 
 }
-
-
-
 
 function confirmSerialFunc(e) {
 
@@ -477,7 +376,7 @@ function cancelSerial() {
     let data = { "seriales": `${cantidadSuccess.innerHTML}`, "motivo": `Retorno Cancelado`, "tipo": `retorno`, "user": `${user_id.innerHTML}` };
     axios({
         method: 'post',
-        url: "/cancelarSerialesRetorno",
+        url: "/transferenciaRP",
         data: JSON.stringify(data),
         headers: {
             'Content-Type': 'application/json'
