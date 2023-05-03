@@ -38,7 +38,7 @@ btn_ap_1.addEventListener("click", ()=>{
     location.replace("/auditoriaProduccionEXT")
 })
 btn_cce_1.addEventListener("click", ()=>{
-    location.replace("http://10.56.99.21:3014/conteo_ciclico/EXT")
+    location.replace("/conteo_ciclico/EXT")
 })
 
 btn_ce_1.addEventListener("click", ()=>{

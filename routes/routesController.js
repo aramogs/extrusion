@@ -12,6 +12,7 @@ const funcion = require('../public/js/functions/controllerFunctions');
 const Excel = require('exceljs');
 //Require ExcelJs
 const axios = require('axios');
+const { get } = require('jquery');
 
 
 
@@ -421,7 +422,6 @@ controller.impresion_GET = (req, res) => {
     let currentShift
     async function waitForPromise() {
         let getTurnos = await funcion.getTurnosAll()
-
         if (moment().weekday() === 6) {
             getTurnos.splice(0, 1)
             getTurnos.splice(2, 1)
@@ -435,7 +435,7 @@ controller.impresion_GET = (req, res) => {
 
             let start = moment(element.turno_inicio, 'HH:mm:ss')
             let end = moment(element.turno_final, 'HH:mm:ss')
-
+           
             if (end.isBetween(start_midnight, end_midnight)) {
 
                 if (timeNow.isBetween(start_midnight, end)) {
@@ -455,7 +455,7 @@ controller.impresion_GET = (req, res) => {
         });
 
         todayDate = todayDate.format("YYYY-MM-DD")
-
+        console.log(currentShift, timeNow);
         funcion.getProgramacionTurno(todayDate, currentShift)
             .then((result) => {
                 turnos = result
@@ -1303,4 +1303,86 @@ controller.postSerialsEXT_POST = (req, res) => {
             .catch(err => { res.json(err) })
 }
 
+controller.conteoC_GET = (req, res) => {
+    let estacion = req.res.locals.macIP.mac
+    let storage_type = req.params.storage_type
+    let user_id = req.res.locals.authData.id.id
+    let user_name = req.res.locals.authData.id.username
+    res.render('conteoC.ejs', {
+        user_id,
+        user_name,
+        storage_type,
+        estacion
+    })
+}
+
+// TODO CAMBIAR A RFC
+controller.getBinStatusReport_POST = (req, res) => {
+    let estacion = req.res.locals.macIP.mac
+
+    let proceso = req.body.proceso
+    let storage_bin = req.body.storage_bin
+    let user_id = req.res.locals.authData.id.id
+    let storage_type = req.body.storage_type
+
+    let send = `{
+        "estacion":"${estacion}",
+        "process":"${proceso}",  
+        "storage_bin": "${storage_bin}", 
+        "user_id":"${user_id}",
+        "storage_type":"${storage_type}" 
+    }`
+
+    axios({
+        method: 'post',
+        url: `http://${process.env.API_ADDRESS}:3014/getBinStatusReportEXT`,
+        headers: {
+            'Content-Type': 'application/json'
+        },
+        data: send
+    })
+        .then(result => { res.send(result.data) })
+        .catch(err => { res.json(JSON.stringify(err))})
+
+    // amqpRequest(send, "rpc_cycle")
+    //     .then((result) => { res.json(result) })
+    //     .catch((err) => { res.json(err) })
+}
+
+controller.postCycleSU_POST = (req, res) => {
+    console.log(req.body);
+    let estacion = req.res.locals.macIP.mac
+
+    let storage_bin = req.body.storage_bin
+    let user_id = req.body.user_id
+    let storage_type = req.body.storage_type
+    let listed_storage_units = req.body.listed_storage_units
+    let unlisted_storage_units = req.body.unlisted_storage_units
+    let not_found_storage_units = req.body.not_found_storage_units
+
+    let send = `{
+        "estacion":"${estacion}", 
+        "storage_bin": "${storage_bin}", 
+        "user_id":"${user_id}",
+        "storage_type":"${storage_type}",
+        "listed_storage_units":"${listed_storage_units}",
+        "unlisted_storage_units":"${unlisted_storage_units}",
+        "not_found_storage_units":"${not_found_storage_units}" 
+    }`
+
+    axios({
+        method: 'post',
+        url: `http://${process.env.API_ADDRESS}:3014/postCycleSUEXT`,
+        headers: {
+            'Content-Type': 'application/json'
+        },
+        data: send
+    })
+        .then(result => { res.send(result.data) })
+        .catch(err => { res.json(JSON.stringify(err))})
+
+    // amqpRequest(send, "rpc_cycle")
+    //     .then((result) => { res.json(result) })
+    //     .catch((err) => { res.json(err) })
+}
 module.exports = controller;

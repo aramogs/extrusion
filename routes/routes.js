@@ -55,6 +55,10 @@ router.post('/auditoriaEXT',middleware.verifyToken, middleware.macFromIP, routes
 router.get('/cargaHule',middleware.verifyToken, routesController.cargaHule_GET);
 router.post('/verificarHule',  middleware.verifyToken, middleware.macFromIP, routesController.verificarHule_POST);
 
+router.get('/conteo_ciclico/:storage_type',middleware.verifyToken, middleware.macFromIP, routesController.conteoC_GET);
+router.post("/getBinStatusReport",middleware.verifyToken, middleware.macFromIP, routesController.getBinStatusReport_POST);
+router.post("/postCycleSU",middleware.verifyToken, middleware.macFromIP, routesController.postCycleSU_POST);
+
 router.get('/inventario', routesController.inventario_GET);
 router.post('/getInventario/', routesController.getInventario_POST);
 
@@ -63,5 +67,7 @@ router.post("/getUbicacionesEXTMandrel",middleware.verifyToken, middleware.macFr
 router.post("/getUbicacionesEXTSerial",middleware.verifyToken, middleware.macFromIP, routesController.getUbicacionesEXTSerial_POST);
 router.get('/transferEXT',middleware.verifyToken, routesController.transferEXT_GET);
 router.post('/postSerialesRedisEXT',middleware.verifyToken, middleware.macFromIP, routesController.postSerialsEXT_POST);
+
+
 
 module.exports = router;
