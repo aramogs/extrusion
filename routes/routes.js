@@ -66,7 +66,7 @@ router.get('/consultaEXT',middleware.verifyToken, routesController.consultaEXT_G
 router.post("/getUbicacionesEXTMandrel",middleware.verifyToken, middleware.macFromIP, routesController.getUbicacionesEXTMandrel_POST);
 router.post("/getUbicacionesEXTSerial",middleware.verifyToken, middleware.macFromIP, routesController.getUbicacionesEXTSerial_POST);
 router.get('/transferEXT',middleware.verifyToken, routesController.transferEXT_GET);
-router.post('/postSerialesRedisEXT',middleware.verifyToken, middleware.macFromIP, routesController.postSerialsEXT_POST);
+router.post('/postSerialesEXT',middleware.verifyToken, middleware.macFromIP, routesController.postSerialsEXT_POST);
 
 
 

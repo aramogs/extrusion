@@ -223,7 +223,7 @@ function transferEXT(e) {
     // let interval = setInterval(verify_hashRedis, 800);
     axios({
         method: 'post',
-        url: "/postSerialesRedisEXT",
+        url: "/postSerialesEXT",
         headers: {
             'Content-Type': 'application/json'
         },

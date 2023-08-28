@@ -1316,7 +1316,7 @@ controller.conteoC_GET = (req, res) => {
     })
 }
 
-// TODO CAMBIAR A RFC
+
 controller.getBinStatusReport_POST = (req, res) => {
     let estacion = req.res.locals.macIP.mac
 

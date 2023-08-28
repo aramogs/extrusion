@@ -248,7 +248,7 @@ function auditoriaProd(e) {
             tabla_consulta.innerHTML = ""
             response.forEach(element => {
                 let newRow = tabla_consulta.insertRow(tabla_consulta.rows.length);
-                if (element.name) {
+                if (element.key) {
                     let row = `
                     <tr class="bg-danger">
                         <td>${element.abapMsgV1}</td>
