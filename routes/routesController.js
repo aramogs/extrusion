@@ -12,8 +12,8 @@ const funcion = require('../public/js/functions/controllerFunctions');
 const Excel = require('exceljs');
 //Require ExcelJs
 const axios = require('axios');
-const { get } = require('jquery');
 
+require('dotenv').config();
 
 
 controller.index_GET = (req, res) => {
@@ -89,7 +89,7 @@ controller.userAccess_POST = (req, res) => {
 function accessToken(user_id, user_name) {
     return new Promise((resolve, reject) => {
         const id = { id: `${user_id}`, username: `${user_name}` }
-        jwt.sign({ id }, `tristone`, {/*expiresIn: '1h'*/}, (err, token) => {
+        jwt.sign({ id }, `tristone`, {/*expiresIn: '1h'*/ }, (err, token) => {
             resolve(token)
             reject(err)
         })
@@ -435,7 +435,7 @@ controller.impresion_GET = (req, res) => {
 
             let start = moment(element.turno_inicio, 'HH:mm:ss')
             let end = moment(element.turno_final, 'HH:mm:ss')
-           
+
             if (end.isBetween(start_midnight, end_midnight)) {
 
                 if (timeNow.isBetween(start_midnight, end)) {
@@ -450,7 +450,7 @@ controller.impresion_GET = (req, res) => {
 
             if (timeNow.isBetween(start, end)) {
 
-                currentShift = (element.turno_descripcion).substring(0, 2);           
+                currentShift = (element.turno_descripcion).substring(0, 2);
             }
         });
 
@@ -559,20 +559,32 @@ controller.impresion_POST = (req, res) => {
     let impresoType = req.body.impresoType
 
 
-    async function waitForPromise() {
-        let process = "handling_ext"
-        let send = `{"station": "${estacion}", "plan_id":${plan_id},"serial_num":"","process":"${process}", "material":"${no_sap}",  "cantidad":${capacidad}, "numero_etiquetas":${etiquetas}, "line": "${linea}","impresoType":"${impresoType}","operator_name":"${operador_name}", "operator_id":${operador_id}}`
-        
-        amqpRequest(send, "rpc_ext_labels")
-            .then(result => {
-                res.json(result)
-            })
-            .catch(err => {
-                console.error(err);
-            })
 
-    }
-    waitForPromise()
+    // async function waitForPromise() {
+        let process_ = "handling_ext"
+        let send = `{"station": "${estacion}", "plan_id":${plan_id},"serial_num":"","process":"${process_}", "material":"${no_sap}",  "cantidad":${capacidad}, "numero_etiquetas":${etiquetas}, "line": "${linea}","impresoType":"${impresoType}","operator_name":"${operador_name}", "operator_id":${operador_id}}`
+
+    //     amqpRequest(send, "rpc_ext_labels")
+    //         .then(result => {
+    //             res.json(result)
+    //         })
+    //         .catch(err => {
+    //             console.error(err);
+    //         })
+
+    // }
+    // waitForPromise()
+
+    axios({
+        method: 'post',
+        url: `http://${process.env.API_ADDRESS}:3014/handlingEXT`,
+        headers: {
+            'Content-Type': 'application/json'
+        },
+        data: send
+    })
+        .then(result => { res.send(result.data) })
+        .catch(err => { res.json(JSON.stringify(err)) })
 }
 
 
@@ -1182,7 +1194,7 @@ controller.verificarHule_POST = (req, res) => {
     let operador_id = req.res.locals.authData.id.id
     let operador_name = req.res.locals.authData.id.username
     let linea = req.body.linea
-   
+
 
     async function waitForPromise() {
 
@@ -1250,16 +1262,16 @@ controller.getUbicacionesEXTSerial_POST = (req, res) => {
             "user_id":"${user_id}"
         }`
 
-        axios({
-            method: 'post',
-            url: `http://${process.env.API_ADDRESS}:3014/getUbicacionesEXTSerial`,
-            headers: {
-                'Content-Type': 'application/json'
-            },
-            data: send
-        })
-            .then(result => { res.send(result.data) })
-            .catch(err => { res.json(JSON.stringify(err)) })
+    axios({
+        method: 'post',
+        url: `http://${process.env.API_ADDRESS}:3014/getUbicacionesEXTSerial`,
+        headers: {
+            'Content-Type': 'application/json'
+        },
+        data: send
+    })
+        .then(result => { res.send(result.data) })
+        .catch(err => { res.json(JSON.stringify(err)) })
 }
 
 controller.transferEXT_GET = (req, res) => {
@@ -1291,16 +1303,16 @@ controller.postSerialsEXT_POST = (req, res) => {
             "user_id":"${user_id}"
         }`
 
-        axios({
-            method: 'post',
-            url: `http://${process.env.API_ADDRESS}:3014/postSerialesEXT`,
-            headers: {
-                'Content-Type': 'application/json'
-            },
-            data: send
-        })
-            .then(result => { res.json(result.data) })
-            .catch(err => { res.json(err) })
+    axios({
+        method: 'post',
+        url: `http://${process.env.API_ADDRESS}:3014/postSerialesEXT`,
+        headers: {
+            'Content-Type': 'application/json'
+        },
+        data: send
+    })
+        .then(result => { res.json(result.data) })
+        .catch(err => { res.json(err) })
 }
 
 controller.conteoC_GET = (req, res) => {
@@ -1342,7 +1354,7 @@ controller.getBinStatusReport_POST = (req, res) => {
         data: send
     })
         .then(result => { res.send(result.data) })
-        .catch(err => { res.json(JSON.stringify(err))})
+        .catch(err => { res.json(JSON.stringify(err)) })
 
     // amqpRequest(send, "rpc_cycle")
     //     .then((result) => { res.json(result) })
@@ -1379,7 +1391,7 @@ controller.postCycleSU_POST = (req, res) => {
         data: send
     })
         .then(result => { res.send(result.data) })
-        .catch(err => { res.json(JSON.stringify(err))})
+        .catch(err => { res.json(JSON.stringify(err)) })
 
     // amqpRequest(send, "rpc_cycle")
     //     .then((result) => { res.json(result) })

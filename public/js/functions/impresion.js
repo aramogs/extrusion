@@ -340,74 +340,105 @@ function impresion(e) {
     headers: { 'content-type': 'application/json' }
   })
     .then((result) => {
-      
-      response = JSON.parse(result.data)
+      let response = result.data
 
-
-      if (response.error === "N/A") {
+      if (!response.error || !response.key) {
         
-
-        let result = response.result
-        let result_mod = ""
-        result_mod = JSON.parse(result).replace("[", "").replace("]", "").replace(/'/g, '"')
-        let objectStringArray = (new Function("return [" + result_mod + "];")());
-    
-        objectStringArray.forEach(element => {
+        response.forEach(element => {
 
           if (typeof (element.result) != "number") {
-            let badge = `<span class="badge badge-success">${element.serial_num}</span> `
+            let badge = `<span class="badge badge-success">${parseInt(element.HUKEY)}</span> `
             // newRow.classList.add("bg-danger", "text-white")
             succesDiv.innerHTML += badge
           }
-
 
         })
 
         setTimeout(() => { soundOk(), $('#modalSpinner').modal('hide') }, 500);
         $('#modalSuccess').modal({ backdrop: 'static', keyboard: false })
-
-      } else {
-
-        soundWrong()
-        errorText.hidden = true
+      } else if (response.error) {
+        tabla_consulta.innerHTML = ""
         tabla_consulta_container.hidden = false
-        let result = response.result
-        let result_mod = ""
+        errorTextField.innerHTML = ""
+        errorText.hidden = true
+        response.error.forEach(element => {
 
-        result_mod = JSON.parse(result).replace("[", "").replace("]", "").replace(/'/g, '"')
-
-        let objectStringArray = (new Function("return [" + result_mod + "];")());
-        let errors = 0
-
-        objectStringArray.forEach(element => {
-          if (typeof (element.result) != "number") {
-            errors++
-          }
-        });
-
-        if (errors != 0) {
-          tabla_consulta.innerHTML = ""
-          objectStringArray.forEach(element => {
             let newRow = tabla_consulta.insertRow(tabla_consulta.rows.length);
-            if (typeof (element.result) != "number") {
-              let row = `
-                                <tr class="bg-danger">
-                                    <td>${element.error}</td>
-                                </tr>
-                                `
-              newRow.classList.add("bg-danger", "text-white")
-              return newRow.innerHTML = row;
+            if (element.error != "N/A") {
+                let row = `
+                        <tr class="bg-danger">
+                            <td>${parseFloat(element.HU_EXID)}</td>
+                            <td>Cehck HU</td>
+                        </tr>
+                        `
+                newRow.classList.add("bg-danger", "text-white")
+                return newRow.innerHTML = row;
             }
+        })
+        cantidadErrores.innerHTML = ""
+        cantidadErrores.innerHTML = response.error.length
+
+        setTimeout(() => { soundWrong(), $('#modalSpinner').modal('hide') }, 500);
+        $('#modalError').modal({ backdrop: 'static', keyboard: false })
+    } else if (response.message) {
+        tabla_consulta.innerHTML = ""
+        tabla_consulta_container.hidden = false
+        errorTextField.innerHTML = ""
+        errorText.hidden = true
+        let newRow = tabla_consulta.insertRow(tabla_consulta.rows.length);
+        let row = `
+                <tr class="bg-danger">
+                    <td>${response.message}</td>
+                    <td>Cehck HU</td>
+                </tr>
+                `
+        newRow.classList.add("bg-danger", "text-white")
+        setTimeout(() => { soundWrong(), $('#modalSpinner').modal('hide') }, 500);
+        $('#modalError').modal({ backdrop: 'static', keyboard: false })
+        return newRow.innerHTML = row;
+    
+      // } else {
+
+      //   soundWrong()
+      //   errorText.hidden = true
+      //   tabla_consulta_container.hidden = false
+      //   let result = response.result
+      //   let result_mod = ""
+
+      //   result_mod = JSON.parse(result).replace("[", "").replace("]", "").replace(/'/g, '"')
+
+      //   let objectStringArray = (new Function("return [" + result_mod + "];")());
+      //   let errors = 0
+
+      //   objectStringArray.forEach(element => {
+      //     if (typeof (element.result) != "number") {
+      //       errors++
+      //     }
+      //   });
+
+      //   if (errors != 0) {
+      //     tabla_consulta.innerHTML = ""
+      //     objectStringArray.forEach(element => {
+      //       let newRow = tabla_consulta.insertRow(tabla_consulta.rows.length);
+      //       if (typeof (element.result) != "number") {
+      //         let row = `
+      //                           <tr class="bg-danger">
+      //                               <td>${element.error}</td>
+      //                           </tr>
+      //                           `
+      //         newRow.classList.add("bg-danger", "text-white")
+      //         return newRow.innerHTML = row;
+      //       }
 
 
-          })
-          cantidadErrores.innerHTML = errors
-          $('#modalSpinner').modal('hide')
-          $('#modalError').modal({ backdrop: 'static', keyboard: false })
-        } else {
-          $('#modalSpinner').modal('hide')
-          $('#modalError').modal({ backdrop: 'static', keyboard: false })
-        }
+      //     })
+      //     cantidadErrores.innerHTML = errors
+      //     $('#modalSpinner').modal('hide')
+      //     $('#modalError').modal({ backdrop: 'static', keyboard: false })
+      //   } else {
+      //     $('#modalSpinner').modal('hide')
+      //     $('#modalError').modal({ backdrop: 'static', keyboard: false })
+      //   }
       }
 
 
