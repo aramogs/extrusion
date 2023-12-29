@@ -177,40 +177,16 @@ function submitSerials(e) {
     })
         .then((result) => {
 
+            response = result.data
 
-            response = JSON.parse(result.data)
-
-            if (response.error != "N/A") {
-                tabla_consulta.innerHTML = ""
-                    let newRow = tabla_consulta.insertRow(tabla_consulta.rows.length);
-            
-                        let row = `
-                                <tr class="bg-danger">
-                                    <td>N/A</td>
-                                    <td>${response.error}</td>
-                                </tr>
-                                `
-                        newRow.classList.add("bg-danger", "text-white")
-                        newRow.innerHTML = row;
-                
-
-                cantidadErrores.innerHTML = 1
-
-                setTimeout(function () {
-                    clearInterval(interval);
-                    $('#modalCountDown').modal('hide')
-                    $('#modalError').modal({ backdrop: 'static', keyboard: false })
-                }, 500);
-
-            } else {
                 soundOk()
                 errorText.hidden = true
                 tabla_consulta_container.hidden = false
-                let arregloResultados = response.result
+                let arregloResultados = response
                 let errors = 0
 
                 arregloResultados.forEach(element => {
-                    if (element.error != "N/A") {
+                    if (!element.E_TANUM) {
                         errors++
                     }
                 });
@@ -219,11 +195,11 @@ function submitSerials(e) {
                     tabla_consulta.innerHTML = ""
                     arregloResultados.forEach(element => {
                         let newRow = tabla_consulta.insertRow(tabla_consulta.rows.length);
-                        if (element.error != "N/A") {
+                        if (!element.E_TANUM || element.error) {
                             let row = `
                                 <tr class="bg-danger">
-                                    <td>${element.serial_num}</td>
-                                    <td>${element.error}</td>
+                                    <td>${element.serial ? element.serial : element.error}</td>
+                                    <td>${element.key ? element.key : element.error }</td>
                                 </tr>
                                 `
                             newRow.classList.add("bg-danger", "text-white")
@@ -245,7 +221,6 @@ function submitSerials(e) {
                     $('#modalCountDown').modal('hide')
                     $('#modalSuccess').modal({ backdrop: 'static', keyboard: false })
                 }
-            }
         })
         .catch((err) => {
             console.error(err);

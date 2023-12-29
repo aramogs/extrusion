@@ -2,7 +2,6 @@ const funcion = {};
 
 const db = require('../../db/conn_b10_bartender');
 const dbE = require('../../db/conn_empleados');
-const dbEX = require('../../db/conn_extr');
 const dbA = require('../../db/conn_areas');
 
 
@@ -56,7 +55,7 @@ funcion.getTurnosAll = () => {
 
 funcion.getProgramacion = (fecha) => {
     return new Promise((resolve, reject) => {
-        dbEX(`
+        db(`
         SELECT DISTINCT
             turno
         FROM
@@ -109,7 +108,7 @@ funcion.insertProgramaExcel = (tabla, titulos, valores, sup_num, fecha, turno) =
 
         let sql  = `INSERT INTO ${tabla} (${titulos.join()},sup_name,fecha,turno) VALUES ?`;
         
-        dbEX(sql, [arreglo_arreglos])
+        db(sql, [arreglo_arreglos])
         .then((result) => {
             resolve(result.affectedRows)
 
@@ -123,7 +122,7 @@ funcion.insertProgramaExcel = (tabla, titulos, valores, sup_num, fecha, turno) =
 
 funcion.getProgramacionFecha = (fecha) => {
     return new Promise((resolve, reject) => {
-        dbEX(`
+        db(`
         SELECT 
             *
         FROM
@@ -138,7 +137,7 @@ funcion.getProgramacionFecha = (fecha) => {
 
 funcion.getCurrentProgramacion = (fecha, turno, linea) => {
     return new Promise((resolve, reject) => {
-        dbEX(`
+        db(`
         SELECT 
             s1.*, s2.impreso
         FROM
@@ -155,7 +154,7 @@ funcion.getCurrentProgramacion = (fecha, turno, linea) => {
 funcion.cancelarIdPlan = (idplan, motivo) => {
 
     return new Promise((resolve, reject) => {
-        dbEX(`
+        db(`
         UPDATE 
             production_plan
         SET
@@ -174,7 +173,7 @@ funcion.cancelarIdPlan = (idplan, motivo) => {
 
 funcion.getInfoIdPlan = (idplan) => {
     return new Promise((resolve, reject) => {
-        dbEX(`
+        db(`
         SELECT 
             *
         FROM
@@ -191,7 +190,7 @@ funcion.getInfoIdPlan = (idplan) => {
 
 funcion.editarIdPlan = (idplan, cantidad, linea) => {
     return new Promise((resolve, reject) => {
-        dbEX(`
+        db(`
         UPDATE 
             production_plan
         SET
@@ -207,7 +206,7 @@ funcion.editarIdPlan = (idplan, cantidad, linea) => {
 
 funcion.getPlanImpresion = (idplan) => {
     return new Promise((resolve, reject) => {
-        dbEX(`
+        db(`
         SELECT 
             *
         FROM
@@ -228,7 +227,7 @@ funcion.getPlanImpresion = (idplan) => {
 
 funcion.etiquetasPlan = (idplan) => {
     return new Promise((resolve, reject) => {
-        dbEX(`
+        db(`
         SELECT 
              SUM(cantidad) as impreso
         FROM
@@ -245,7 +244,7 @@ funcion.etiquetasPlan = (idplan) => {
 funcion.agregarIdPlan = (numero_sap, cantidad, linea, sup_name, fecha, turno) => {
 
     return new Promise((resolve, reject) => {
-        dbEX(`
+        db(`
         INSERT INTO 
             production_plan (numero_sap,cantidad,linea,sup_name, fecha, turno)
         VALUES
@@ -258,7 +257,7 @@ funcion.agregarIdPlan = (numero_sap, cantidad, linea, sup_name, fecha, turno) =>
 
 funcion.getProgramacionTurno = (fecha, turno) => {
     return new Promise((resolve, reject) => {
-        dbEX(`
+        db(`
         SELECT 
         DISTINCT
             (linea)
@@ -312,7 +311,7 @@ funcion.getBaseExtr = (no_sap) => {
 funcion.getSerialesFecha = (fecha) => {
 
     return new Promise((resolve, reject) => {
-        dbEX(`
+        db(`
         SELECT 
             *
         FROM
@@ -337,7 +336,7 @@ funcion.getSerialesFecha = (fecha) => {
 
 funcion.getSerialesFechasMultiples = (desde, hasta) => {
     return new Promise((resolve, reject) => {
-        dbEX(`
+        db(`
         SELECT 
             *
         FROM
@@ -357,7 +356,7 @@ funcion.getSerialesFechasMultiples = (desde, hasta) => {
 
 funcion.getPlanFechasMultiples = (desde, hasta) => {
     return new Promise((resolve, reject) => {
-        dbEX(`
+        db(`
         SELECT 
             *
         FROM
@@ -395,7 +394,7 @@ funcion.cancelarSeriales = (arraySeriales, motivo,user) => {
 
     return new Promise((resolve, reject) => {
         for (let i = 0; i < arraySeriales.length; i++) {
-            dbEX(`
+            db(`
             UPDATE 
                 extrusion_labels
             SET
@@ -416,7 +415,7 @@ funcion.insertImpresion = (plan_id, numero_parte, emp_num, cantidad, numero_etiq
     return new Promise((resolve, reject) => {
 
         for (let i = 0; i < numero_etiquetas; i++) {
-            dbEX(`INSERT INTO extrusion_labels (plan_id, numero_parte, emp_num, cantidad, status) 
+            db(`INSERT INTO extrusion_labels (plan_id, numero_parte, emp_num, cantidad, status) 
                 VALUES ('${plan_id}','${numero_parte}',${emp_num},${cantidad},'${impresoType}')`)
                 .then((result) => { resolve(result) })
                 .catch((error) => { console.error(error),reject(error) })
@@ -427,7 +426,7 @@ funcion.insertImpresion = (plan_id, numero_parte, emp_num, cantidad, numero_etiq
 funcion.getPrinter = (linea) => {
     return new Promise((resolve, reject) => {
 
-        dbEX(`SELECT printer FROM extrusion_conf WHERE linea = ${linea};`)
+        db(`SELECT printer FROM extrusion_conf WHERE linea = ${linea};`)
             .then((result) => { resolve(result) })
             .catch((error) => { reject(error) })
     })
@@ -435,7 +434,7 @@ funcion.getPrinter = (linea) => {
 
 funcion.UpdatePlan = (plan_id) => {
     return new Promise((resolve, reject) => {
-        dbEX(`
+        db(`
         UPDATE 
             production_plan 
         SET 
@@ -451,7 +450,7 @@ funcion.UpdatePlan = (plan_id) => {
 funcion.getIdPlans = (fecha) => {
     return new Promise((resolve, reject) => {
 
-        dbEX(`SELECT  plan_id, COUNT(*)      
+        db(`SELECT  plan_id, COUNT(*)      
             AS count
         FROM 
             extrusion_labels 
@@ -471,7 +470,7 @@ funcion.getIdPlans = (fecha) => {
 
 funcion.cancelSerialesPlan = (plan_id, motivo,user) => {
     return new Promise((resolve, reject) => {
-        dbEX(`
+        db(`
         UPDATE 
             extrusion_labels 
         SET 
@@ -489,7 +488,7 @@ funcion.cancelSerialesPlan = (plan_id, motivo,user) => {
 funcion.getCountCanceled = (fecha) => {
     return new Promise((resolve, reject) => {
 
-        dbEX(`SELECT  plan_id, COUNT(*)      
+        db(`SELECT  plan_id, COUNT(*)      
             AS count
         FROM 
             extrusion_labels 
@@ -516,7 +515,7 @@ funcion.statusSerial = (seriales) => {
         let resultado = []
         seriales.forEach(serial => {
 
-            dbEX(`
+            db(`
             SELECT 
                 serial, status, datetime
             FROM 
@@ -551,7 +550,7 @@ funcion.infoSerial = (seriales) => {
     return new Promise((resolve, reject) => {
         let resultado = []
         seriales.forEach(serial => {
-            dbEX(`
+            db(`
             SELECT 
                 serial,plan_id, numero_parte, cantidad 
             FROM 
@@ -582,7 +581,7 @@ funcion.updateSerialesAcred = (seriales, user_id) => {
 
         seriales.forEach(serial => {
             if (serial.result != "N/A") {
-                dbEX(`
+                db(`
                 UPDATE 
                     extrusion_labels 
                 SET 
@@ -605,7 +604,7 @@ funcion.updateSerialesAcred = (seriales, user_id) => {
                     .catch((error) => { reject(error) })
 
             } else {
-                dbEX(`
+                db(`
                 UPDATE 
                     extrusion_labels 
                 SET 
@@ -638,7 +637,7 @@ funcion.updateSerialesTransferidos = (seriales,user_id, status) => {
         seriales.forEach(element => {
             
             if (element.error === "N/A") {
-                dbEX(`
+                db(`
                 UPDATE 
                     extrusion_labels 
                 SET 
@@ -678,7 +677,7 @@ funcion.updateSerialesTransferidos = (seriales,user_id, status) => {
 funcion.updateSerialesTransferidosPR = (serial,user_id, status) => {
 
     return new Promise((resolve, reject) => {
-            dbEX(`
+            db(`
                 UPDATE 
                     extrusion_labels 
                 SET 
@@ -697,7 +696,7 @@ funcion.updateSerialesTransferidosPR = (serial,user_id, status) => {
 
 funcion.graficaReporte = (desde, hasta) => {
     return new Promise((resolve, reject) => {
-        dbEX(`
+        db(`
         SELECT 
             s1.numero_sap, s1.programado, s2.producido
         FROM
@@ -731,7 +730,7 @@ funcion.graficaReporte = (desde, hasta) => {
 funcion.getAllInfoSerial = (serial) => {
     return new Promise((resolve, reject) => {
 
-        dbEX(`SELECT *
+        db(`SELECT *
         FROM 
             extrusion_labels 
         WHERE 
@@ -775,7 +774,7 @@ funcion.countSeriales = (arraySeriales) => {
 
     return new Promise((resolve, reject) => {
 
-        dbEX(`
+        db(`
         SELECT 
             COUNT(serial) AS "COUNT"
         FROM extrusion.extrusion_labels 
@@ -791,7 +790,7 @@ funcion.countSeriales = (arraySeriales) => {
 
 funcion.updateObsoleto = (serial_obsoleto) => {
     return new Promise((resolve, reject) => {
-        dbEX(`
+        db(`
         UPDATE 
             extrusion_labels 
         SET 
@@ -808,7 +807,7 @@ funcion.updateObsoleto = (serial_obsoleto) => {
 funcion.getSerial = () => {
     return new Promise((resolve, reject) => {
 
-        dbEX(`SELECT serial FROM extrusion_labels ORDER BY serial DESC LIMIT 1`)
+        db(`SELECT serial FROM extrusion_labels ORDER BY serial DESC LIMIT 1`)
             .then((result) => { resolve(result[0]) })
             .catch((error) => { reject(error) })
     })
@@ -819,7 +818,7 @@ funcion.getSerial = () => {
 funcion.getInventario = () => {
     return new Promise((resolve, reject) => {
 
-        dbEX(`SELECT * FROM extrusion_labels WHERE status="Acreditado" OR status="Retornado"`)
+        db(`SELECT * FROM extrusion_labels WHERE status="Acreditado" OR status="Retornado"`)
             .then((result) => { resolve(result) })
             .catch((error) => { reject(error) })
     })

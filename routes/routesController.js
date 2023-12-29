@@ -577,7 +577,7 @@ controller.impresion_POST = (req, res) => {
 
     axios({
         method: 'post',
-        url: `http://${process.env.API_ADDRESS}:3014/handlingEXT`,
+        url: `http://${process.env.API_ADDRESS}:5000/handlingEXT`,
         headers: {
             'Content-Type': 'application/json'
         },
@@ -774,40 +774,24 @@ controller.procesarSeriales_POST = (req, res) => {
     let seriales = req.body.seriales
     let arraySeriales = seriales.split(',')
     let estacion = req.res.locals.macIP.mac
-    let process = "confirm_ext_hu"
+    // let process = "confirm_ext_hu"
     let user_id = req.res.locals.authData.id.id
     let user_name = req.res.locals.authData.id.username
 
     async function getStatus() {
 
-        let allStatus = await statusSeriales(arraySeriales)
-        let checkStatus = await checkAllStatus(allStatus, "Impreso")
 
-        if (checkStatus.length > 0) {
-
-            let obj = {}
-            obj['result'] = checkStatus
-            obj['error'] = "N/A"
-            res.json(JSON.stringify(obj))
-
-        } else {
-
-
-            let info = await infoSeriales(arraySeriales)
-            let jsonInfo = JSON.stringify(info)
-            let send = `{"station":"${estacion}","serial_num":"","process":"${process}", "material":"",  "cantidad":"", "user_id":"${user_id}", "data":${jsonInfo}}`
-            amqpRequest(send, "rpc_ext")
-                .then((result) => {
-                    async function updateAcred() {
-                        let resultado = JSON.parse(result)
-                        let resultadArray = resultado.result
-                        // let acreditado = await updateAcreditado(resultadArray, user_id);
-                        res.json(result)
-                    } updateAcred()
-                })
-                .catch((err) => { console.error(err) })
-
-        }
+            let send = `{"station":"${estacion}","user_id":"${user_id}", "serials":"${seriales}"}`
+            axios({
+                method: 'post',
+                url: `http://${process.env.API_ADDRESS}:5000/backflushEXT`,
+                headers: {
+                    'Content-Type': 'application/json'
+                },
+                data: send
+            })
+                .then(result => { res.send(result.data) })
+                .catch(err => { res.json(JSON.stringify(err)) })
     }
     getStatus()
 
@@ -1017,7 +1001,7 @@ controller.transferenciaRP_POST = (req, res) => {
 
     axios({
         method: 'post',
-        url: `http://${process.env.API_ADDRESS}:3014/transferEXTRP`,
+        url: `http://${process.env.API_ADDRESS}:5000/transferEXTRP`,
         headers: {
             'Content-Type': 'application/json'
         },
@@ -1107,7 +1091,7 @@ controller.impresionPR_POST = (req, res) => {
     }`
     axios({
         method: 'post',
-        url: `http://${process.env.API_ADDRESS}:3014/transferEXTPR`,
+        url: `http://${process.env.API_ADDRESS}:5000/transferEXTPR`,
         headers: {
             'Content-Type': 'application/json'
         },
@@ -1166,7 +1150,7 @@ controller.auditoriaEXT_POST = (req, res) => {
         }`
     axios({
         method: 'post',
-        url: `http://${process.env.API_ADDRESS}:3014/auditoriaEXT`,
+        url: `http://${process.env.API_ADDRESS}:5000/auditoriaEXT`,
         headers: {
             'Content-Type': 'application/json'
         },
@@ -1236,7 +1220,7 @@ controller.getUbicacionesEXTMandrel_POST = (req, res) => {
 
     axios({
         method: 'post',
-        url: `http://${process.env.API_ADDRESS}:3014/getUbicacionesEXTMandrel`,
+        url: `http://${process.env.API_ADDRESS}:5000/getUbicacionesEXTMandrel`,
         headers: {
             'Content-Type': 'application/json'
         },
@@ -1264,7 +1248,7 @@ controller.getUbicacionesEXTSerial_POST = (req, res) => {
 
     axios({
         method: 'post',
-        url: `http://${process.env.API_ADDRESS}:3014/getUbicacionesEXTSerial`,
+        url: `http://${process.env.API_ADDRESS}:5000/getUbicacionesEXTSerial`,
         headers: {
             'Content-Type': 'application/json'
         },
@@ -1305,7 +1289,7 @@ controller.postSerialsEXT_POST = (req, res) => {
 
     axios({
         method: 'post',
-        url: `http://${process.env.API_ADDRESS}:3014/postSerialesEXT`,
+        url: `http://${process.env.API_ADDRESS}:5000/postSerialesEXT`,
         headers: {
             'Content-Type': 'application/json'
         },
@@ -1347,7 +1331,7 @@ controller.getBinStatusReport_POST = (req, res) => {
 
     axios({
         method: 'post',
-        url: `http://${process.env.API_ADDRESS}:3014/getBinStatusReportEXT`,
+        url: `http://${process.env.API_ADDRESS}:5000/getBinStatusReportEXT`,
         headers: {
             'Content-Type': 'application/json'
         },
@@ -1384,7 +1368,7 @@ controller.postCycleSU_POST = (req, res) => {
 
     axios({
         method: 'post',
-        url: `http://${process.env.API_ADDRESS}:3014/postCycleSUEXT`,
+        url: `http://${process.env.API_ADDRESS}:5000/postCycleSUEXT`,
         headers: {
             'Content-Type': 'application/json'
         },
