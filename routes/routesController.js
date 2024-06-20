@@ -3,8 +3,8 @@ const controller = {};
 
 let amqp = require('amqplib/callback_api');
 const jwt = require('jsonwebtoken');
-// const moment = require('moment')
-const moment = require('moment-timezone');
+const moment = require('moment')
+//const moment = require('moment-timezone');
 
 //Require Funciones
 const funcion = require('../public/js/functions/controllerFunctions');
@@ -477,61 +477,68 @@ controller.cancelarIdPlan_POST = (req, res) => {
 // }
 
 controller.impresion_GET = (req, res) => {
-    let user_id = req.res.locals.authData.id.id;
-    let user_name = req.res.locals.authData.id.username;
-    let todayDate = moment().tz('America/Mexico_City');
+    let user_id = req.res.locals.authData.id.id
+    let user_name = req.res.locals.authData.id.username
+    let todayDate = moment()
 
-    let start_midnight = moment.tz('00:00:00', 'HH:mm:ss', 'America/Mexico_City');
-    let end_midnight = moment.tz('00:59:59', 'HH:mm:ss', 'America/Mexico_City');
-    let timeNow = moment().tz('America/Mexico_City');
-    let currentShift;
-
+    let start_midnight = moment("00:00:00", 'HH:mm:ss')
+    let end_midnight = moment("00:59:59", 'HH:mm:ss')
+    let timeNow = moment();
+    let currentShift
     async function waitForPromise() {
-        let getTurnos = await funcion.getTurnosAll();
-        if (moment().tz('America/Mexico_City').weekday() === 6) {
-            getTurnos.splice(0, 1);
-            getTurnos.splice(2, 1);
+        let getTurnos = await funcion.getTurnosAll()
+        if (moment().weekday() === 6) {
+            getTurnos.splice(0, 1)
+            getTurnos.splice(2, 1)
         } else {
-            getTurnos.splice(1, 1);
-            getTurnos.splice(3, 1);
+            getTurnos.splice(1, 1)
+            getTurnos.splice(3, 1)
         }
 
+
         getTurnos.forEach(element => {
-            let start = moment.tz(element.turno_inicio, 'HH:mm:ss', 'America/Mexico_City');
-            let end = moment.tz(element.turno_final, 'HH:mm:ss', 'America/Mexico_City');
+
+            let start = moment(element.turno_inicio, 'HH:mm:ss')
+            let end = moment(element.turno_final, 'HH:mm:ss')
 
             if (end.isBetween(start_midnight, end_midnight)) {
+
                 if (timeNow.isBetween(start_midnight, end)) {
-                    start.subtract(1, "days");
-                    todayDate.subtract(1, "days");
+
+                    start.subtract(1, "days")
+                    todayDate.subtract(1, "days")
                 }
-                end.add(1, "days");
+                end.add(1, "days")
+
             }
 
+
             if (timeNow.isBetween(start, end)) {
+
                 currentShift = (element.turno_descripcion).substring(0, 2);
             }
         });
 
-        todayDate = todayDate.format("YYYY-MM-DD");
-        console.log(currentShift, timeNow.format('HH:mm'));
-
+        todayDate = todayDate.format("YYYY-MM-DD")
+        console.log(currentShift, timeNow);
         funcion.getProgramacionTurno(todayDate, currentShift)
             .then((result) => {
-                turnos = result;
+                turnos = result
                 res.render('impresion.ejs', {
                     user_id,
                     user_name,
                     turnos,
                     currentShift
-                });
+                })
             })
             .catch((err) => {
                 console.error(err);
-            });
+            })
     }
-    waitForPromise();
-};
+    waitForPromise()
+
+
+}
 
 controller.getCurrentProgramacion_POST = (req, res) => {
 
