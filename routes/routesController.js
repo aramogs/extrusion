@@ -483,7 +483,7 @@ controller.impresion_GET = (req, res) => {
 
     let start_midnight = moment("00:00:00", 'HH:mm:ss')
     let end_midnight = moment("00:59:59", 'HH:mm:ss')
-    let timeNow = moment();
+    let timeNow = moment().subtract(1, 'hours');
     let currentShift
     async function waitForPromise() {
         let getTurnos = await funcion.getTurnosAll()
